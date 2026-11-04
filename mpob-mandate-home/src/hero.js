@@ -507,8 +507,8 @@ function buildKeys(xD, yD) {
   BUNCH = [HERO.x + .3, hy + palmS * .475, HERO.z + 1.55];
   const B = BUNCH;
   KEYS = [
-    { g: 0.00, p: [0, 1540, 2700], l: [80, 1480, 0], fov: 50 },
-    { g: 0.20, p: [0, 1500, 2520], l: [70, 1400, 0], fov: 50 },
+    { g: 0.00, p: [0, 1540, 2700], l: [80, 1480, 0], fov: 50, sy: .3, psy: .14 },
+    { g: 0.20, p: [0, 1500, 2520], l: [70, 1400, 0], fov: 50, sy: .3, psy: .14 },
     { g: 0.48, p: [0, 1120, 1600], l: [40, 500, -500], fov: 52 },
     { g: 0.72, p: [0, 360, 600], l: [0, 90, -700], fov: 54, fit: 1 },
     { g: 0.90, p: [0, 96, 40], l: [0, 42, -700], fov: 52, fit: 1 },
@@ -569,7 +569,7 @@ function keyParam(g, name, def) {
 /* ── Light, weather and grade through the day ── */
 const n3 = v => vnorm(v);
 const DAY = [
-  { g: 0.0, sun: n3([.03, .06, -1]), c: [14, 8.6, 4.6], z: [.1, .19, .36], h: [.98, .66, .38], f: [.86, .6, .4], fd: .00012, a: [.44, .38, .36], cov: .6, cb: 560, ct: 1200, cd: 4.2, lit: [1.6, 1.24, .9], sh: [.2, .22, .3], ex: 1, ls: 0, rain: 0, rays: .3, fl: 1 },
+  { g: 0.0, sun: n3([.03, .06, -1]), c: [10.5, 6.4, 3.4], z: [.045, .1, .25], h: [.88, .54, .29], f: [.78, .52, .34], fd: .00012, a: [.44, .38, .36], cov: .6, cb: 560, ct: 1200, cd: 4.2, lit: [1.6, 1.24, .9], sh: [.2, .22, .3], ex: 1, ls: 0, rain: 0, rays: .3, fl: 1 },
   { g: .7, sun: n3([.05, .065, -1]), c: [14, 8.6, 4.6], z: [.11, .2, .37], h: [1, .68, .4], f: [.74, .58, .4], fd: .00016, a: [.46, .4, .38], cov: .5, cb: 560, ct: 1200, cd: 4.2, lit: [1.6, 1.24, .9], sh: [.2, .22, .3], ex: 1, ls: 0, rain: 0, rays: .3, fl: 1 },
   { g: 1.0, sun: n3([.04, .1, -1]), c: [10, 6, 3], z: [.1, .2, .4], h: [.94, .54, .27], f: [.86, .54, .32], fd: .00024, a: [.5, .43, .4], cov: .32, cb: 900, ct: 1500, cd: 3, lit: [1.42, 1.04, .76], sh: [.74, .6, .5], ex: 1, ls: 1, rain: 0, rays: .34, fl: .7 },
   { g: 1.6, sun: n3([.16, .14, -1]), c: [15, 10, 5.8], z: [.11, .23, .44], h: [.92, .72, .5], f: [.8, .68, .52], fd: .00024, a: [.52, .47, .45], cov: .28, cb: 1000, ct: 1600, cd: 3, lit: [1.4, 1.1, .84], sh: [.72, .62, .54], ex: 1, ls: .9, rain: 0, rays: .4, fl: .8 },
@@ -845,7 +845,6 @@ function buildStatic() {
   const gx = 1120; // overhead sign gantry
   for (const side of [-1, 1]) { box(gx, 6, ROAD_Z + side * 13, .9, 11.5, .9, [.2, .21, .22]); }
   box(gx, 17.2, ROAD_Z, .8, .8, 27, [.2, .21, .22]); box(gx, 15.4, ROAD_Z, .5, .5, 27, [.2, .21, .22]);
-  cyl(DROP[0], 5.5, DROP[2], 30, .9, [.24, .22, .22], 28, 0);   // plinth below the drop
   return { vb: buf(new Float32Array(V)), n: V.length / 10 };
 }
 function buildSigns() {
@@ -974,7 +973,7 @@ function draw(now, dt) {
   const near = keyParam(gg, 'near', 1.2);
   // Lens shift keeps the subject clear of the words; on a tall screen it moves up instead of sideways.
   let sx = keyParam(gg, 'sx', 0), sy = keyParam(gg, 'sy', 0);
-  if (!wide) { sy = -Math.abs(sx) * .95; sx = keyParam(gg, 'psx', 0); }
+  if (!wide) { sy = -Math.abs(sx) * .95 + keyParam(gg, 'psy', 0); sx = keyParam(gg, 'psx', 0); }
   const ptr = reduced ? 0 : 1;
   const look = [look0[0], look0[1], look0[2]];
   const f0 = vnorm(vsub(look, pos));
