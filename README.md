@@ -1,6 +1,14 @@
 # Website design ideas
 
-### ▶ [Open the gallery](https://mukhrizizraf.github.io/website-design-idea/)
+### ▶ [Open the MPOB home page](https://mukhrizizraf.github.io/website-design-idea/mpob-mandate-home/)
+
+Link to share or open on a phone:
+
+```text
+https://mukhrizizraf.github.io/website-design-idea/mpob-mandate-home/
+```
+
+**All homepage ideas:** [open the gallery](https://mukhrizizraf.github.io/website-design-idea/)
 
 Homepage concepts, one folder per project. These are try-outs, separate from the live apps they might one day feed into.
 
