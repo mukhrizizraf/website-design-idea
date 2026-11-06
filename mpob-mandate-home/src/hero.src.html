@@ -13,6 +13,7 @@
 <body>
 <div class="track" id="track">
   <div class="stage" id="stage">
+    <div class="journey-progress" aria-hidden="true"><i id="journeyProgress"></i></div>
     <div class="poster" id="poster" aria-hidden="true"></div>
     <canvas id="scene" aria-hidden="true"></canvas>
 
@@ -77,10 +78,12 @@
         <p class="kicker">Decision now</p>
         <h2>Make the next call</h2>
         <p class="sub">Set the prices and the fund, and see whether the blend stays at B20 or can move to B30.</p>
-        <div class="blend" role="group" aria-label="Show the palm share of the drop">
+        <div class="blend" id="blend" data-selected="20" role="group" aria-label="Show the palm share of the drop">
+          <i class="blend-indicator" aria-hidden="true"></i>
           <button type="button" data-blend="20" aria-pressed="true"><b>B20</b> 1 part in 5</button>
           <button type="button" data-blend="30" aria-pressed="false"><b>B30</b> 3 parts in 10</button>
         </div>
+        <p class="blend-readout" id="blendReadout"><span class="blend-meter" aria-hidden="true"><i id="blendMeter"></i></span><strong>B20</strong> · 20% palm biodiesel</p>
         <div class="links">
           <a class="go primary" href="https://mukhrizizraf.github.io/mpob-user-level-dashboard/#decision">Decide now</a>
           <a class="go" href="https://mukhrizizraf.github.io/mpob-user-level-dashboard/#obj1">Start with Objective 1</a>
@@ -90,6 +93,7 @@
       </section>
     </div>
 
+    <div class="scroll-cue" aria-hidden="true"><i></i><span>Scroll to travel</span></div>
     <nav class="rail" id="rail" aria-label="Chapters"></nav>
     <button class="play" id="play" type="button"><svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg><span>Play</span></button>
     <div class="debug" id="debug" hidden></div>

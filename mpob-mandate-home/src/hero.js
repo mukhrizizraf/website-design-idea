@@ -594,8 +594,8 @@ function dayAt(g) {
 /* ── Quality. Phones start low and earn detail; nothing here ever reallocates a buffer mid-flight. ── */
 const TIERS = [
   { name: 'phone', msaa: 0, cloudDiv: 5, cloudSteps: 13, near: 46, nearCap: 70, mid: 420, midCap: 2600, taps: 7, mblur: 4, rays: 9, fruit: 320, nearGeo: [18, 4], terr: [72, 56], dprMax: 1.5, maxW: 1500 },
-  { name: 'laptop', msaa: 2, cloudDiv: 4, cloudSteps: 18, near: 70, nearCap: 150, mid: 620, midCap: 4800, taps: 11, mblur: 6, rays: 13, fruit: 620, nearGeo: [24, 6], terr: [96, 72], dprMax: 1.25, maxW: 1920 },
-  { name: 'desktop', msaa: 4, cloudDiv: 3, cloudSteps: 26, near: 110, nearCap: 320, mid: 980, midCap: 11000, taps: 17, mblur: 8, rays: 18, fruit: 1000, nearGeo: [30, 8], terr: [128, 96], dprMax: 1.6, maxW: 2560 },
+  { name: 'laptop', msaa: 2, cloudDiv: 4, cloudSteps: 20, near: 76, nearCap: 170, mid: 680, midCap: 5200, taps: 13, mblur: 7, rays: 15, fruit: 720, nearGeo: [26, 6], terr: [104, 78], dprMax: 1.5, maxW: 2200 },
+  { name: 'desktop', msaa: 4, cloudDiv: 3, cloudSteps: 30, near: 124, nearCap: 380, mid: 1120, midCap: 13000, taps: 19, mblur: 9, rays: 20, fruit: 1300, nearGeo: [34, 9], terr: [160, 120], dprMax: 2, maxW: 2880 },
 ];
 let T, gl, dynScale = 1, needDraw = true;
 
@@ -605,6 +605,7 @@ function pickTier(g) {
   const r = dbg ? String(g.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : '';
   if (coarse || mem <= 3 || /mali-[gt][0-9]{1,2}\b|adreno.{0,3}[1-5][0-9]{2}\b|powervr|swiftshader|llvmpipe|intel.*\b(hd|uhd) graphics/i.test(r)) return 0;
   if (/rtx|gtx (10|16)|radeon rx|apple m[1-9]|arc a/i.test(r)) return 2;
+  if (innerWidth >= 1200 && mem >= 8) return 2;
   return 1;
 }
 
@@ -884,7 +885,7 @@ let M = {}, WORD, NOISE, palmNear, palmMid, FRUIT, FRUITI, DROPM, STATIC, SIGNS,
 const UB = new Float32Array(16 + 4 * 12);
 let ubo, emptyVAO, instBufs = [], instIdx = 0, instNear = new Float32Array(0), instMid = new Float32Array(0), nearCount = 0, midCount = 0, lastCull = [1e9, 0, 0, 0, 0];
 let g = TEST_G ?? 0, gVel = 0, target_g = g, last = 0, ema = 16, lowFor = 0, highFor = 0, ready = false, firstFrame = true;
-let lvlShare = .2, lvlVel = 0, lvlTarget = .2, boltAt = -10, nextBolt = 3, boltN = 0, parX = 0, parY = 0, parTX = 0, parTY = 0, pathNear = [];
+let lvlShare = .2, lvlVel = 0, lvlTarget = .2, blendKick = 0, boltAt = -10, nextBolt = 3, boltN = 0, parX = 0, parY = 0, parTX = 0, parTY = 0, pathNear = [];
 
 function allocTargets() {
   const f = hdr, mk = (w, h) => target(Math.max(2, w | 0), Math.max(2, h | 0), f.i, f.f, f.t);
@@ -1098,7 +1099,7 @@ function draw(now, dt) {
   // The drop
   if (gg > 4.6) { const Pp = use('drop'); gl.bindBuffer(gl.ARRAY_BUFFER, DROPM.vb); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, DROPM.ib);
     for (const [k, o] of [['aP', 0], ['aN', 12]]) { gl.enableVertexAttribArray(Pp.a[k]); gl.vertexAttribPointer(Pp.a[k], 3, gl.FLOAT, false, 24, o); }
-    const cy = DROP_R * 1.72 + 6.5, e = DROPM.levelFor(lvlShare);
+    const cy = DROP_R * 1.72 + 6.5, e = DROPM.levelFor(clamp(lvlShare + blendKick));
     gl.uniform4f(Pp.u.uDrop, DROP[0], cy, DROP[2], DROP_R); gl.uniform1f(Pp.u.uLvl, cy + e.y * DROP_R); gl.uniform1f(Pp.u.uRL, e.r * DROP_R);
     gl.enable(gl.CULL_FACE); gl.drawElements(gl.TRIANGLES, DROPM.n, gl.UNSIGNED_SHORT, 0); gl.disable(gl.CULL_FACE);
     for (const k of ['aP', 'aN']) gl.disableVertexAttribArray(Pp.a[k]); }
@@ -1182,9 +1183,10 @@ function makeBolt() {
 }
 
 /* ── Words and controls. Only opacity and transform are written, and only when they change. ── */
-const chs = [...document.querySelectorAll('.ch')].map(el => ({ el, i: +el.dataset.i, o: -1, y: 1e9 }));
+const chs = [...document.querySelectorAll('.ch')].map(el => ({ el, i: +el.dataset.i, o: -1, y: 1e9, parts: [...el.children].filter(x => !x.classList.contains('sr')) }));
 const WINDOWS = [[-.5, 0, .1, .3], [.86, .97, 1.2, 1.32], [1.92, 2.0, 2.24, 2.36], [2.9, 3.0, 3.26, 3.4], [3.9, 4.0, 4.24, 4.38], [4.9, 5.0, 5.22, 5.32], [5.86, 5.98, 7, 8]];
-const rail = document.getElementById('rail'), playBtn = document.getElementById('play');
+const rail = document.getElementById('rail'), playBtn = document.getElementById('play'), progressBar = document.getElementById('journeyProgress');
+const blendEl = document.getElementById('blend'), blendReadout = document.getElementById('blendReadout'), blendMeter = document.getElementById('blendMeter');
 NAMES.forEach((n, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Go to ' + n); b.innerHTML = `<em>${n}</em><i></i>`; b.onclick = () => jump(i); rail.appendChild(b); });
 const railBtns = [...rail.children];
 let curCh = -1;
@@ -1197,12 +1199,22 @@ function updateWords(gg) {
     const y = reduced ? 0 : (1 - easeOut) * 28 - (1 - leave) * 14;
     if (Math.abs(o - c.o) > .002 || Math.abs(y - c.y) > .1) {
       c.el.style.opacity = o.toFixed(3);
-      c.el.style.transform = `translate3d(0,${y.toFixed(1)}px,0)`;
+      c.el.style.transform = 'translate3d(0,0,0)';
       c.el.style.visibility = o < .004 ? 'hidden' : 'visible';
       c.el.classList.toggle('live', o > .55);
+      c.parts.forEach((part, idx) => {
+        const stagger = Math.min(.09, idx * .035), partEnter = clamp((gg - a - stagger) / (b - a));
+        const partEase = reduced ? 1 : 1 - Math.pow(1 - partEnter, 3);
+        const partO = Math.min(partEase, leave * leave * (3 - 2 * leave));
+        const partY = reduced ? 0 : (1 - partEase) * (idx ? 18 : 10) - (1 - leave) * 8;
+        part.style.opacity = partO.toFixed(3);
+        part.style.transform = `translate3d(0,${partY.toFixed(1)}px,0)`;
+      });
       c.o = o; c.y = y;
     }
   }
+  if (progressBar) progressBar.style.transform = `scaleX(${clamp(gg / (N - 1)).toFixed(4)})`;
+  stage.classList.toggle('has-traveled', gg > .12);
   const cur = clamp(Math.round(gg), 0, N - 1);
   if (cur !== curCh) { curCh = cur; railBtns.forEach((b, k) => { b.classList.toggle('on', k === cur); if (k === cur) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); }); stage.classList.toggle('at-end', cur === N - 1); }
 }
@@ -1218,7 +1230,7 @@ function jump(i) {
   const to = maxScroll * (i / (N - 1));
   if (reduced) { scrollTo(0, to); return; }
   const from = scrollY, dist = Math.abs(to - from) / Math.max(maxScroll, 1) * (N - 1);
-  jumpA = { from, to, t0: performance.now(), dur: 700 + Math.min(dist, 3) * 900 };
+  jumpA = { from, to, t0: performance.now(), dur: 560 + Math.min(dist, 3) * 760 };
 }
 function setPlayUI() { playBtn.querySelector('span').textContent = playing ? 'Pause' : 'Play'; playBtn.querySelector('svg').innerHTML = playing ? '<path d="M2 1h3v10H2zM7 1h3v10H7z"/>' : '<path d="M2 1l9 5-9 5z"/>'; playBtn.setAttribute('aria-pressed', String(playing)); }
 function stopPlay() { if (playing) { playing = false; setPlayUI(); } }
@@ -1229,7 +1241,8 @@ let playAt = 0;
 function stepScroll(now) {
   if (jumpA) {
     const t = clamp((now - jumpA.t0) / jumpA.dur), e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    scrollTo(0, mix(jumpA.from, jumpA.to, e)); if (t >= 1) jumpA = null;
+    scrollTo(0, mix(jumpA.from, jumpA.to, e));
+    if (t >= 1) { g = clamp((jumpA.to / Math.max(maxScroll, 1)) * (N - 1), 0, N - 1); gVel = 0; jumpA = null; }
   } else if (playing) {
     const dt = Math.min(.05, (now - playAt) / 1000); playAt = now;
     // Slow while words are on screen, faster between chapters.
@@ -1239,13 +1252,15 @@ function stepScroll(now) {
   }
 }
 for (const b of document.querySelectorAll('[data-blend]')) b.onclick = () => {
-  lvlTarget = +b.dataset.blend / 100; document.querySelectorAll('[data-blend]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); needDraw = true;
+  lvlTarget = +b.dataset.blend / 100; lvlVel = (lvlTarget - lvlShare) * 16; blendKick = Math.sign(lvlTarget - lvlShare) * .006;
+  document.querySelectorAll('[data-blend]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  blendEl?.setAttribute('data-selected', b.dataset.blend); needDraw = true;
 };
 if (!coarse) addEventListener('pointermove', e => { parTX = e.clientX / innerWidth * 2 - 1; parTY = -(e.clientY / innerHeight * 2 - 1); }, { passive: true });
 
 /* ── Loop: spring-driven camera, and frame-time control that changes resolution without touching a buffer ── */
 const dbg = document.getElementById('debug'); if (qs.has('debug')) dbg.hidden = false;
-let useMS = true, ceilScale = 1, ceilUntil = 0, retryMs = 15000, benching = false, frames = 0, drawnOnce = false, fps = 60, statT = 0, statF = 0;
+let capMs = 0, probe = null, noGain = 0, keepScale = 1, keepMS = true, useMS = true, ceilScale = 1, ceilUntil = 0, retryMs = 15000, benching = false, frames = 0, drawnOnce = false, fps = 60, statT = 0, statF = 0;
 function frame(now) {
   raf = requestAnimationFrame(frame);
   const dt = Math.min(.1, Math.max(.001, (now - last) / 1000)); last = now;
@@ -1262,7 +1277,11 @@ function frame(now) {
     if (Math.abs(target_g - g) < .00008 && Math.abs(gVel) < .0004) { g = target_g; gVel = 0; }
   }
   // Blend-share spring for the drop, with a small iOS-like overshoot.
-  const lw = 9, la = (lvlTarget - lvlShare) * lw * lw - 2 * .62 * lw * lvlVel; lvlVel += la * dt; lvlShare += lvlVel * dt;
+  const lw = 9, la = (lvlTarget - lvlShare) * lw * lw - 2 * .56 * lw * lvlVel; lvlVel += la * dt; lvlShare += lvlVel * dt; blendKick += -blendKick * (1 - Math.exp(-dt * 8));
+  if (blendReadout) {
+    const pct = Math.round(clamp(lvlShare + blendKick, .2, .3) * 100), mode = pct >= 25 ? 'B30' : 'B20';
+    blendReadout.innerHTML = `<span class="blend-meter" aria-hidden="true"><i style="transform:scaleX(${(pct / 100).toFixed(3)})"></i></span><strong>${mode}</strong> · ${pct}% palm biodiesel`;
+  }
   parX += (parTX - parX) * (1 - Math.exp(-dt * 4)); parY += (parTY - parY) * (1 - Math.exp(-dt * 4));
   updateWords(Math.max(g, 0));
   if (!ready || benching) return;
@@ -1271,10 +1290,25 @@ function frame(now) {
   if (!reduced && frames > 20) {
     ema = ema * .9 + dt * 1000 * .1;
     statF++; if (now - statT > 500) { fps = statF / ((now - statT) / 1000); statT = now; statF = 0; }
-    if (ema > 20) { lowFor += dt; highFor = 0; } else if (ema < 17.6) { highFor += dt; lowFor = 0; } else { lowFor = 0; highFor = Math.max(0, highFor - dt); }
-    if (lowFor > .3 && dynScale > .5) { ceilScale = dynScale; ceilUntil = now + retryMs; retryMs = Math.min(retryMs * 2, 120000); if (useMS && rts.ms && dynScale <= .8) useMS = false; dynScale = Math.max(.5, dynScale - .1); lowFor = 0; }
+    if (capMs && ema < capMs * .85) capMs = 0;              // the device's limit lifted (plugged in, low-power mode off)
+    const aim = capMs || 16.7;
+    if (ema > aim * 1.2) { lowFor += dt; highFor = 0; } else if (ema < aim * 1.055) { highFor += dt; lowFor = 0; } else { lowFor = 0; highFor = Math.max(0, highFor - dt); }
+    // Did the last step down help? Battery saver and low-power modes limit the frame rate of every page, and no amount of
+    // blur can beat that. Two steps that change nothing mean the limit is the device: restore sharpness and aim for that rate.
+    if (probe && now - probe.t > 700) {
+      if (ema > probe.ema * .93) noGain++; else noGain = 0;
+      probe = null;
+      if (noGain >= 2 || (noGain >= 1 && dynScale <= .5)) { capMs = ema; dynScale = keepScale; useMS = keepMS; noGain = 0; lowFor = highFor = 0; ceilScale = 1; ceilUntil = 0; retryMs = 15000; }
+    }
+    if (!probe && lowFor > .3 && dynScale > .5) {
+      if (noGain === 0) { keepScale = dynScale; keepMS = useMS; }
+      probe = { ema, t: now };
+      ceilScale = dynScale; ceilUntil = now + retryMs; retryMs = Math.min(retryMs * 2, 120000);
+      if (useMS && rts.ms && dynScale <= .8) useMS = false;
+      dynScale = Math.max(.5, dynScale - .1); lowFor = 0;
+    }
     if (highFor > 3 && dynScale < 1 && (dynScale + .04 < ceilScale || now > ceilUntil)) { dynScale = Math.min(1, dynScale + .05); highFor = 1.8; }
-    if (!dbg.hidden) dbg.textContent = `${fps.toFixed(0)} fps  frame ${ema.toFixed(1)} ms\ntier ${T.name}  res ${(dynScale * 100).toFixed(0)}%  ${FW}x${FH_}  msaa ${useMS && rts.ms ? T.msaa : 0}\npalms ${nearCount}+${midCount}  g ${g.toFixed(2)}`;
+    if (!dbg.hidden) dbg.textContent = `${fps.toFixed(0)} fps  frame ${ema.toFixed(1)} ms${capMs ? '  device limit ' + (1000 / capMs).toFixed(0) + ' fps' : ''}\ntier ${T.name}  res ${(dynScale * 100).toFixed(0)}%  ${FW}x${FH_}  msaa ${useMS && rts.ms ? T.msaa : 0}\npalms ${nearCount}+${midCount}  g ${g.toFixed(2)}`;
   }
 }
 let raf = 0;
@@ -1292,7 +1326,7 @@ function opening() {
   if (reduced || !stage.animate || TEST_G != null) return;
   const sp = CSS.supports('animation-timing-function', 'linear(0,1)') ? springEasing() : { easing: 'cubic-bezier(.2,0,0,1)', duration: 620 };
   stage.style.borderRadius = '26px';
-  stage.animate([{ transform: 'scale(.92)' }, { transform: 'scale(1)' }], { ...sp, fill: 'none' });
+  stage.animate([{ transform: 'scale(.965)' }, { transform: 'scale(1)' }], { ...sp, fill: 'none' });
   setTimeout(() => { stage.style.borderRadius = ''; }, 520);
 }
 function reveal() {
@@ -1368,7 +1402,7 @@ async function boot() {
   await breathe();
   resize(true);
   if (!reduced && TEST_G == null) { const keep = g; for (const gk of [0, .7, 1, 2, 3.1, 4, 5, 6]) { g = gk; gVel = 0; draw(performance.now(), .016); gl.flush(); await nextFrame(); } g = keep; gVel = 0; prevCam = null; lastCull[0] = 1e9; boltAt = -10; }
-  window.__hero = { get stats() { return { fps, ema, dynScale, tier: T.name, g, lvl: lvlShare, nearCount, midCount, W, H, msaa: rts.ms ? T.msaa : 0, word: WORD && { xD: WORD.xD, yD: WORD.yD, hole: WORD.hole, capH: WORD.capH } }; }, setDyn: v => { dynScale = v; }, OFF,
+  window.__hero = { get stats() { return { fps, ema, dynScale, cap: capMs, tier: T.name, g, lvl: lvlShare + blendKick, nearCount, midCount, W, H, msaa: rts.ms ? T.msaa : 0, word: WORD && { xD: WORD.xD, yD: WORD.yD, hole: WORD.hole, capH: WORD.capH } }; }, setDyn: v => { dynScale = v; }, OFF,
     bench: async (gv, n = 14) => { const keep = g; g = gv; gVel = 0; let tot = 0, c = 0; const px = new Uint8Array(4); benching = true; for (let i = 0; i < n; i++) { await nextFrame(); const t0 = performance.now(); draw(performance.now(), .016); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); const d = performance.now() - t0; if (i > 3) { tot += d; c++; } } benching = false; g = keep; return tot / c; } };
   if (coarse) dynScale = .8;
   ready = true;
