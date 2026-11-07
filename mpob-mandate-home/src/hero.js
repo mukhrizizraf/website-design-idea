@@ -1187,8 +1187,10 @@ const chs = [...document.querySelectorAll('.ch')].map(el => ({ el, i: +el.datase
 const WINDOWS = [[-.5, 0, .1, .3], [.86, .97, 1.2, 1.32], [1.92, 2.0, 2.24, 2.36], [2.9, 3.0, 3.26, 3.4], [3.9, 4.0, 4.24, 4.38], [4.9, 5.0, 5.22, 5.32], [5.86, 5.98, 7, 8]];
 const rail = document.getElementById('rail'), playBtn = document.getElementById('play'), progressBar = document.getElementById('journeyProgress');
 const blendEl = document.getElementById('blend'), blendReadout = document.getElementById('blendReadout'), blendMeter = document.getElementById('blendMeter');
+const signalBlend = document.getElementById('signalBlend'), signalFill = document.getElementById('signalFill');
 NAMES.forEach((n, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Go to ' + n); b.innerHTML = `<em>${n}</em><i></i>`; b.onclick = () => jump(i); rail.appendChild(b); });
 const railBtns = [...rail.children];
+for (const b of document.querySelectorAll('[data-jump]')) b.onclick = () => jump(+b.dataset.jump);
 let curCh = -1;
 function updateWords(gg) {
   for (const c of chs) {
@@ -1281,6 +1283,8 @@ function frame(now) {
   if (blendReadout) {
     const pct = Math.round(clamp(lvlShare + blendKick, .2, .3) * 100), mode = pct >= 25 ? 'B30' : 'B20';
     blendReadout.innerHTML = `<span class="blend-meter" aria-hidden="true"><i style="transform:scaleX(${(pct / 100).toFixed(3)})"></i></span><strong>${mode}</strong> · ${pct}% palm biodiesel`;
+    if (signalBlend) signalBlend.textContent = mode;
+    if (signalFill) signalFill.style.transform = `scaleX(${(pct / 100).toFixed(3)})`;
   }
   parX += (parTX - parX) * (1 - Math.exp(-dt * 4)); parY += (parTY - parY) * (1 - Math.exp(-dt * 4));
   updateWords(Math.max(g, 0));
