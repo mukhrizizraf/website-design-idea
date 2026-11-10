@@ -82,31 +82,52 @@ function empty(title,desc,action=''){return `<div class="empty"><h3>${title}</h3
 function skillCard(skill){return `<article class="skill-card"><div class="card-top">${categoryBadge(skill.category)}<button class="bookmark" data-bookmark="${skill.id}" aria-label="${saved(skill.id)?'Unsave':'Save'} ${esc(skill.title)}" aria-pressed="${saved(skill.id)}">${icon('bookmark')}</button></div><h3>${esc(skill.title)}</h3><p>${esc(skill.description)}</p><div class="card-meta"><span>${esc(skill.tool)}</span><span>·</span><span>${skill.time} min</span></div><div class="card-footer"><span>${status(skill.id)==='To explore'?skill.level:status(skill.id)}</span><button class="button text" data-skill="${skill.id}">Explore skill ${icon('arrow')}</button></div></article>`;}
 function pathProgress(path){return path.skills.filter(id=>status(id)==='Confident').length;}
 function renderNav(){ $('#navigation').innerHTML=navs.map(([id,label,glyph])=>`<button class="nav-item ${route===id?'active':''}" data-route="${id}" ${route===id?'aria-current="page"':''} title="${label}">${icon(glyph)}<span class="nav-label">${label}</span>${id==='inbox'&&state.lessons.length?`<span class="count">${state.lessons.length}</span>`:''}</button>`).join('');$('#settings-nav').innerHTML=icon('settings')+'<span class="nav-label">Connections & data</span>';$('#settings-nav').classList.toggle('active',route==='settings');$('#current-page').textContent=navs.find(x=>x[0]===route)?.[1]||'Connections & data'; }
+// Real-data analytics for the overview. No simulated numbers.
+function kpiRow() {
+  const practicing = starterSkills.filter(s => status(s.id) === 'Practicing').length;
+  const confident = starterSkills.filter(s => status(s.id) === 'Confident').length;
+  const since = Date.now() - 30 * 864e5;
+  const active = new Set(state.journal.filter(j => new Date(j.date).getTime() >= since).map(j => dateKey(new Date(j.date)))).size;
+  const tiles = [[state.lessons.length, 'Lessons saved', 'inbox'], [practicing, 'Skills in practice', 'path'], [confident, 'Skills confident', 'check'], [active, 'Active days · 30 days', 'progress']];
+  return `<div class="kpi-row">${tiles.map(([n, label, glyph]) => `<div class="kpi"><span class="kpi-icon">${icon(glyph)}</span><strong>${n}</strong><span>${label}</span></div>`).join('')}</div>`;
+}
+function activityChart() {
+  const counts = new Map();
+  state.journal.forEach(j => { const k = dateKey(new Date(j.date)); counts.set(k, (counts.get(k) || 0) + 1); });
+  const days = Array.from({ length: 14 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (13 - i)); return { d, n: counts.get(dateKey(d)) || 0 }; });
+  const max = Math.max(1, ...days.map(x => x.n));
+  const total = days.reduce((sum, x) => sum + x.n, 0);
+  const activeDays = days.filter(x => x.n).length;
+  const label = d => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  const entries = n => `${n} ${n === 1 ? 'entry' : 'entries'}`;
+  return `<section class="weekly activity">
+      <div class="section-head"><h2>Activity, last 14 days</h2><small>${entries(total)}</small></div>
+      <div class="bars" aria-hidden="true">${days.map(({ d, n }) => `<div class="bar-col"><span class="bar ${n ? '' : 'zero'}" style="height:${n ? Math.max(8, n / max * 100) : 0}%"></span><span class="bar-tip">${label(d)} · ${entries(n)}</span><span class="bar-x">${d.getDate()}</span></div>`).join('')}</div>
+      <table class="sr-only"><caption>Practice entries per day, last 14 days</caption><tbody>${days.map(({ d, n }) => `<tr><th scope="row">${label(d)}</th><td>${n}</td></tr>`).join('')}</tbody></table>
+      <p>${total === 0 ? 'No activity logged yet. Log a practice session and your chart will grow.' : `Activity on ${activeDays} of the last 14 days.`}</p>
+      <button class="button text" data-route="progress">Log practice ${icon('arrow')}</button>
+    </section>`;
+}
+function statusChart() {
+  const parts = statuses.map((s, i) => ({ s, cls: 'st' + (i + 1), n: starterSkills.filter(k => status(k.id) === s).length }));
+  return `<section class="overview-detail status-chart">
+      <div class="section-head"><h2>Skill status</h2><small>${starterSkills.length} starter skills</small></div>
+      <div class="stack" role="img" aria-label="${parts.map(p => `${p.s}: ${p.n}`).join(', ')}">${parts.filter(p => p.n).map(p => `<span class="seg ${p.cls}" style="flex:${p.n}" title="${p.s}: ${p.n}"></span>`).join('')}</div>
+      <ul class="legend">${parts.map(p => `<li><i class="${p.cls}" aria-hidden="true"></i>${p.s}<strong>${p.n}</strong></li>`).join('')}</ul>
+    </section>`;
+}
 function overview() {
   const path = paths.find(item => item.id === state.activePath) || paths[0];
   const nextId = path.skills.find(id => status(id) !== 'Confident');
   const next = starterSkills.find(skill => skill.id === nextId);
   const exercise = next?.steps.find((_, index) => !checked(next.id).includes(index));
-  const activityDates = new Set(state.journal.map(entry => dateKey(new Date(entry.date))));
-  let activeDays = 0;
-  const days = Array.from({ length: 7 }, (_, index) => {
-    const day = new Date();
-    day.setDate(day.getDate() - (6 - index));
-    const active = activityDates.has(dateKey(day));
-    if (active) activeDays++;
-    const dateLabel = day.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' });
-    return `<li class="day" aria-label="${dateLabel}, ${active ? 'activity logged' : 'no activity'}">
-      <span aria-hidden="true">${day.toLocaleDateString('en', { weekday: 'short' })}</span>
-      <span aria-hidden="true" class="day-number ${active ? 'done' : ''}">${active ? icon('check') : day.getDate()}</span>
-    </li>`;
-  }).join('');
   const skills = ['web-1', 'motion-1', 'write-1', 'codex-1']
     .filter(id => id !== nextId)
     .slice(0, 3)
     .map(id => starterSkills.find(skill => skill.id === id));
   const completed = pathProgress(path);
   const recent = state.lessons[0];
-  return heading('Overview', 'Continue your learning path or return to a saved lesson.') + `
+  return heading('Overview', 'Continue your learning path or return to a saved lesson.') + kpiRow() + `
     <div class="overview-grid">
       <section class="focus-panel">
         <h2>${next ? esc(next.title) : 'Learning path complete'}</h2>
@@ -114,12 +135,7 @@ function overview() {
         <p>${exercise ? `<strong>Next exercise</strong><br>${esc(exercise)}` : next ? 'Review your work and update your confidence level.' : 'Choose a new path when you’re ready.'}</p>
         <button class="button light" ${next ? `data-skill="${next.id}"` : 'data-route="paths"'}>${next ? 'Open skill' : 'Browse paths'} ${icon('arrow')}</button>
       </section>
-      <section class="weekly">
-        <h2>Last 7 days</h2>
-        <ul class="week-days">${days}</ul>
-        <p>${activeDays === 0 ? 'No learning activity logged yet.' : `Learning activity on ${activeDays} of the last 7 days.`}</p>
-        <button class="button text" data-route="progress">View activity ${icon('arrow')}</button>
-      </section>
+      ${activityChart()}
     </div>
     <div class="overview-columns">
       <section>
@@ -134,6 +150,7 @@ function overview() {
         </ul>
       </section>
       <div>
+        ${statusChart()}
         <section class="overview-detail">
           <div class="section-head"><h2>Your learning path</h2><button class="button text" data-route="paths">View paths ${icon('arrow')}</button></div>
           <h3>${esc(path.title)}</h3>
