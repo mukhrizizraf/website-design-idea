@@ -29,7 +29,8 @@ test('the directly opened page uses a classic bundle that renders navigation and
   assert.doesNotMatch(bundledSource,/^import |^export /m);
   const w=workspace(true);
   assert.match(w.node('#navigation').innerHTML,/Skill library/);
-  assert.match(w.node('#main').innerHTML,/A little better, every day/);
+  assert.match(w.node('#main').innerHTML,/<h1>Overview<\/h1>/);
+  assert.match(w.node('#main').innerHTML,/<h2>Give your coding agent a better brief<\/h2>/);
   assert.match(w.node('#main').innerHTML,/Design with intention/);
 });
 test('storage failure remains visible despite later success messaging and retry clears warning',()=>{

@@ -15,7 +15,11 @@ An Operate surface for deliberate daily learning. Quiet warm paper, botanical gr
 Native buttons, forms, dialog, checkboxes, and video controls. Visible keyboard focus and an accessible skip link. SVG line icons. Color is never the only state cue. Category tags are text-labelled. Hover, empty, invalid import, connection failure, and storage failure states are explicit.
 
 ## Responsive composition
-238px desktop rail becomes a 76px icon rail at 900px, then bottom navigation at 600px. Desktop split views stack; skill cards become a single column. Dialogs stay within the viewport. Reduced-motion preference suppresses the single decorative reveal.
+238px desktop rail becomes a 76px icon rail at 900px, then bottom navigation at 600px. The overview uses a short skills list and stacks its columns below 800px. Library cards become a single column on phones. Dialogs stay within the viewport.
+
+## Motion
+
+A half-second checkmark confirms a saved or imported lesson. The [Lottie source](motion/lesson-saved.json) was rendered to a single-play animated PNG with LottieFiles dotLottie Web 0.82.1. The browser displays the same confirmation text if reduced motion is on or the image fails to load.
 
 ## Content
 No simulated personal metrics. Starter guides carry a clear label. Notes are escaped before HTML rendering and source links accept HTTP/HTTPS only. Saving media and analyzing media are explained as distinct actions.
