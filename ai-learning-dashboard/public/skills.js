@@ -17,14 +17,18 @@ window.SKILL_DATA = {
     medium: { label: 'Medium', hint: 'Easy to ask for, but works best on a real project.' },
     technical: { label: 'Technical', hint: 'Made for people who build websites or code.' }
   },
+  // repo/branch/dir let the shelf write install steps directly on each skill (checked 2026-11-10):
+  // a skill folder lives at <repo>/<dir>/<skill id>. root:true means the whole repo is one skill.
+  // plugin: commands to type inside Claude Code instead of copying folders.
   sources: {
-    anthropic: { name: 'Anthropic (official)', url: 'https://github.com/anthropics/skills' },
-    superpowers: { name: 'obra/superpowers', url: 'https://github.com/obra/superpowers' },
-    emil: { name: 'Emil Kowalski', url: 'https://github.com/emilkowalski/skills' },
-    gsap: { name: 'GreenSock (GSAP) official', url: 'https://github.com/greensock/gsap-skills' },
-    designdna: { name: 'zanwei/design-dna', url: 'https://github.com/zanwei/design-dna' },
-    juliobsz: { name: 'juliobsz/skills', url: 'https://github.com/juliobsz/skills' },
-    claudemem: { name: 'thedotmack/claude-mem', url: 'https://github.com/thedotmack/claude-mem' },
+    anthropic: { name: 'Anthropic (official)', url: 'https://github.com/anthropics/skills', repo: 'anthropics/skills', branch: 'main', dir: 'skills' },
+    superpowers: { name: 'obra/superpowers', url: 'https://github.com/obra/superpowers', repo: 'obra/superpowers', branch: 'main', dir: 'skills' },
+    emil: { name: 'Emil Kowalski', url: 'https://github.com/emilkowalski/skills', repo: 'emilkowalski/skills', branch: 'main', dir: 'skills' },
+    gsap: { name: 'GreenSock (GSAP) official', url: 'https://github.com/greensock/gsap-skills', repo: 'greensock/gsap-skills', branch: 'main', dir: 'skills' },
+    designdna: { name: 'zanwei/design-dna', url: 'https://github.com/zanwei/design-dna', repo: 'zanwei/design-dna', branch: 'main', root: true },
+    juliobsz: { name: 'juliobsz/skills', url: 'https://github.com/juliobsz/skills', repo: 'juliobsz/skills', branch: 'main', dir: '' },
+    claudemem: { name: 'thedotmack/claude-mem', url: 'https://github.com/thedotmack/claude-mem', repo: 'thedotmack/claude-mem', branch: 'main',
+      plugin: ['/plugin marketplace add thedotmack/claude-mem', '/plugin install claude-mem'] },
     claudeapp: { name: 'Claude app', url: '' },
     plugin: { name: 'Claude plugin', url: '' },
     community: { name: 'Community', url: '' },

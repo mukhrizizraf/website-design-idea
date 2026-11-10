@@ -1,0 +1,109 @@
+/* AI Skill Shelf: homepage.
+   A four-chapter scroll story around one 3D object: a deck of glass skill cards.
+   Type follows the owner's own sites: Bricolage Grotesque (heavy, tight) with an
+   Instrument Serif italic second line, and JetBrains Mono for chapter numbers. */
+:root{
+  --night:#0b0d12;
+  --ivory:#f3ede4;
+  --ivory-2:rgba(243,237,228,.74);
+  --ivory-3:rgba(243,237,228,.5);
+  --line:rgba(243,237,228,.14);
+  --mint:#6ff2d2;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --serif:'Instrument Serif',Georgia,serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--night);scroll-behavior:smooth}
+body{margin:0;font:400 1rem/1.55 var(--display);color:var(--ivory);background:transparent;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,p{margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--mint);outline-offset:4px;border-radius:10px}
+::selection{background:rgba(111,242,210,.35)}
+.skip{position:fixed;left:16px;top:-80px;z-index:60;background:#111;color:#fff;padding:12px 16px;border-radius:12px}
+.skip:focus{top:16px}
+
+/* The WebGL stage sits behind everything. Until it is ready (or without WebGL), CSS paints the same light. */
+#stage{position:fixed;inset:0;width:100vw;height:100vh;z-index:-2;display:block;opacity:0;transition:opacity 1.2s var(--ease)}
+.scene-ready #stage{opacity:1}
+html:not(.scene-ready) body,.no-webgl body{background:
+  radial-gradient(40vw 40vw at 66% 42%,rgba(111,242,210,.22),transparent 70%),
+  radial-gradient(34vw 34vw at 42% 66%,rgba(255,150,80,.16),transparent 70%),
+  radial-gradient(28vw 28vw at 82% 78%,rgba(150,135,255,.14),transparent 70%),var(--night);background-attachment:fixed}
+.no-webgl #stage{display:none}
+/* A soft dark wash on the text side keeps words readable over the moving glass. */
+.veil{position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(11,13,18,.82) 0%,rgba(11,13,18,.55) 34%,rgba(11,13,18,0) 58%)}
+
+/* ---------- Nav: a frosted bar ---------- */
+.nav{position:fixed;top:14px;left:50%;z-index:10;transform:translateX(-50%);width:min(1240px,calc(100% - 28px));display:flex;align-items:center;gap:18px;padding:8px 8px 8px 18px;border-radius:999px;
+  background:rgba(14,16,22,.5);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.07),0 20px 40px rgba(0,0,0,.25)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1rem;letter-spacing:-.02em;text-decoration:none;white-space:nowrap}
+.mark{width:22px;height:26px;border-radius:6px;transform:rotate(-8deg);
+  background:linear-gradient(150deg,rgba(255,255,255,.75),rgba(111,242,210,.55) 55%,rgba(255,150,80,.5));box-shadow:5px 2px 0 -1px rgba(111,242,210,.35),inset 0 1px 0 #fff}
+.chapters{display:flex;gap:4px;margin:0 auto}
+.chapters a{position:relative;display:flex;align-items:baseline;gap:7px;padding:8px 14px;border-radius:999px;font-size:.875rem;color:var(--ivory-2);text-decoration:none;transition:color .25s,background .25s}
+.chapters a b{font:500 .7rem/1 var(--mono);color:var(--ivory-3);transition:color .25s}
+.chapters a:hover{color:var(--ivory)}
+.chapters a[aria-current]{color:var(--ivory);background:rgba(255,255,255,.08)}
+.chapters a[aria-current] b{color:var(--mint)}
+.chapters a[aria-current]::after{content:"";position:absolute;left:14px;right:14px;bottom:3px;height:2px;border-radius:2px;background:var(--mint);box-shadow:0 0 10px var(--mint)}
+.pill{flex:none;padding:10px 18px;border-radius:999px;background:var(--ivory);color:#12151d;font-weight:700;font-size:.9rem;text-decoration:none;transition:transform .2s var(--ease),background .2s}
+.pill:hover{background:#fff}
+.pill:active{transform:scale(.97)}
+
+/* ---------- Chapters ---------- */
+main{position:relative}
+.chapter{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px max(28px,calc((100vw - 1240px)/2 + 28px)) 80px}
+.copy{max-width:640px}
+.kicker{font:500 .78rem/1 var(--mono);letter-spacing:.06em;color:var(--mint);white-space:pre;margin-bottom:22px}
+h1,h2{font-size:clamp(3rem,7.4vw,6.6rem);line-height:.9;letter-spacing:-.045em;text-wrap:balance}
+.heavy{display:block;font:800 1em/0.9 var(--display);font-variation-settings:'opsz' 96}
+.soft{display:block;margin-top:.04em;font:400 1.04em/0.95 var(--serif);font-style:italic;letter-spacing:-.02em;color:var(--mint)}
+.body{margin-top:28px;max-width:44ch;font-size:clamp(1.05rem,1.4vw,1.25rem);line-height:1.6;color:var(--ivory-2)}
+.cue{display:flex;align-items:center;gap:12px;margin-top:44px;font:500 .78rem/1 var(--mono);color:var(--ivory-3)}
+.cue span{position:relative;width:1px;height:42px;background:var(--line);overflow:hidden}
+.cue span::after{content:"";position:absolute;left:0;top:-40%;width:1px;height:40%;background:var(--mint);animation:drip 2.2s var(--ease) infinite}
+@keyframes drip{to{top:100%}}
+.cta{display:inline-flex;align-items:center;margin-top:34px;padding:18px 30px;border-radius:999px;background:var(--mint);color:#06231d;font-weight:800;font-size:1.1rem;letter-spacing:-.01em;text-decoration:none;
+  box-shadow:0 18px 40px rgba(111,242,210,.25);transition:transform .25s var(--ease),box-shadow .25s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 24px 50px rgba(111,242,210,.35)}
+.cta:active{transform:scale(.97)}
+
+/* Category doors: big confident colour blocks, one per kind of job */
+.chapter.last{justify-content:center;gap:56px}
+.doors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:min(620px,46vw)}
+.door{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:150px;padding:20px 22px;border-radius:24px;text-decoration:none;color:#12151d;overflow:hidden;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+.door::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.35),transparent 45%)}
+.door:hover{transform:translateY(-4px) rotate(-.6deg);box-shadow:0 22px 40px rgba(0,0,0,.35)}
+.door:active{transform:scale(.98)}
+.door-n{font:500 .74rem/1 var(--mono);letter-spacing:.04em;opacity:.7}
+.door-name{font:800 1.45rem/1.02 var(--display);letter-spacing:-.035em}
+.door[data-cat="design"]{background:#ff6a2b}
+.door[data-cat="motion"]{background:var(--mint)}
+.door[data-cat="writing"]{background:#f1ece2}
+.door[data-cat="docs"]{background:#9cc9ff}
+.door[data-cat="coding"]{background:#cdbcff}
+.door[data-cat="workflow"]{background:#f3dc72}
+
+.foot{display:flex;justify-content:space-between;gap:16px;padding:28px max(28px,calc((100vw - 1240px)/2 + 28px)) 34px;font-size:.85rem;color:var(--ivory-3);border-top:1px solid var(--line)}
+.foot a{text-underline-offset:4px}
+
+/* ---------- Small screens: the deck floats behind the words ---------- */
+@media (max-width:820px){
+  .chapters{display:none}
+  .nav{gap:10px;justify-content:space-between}
+  .veil{background:linear-gradient(180deg,rgba(11,13,18,.2) 0%,rgba(11,13,18,.72) 46%,rgba(11,13,18,.85) 100%)}
+  .chapter{justify-content:flex-end;padding:110px 22px 64px}
+  h1,h2{font-size:clamp(2.7rem,12vw,4rem)}
+  .doors{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none}
+  .door{min-height:120px;padding:16px 18px}
+  .door-name{font-size:1.3rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}

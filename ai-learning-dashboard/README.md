@@ -8,16 +8,21 @@ Prompt Motion's external example links are paused following a reported antivirus
 
 For offline use, open **public/index.html**. That is a separate local copy; GitHub updates do not automatically update files on your computer. Make shared changes in the `website-design-idea/ai-learning-dashboard` repository folder and merge current GitHub changes before pushing.
 
-The main page (`public/index.html`) is a shared showcase of the AI skills I collect from GitHub, TikTok and friends. Each card explains, in plain words, what the skill does, what it is good for, how to start it in Claude Code or the Claude app, and an example request to copy. Everyone who opens the link sees the same list. The design is visionOS-style glass over a soft blurred room, inspired by "Glassy Dashboard V18" (TikTok @paulcodes4).
+There are two pages:
+
+- **Homepage** (`public/index.html`): a four-chapter 3D scroll story that explains what the shelf is for. A deck of glass skill cards (Three.js 0.170.0 from jsDelivr) fans out, brings one card forward, then lines up on a glass shelf. Click a card to open that skill. Six colour cards at the end open the shelf on one category.
+- **The shelf** (`public/shelf.html`, `shelf.css`, `shelf.js`): every skill grouped by what it helps with. Each skill opens a sheet with what it does, the exact words to say to Claude, and the install steps written out: a sentence to paste into Claude Code, PowerShell and Terminal commands, and a direct ZIP download for the Claude app. Nobody has to open GitHub.
+
+The type follows my other sites: Bricolage Grotesque, Instrument Serif italic and JetBrains Mono. `?pose=0..3` on the homepage holds the 3D deck in one chapter's pose for design review.
 
 ## Add or change a skill
 
 1. Open `public/skills.js`.
-2. Copy one entry in the `skills` list and change its text. A pack has a `members` list.
+2. Copy one entry in the `skills` list and change its text. A pack has a `members` list. For a skill from a new GitHub repo, add the repo to `sources` with `repo`, `branch` and `dir` (the folder that holds the skill folders) so the install steps can be written for it.
 3. Run `npm test` to check that nothing is missing.
 4. Push. The live page updates in a minute or two.
 
-Share one skill directly with a link like `…/public/index.html#skill=humanizer`.
+Share one skill directly with a link like `…/public/shelf.html#skill=humanizer`. Older `index.html#skill=…` links still work: the homepage forwards them to the shelf.
 
 ## Old lesson workspace
 

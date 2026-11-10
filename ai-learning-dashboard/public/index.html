@@ -3,94 +3,261 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#2a221d">
-  <meta name="description" content="The AI skills I collect from GitHub and TikTok, explained simply: what each one does and how to use it.">
+  <meta name="theme-color" content="#0b0d12">
+  <meta name="description" content="AI Skill Shelf: every AI skill I find, kept in one place, with the words to use it and how to install it. Made for my friends and kids.">
   <title>AI Skill Shelf</title>
+  <script>
+    // Old shared links pointed at this page; send them to the shelf.
+    if (/^#(skill=|guide)/.test(location.hash)) location.replace('./shelf.html' + location.hash);
+  </script>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="./showcase.css?v=20261110-motion-icons">
-  <script defer src="./skills.js?v=20261110-motion-icons"></script>
-  <script defer src="./showcase.js?v=20261110-motion-icons"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="./home.css">
+  <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    } }
+  </script>
+  <script defer src="./skills.js"></script>
 </head>
 <body>
-  <a class="skip" href="#content">Skip to skills</a>
+  <a class="skip" href="#ch-share">Skip to the shelf link</a>
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <div class="veil" aria-hidden="true"></div>
 
-  <!-- Real room photo behind the glass (Unsplash License), softly blurred and dimmed. -->
-  <div class="room" aria-hidden="true"></div>
+  <header class="nav">
+    <a class="brand" href="./index.html"><span class="mark" aria-hidden="true"></span>AI Skill Shelf</a>
+    <nav class="chapters" aria-label="Chapters">
+      <a href="#ch-saved" data-ch="0"><b>01</b>Saved</a>
+      <a href="#ch-skill" data-ch="1"><b>02</b>One job</a>
+      <a href="#ch-use" data-ch="2"><b>03</b>Use it</a>
+      <a href="#ch-share" data-ch="3"><b>04</b>Share</a>
+    </nav>
+    <a class="pill" href="./shelf.html">Open the shelf</a>
+  </header>
 
-  <div class="stage">
-    <div class="window-wrap">
-      <div class="window">
-        <aside class="side">
-          <div class="profile">
-            <span class="avatar" aria-hidden="true"><span class="i shelf-icon shelf-icon--shelf"></span></span>
-            <span><strong>AI Skill Shelf</strong><small>Shared with friends &amp; family</small></span>
-          </div>
-          <nav aria-label="Skill categories" id="cat-nav"></nav>
-          <div class="side-bottom">
-            <button class="side-link" id="open-guide" type="button"><span class="i shelf-icon shelf-icon--bulb" aria-hidden="true"></span>What is a skill?</button>
-            <button class="side-link" id="share-page" type="button"><span class="i shelf-icon shelf-icon--link" aria-hidden="true"></span>Share this page</button>
-            <p class="credit">Background photo from <a href="https://unsplash.com/photos/cozy-living-room-with-fireplace-and-television-XwgC9tsm7jU" target="_blank" rel="noopener">Unsplash</a></p>
-          </div>
-        </aside>
-
-        <main class="content" id="content" tabindex="-1">
-          <header class="head">
-            <div>
-              <h1 id="greeting">Hello</h1>
-              <p class="lede">These are the AI skills I collect from GitHub, TikTok and friends. Tap a card to see what it does and how to use it.</p>
-            </div>
-            <label class="search">
-              <span class="i shelf-icon shelf-icon--search" aria-hidden="true"></span>
-              <input id="q" type="search" placeholder="Search skills…" aria-label="Search skills" autocomplete="off">
-            </label>
-          </header>
-
-          <section class="intro glass-card" id="intro" aria-label="How skills work">
-            <button class="intro-close" id="intro-close" type="button" aria-label="Hide this tip"><span class="i sm shelf-icon shelf-icon--close" aria-hidden="true"></span></button>
-            <div><b>1</b><p><strong>A skill is a ready-made instruction pack.</strong> It teaches Claude to do one job really well.</p></div>
-            <div><b>2</b><p><strong>Add it once.</strong> Some are already built into Claude. Others you download from GitHub.</p></div>
-            <div><b>3</b><p><strong>Then just ask.</strong> Use normal words, or type <code>/</code> and the skill name.</p></div>
-          </section>
-
-          <section class="kpis" id="kpis" aria-label="Collection summary"></section>
-
-          <div class="toolbar">
-            <div class="seg" role="group" aria-label="Filter by difficulty" id="levels"></div>
-            <p class="count" id="count" aria-live="polite"></p>
-          </div>
-
-          <section class="grid" id="grid" aria-label="Skills"></section>
-        </main>
+  <main>
+    <section class="chapter" id="ch-saved">
+      <div class="copy">
+        <p class="kicker">01  Saved, not lost</p>
+        <h1><span class="heavy">Every AI trick I find,</span> <span class="soft">kept in one place.</span></h1>
+        <p class="body">I save the best AI skills from TikTok, GitHub and friends. No more digging through old WhatsApp chats to find them again.</p>
+        <p class="cue"><span aria-hidden="true"></span>Scroll to see how it works</p>
       </div>
-      <div class="handle" aria-hidden="true"></div>
-    </div>
+    </section>
 
-    <aside class="widgets" aria-label="Collection charts">
-      <section class="widget w-blue" id="w-cats"></section>
-      <section class="widget" id="w-sources"></section>
-      <section class="widget" id="w-featured"></section>
-    </aside>
-  </div>
-
-  <!-- Phone only: floating glass tab bar (style from "Glassy Navigation Tabs V5"). -->
-  <nav class="tabbar" id="tabbar" aria-label="Skill categories"></nav>
-
-  <dialog id="detail" aria-labelledby="d-title"><div id="detail-body"></div></dialog>
-  <dialog id="guide" aria-labelledby="g-title">
-    <div class="d-inner">
-      <div class="d-top"><h2 id="g-title">What is a skill?</h2><button class="close" type="button" data-close aria-label="Close"><span class="i shelf-icon shelf-icon--close" aria-hidden="true"></span></button></div>
-      <p class="d-what">A <strong>skill</strong> is a small folder of instructions (a <code>SKILL.md</code> file, sometimes with helper files). When Claude sees that your request matches a skill, it reads those instructions and follows them. It's like giving Claude a recipe card for one job.</p>
-      <div class="how">
-        <div class="how-card"><h3><span class="i sm shelf-icon shelf-icon--terminal" aria-hidden="true"></span>In Claude Code</h3><p>Put the skill folder in <code>~/.claude/skills/</code>. Then ask in normal words, or type <code>/</code> and the skill name, like <code>/humanizer</code>.</p></div>
-        <div class="how-card"><h3><span class="i sm shelf-icon shelf-icon--chat" aria-hidden="true"></span>In the Claude app</h3><p>Word, PowerPoint, Excel and PDF skills are already built in. For other skills, zip the skill folder and upload it under <em>Settings → Capabilities → Skills</em>.</p></div>
+    <section class="chapter" id="ch-skill">
+      <div class="copy">
+        <p class="kicker">02  What a skill is</p>
+        <h2><span class="heavy">One skill,</span> <span class="soft">one job done well.</span></h2>
+        <p class="body">A skill is a small set of instructions for Claude. Install it once, and Claude knows how to do that job: write like a person, design a poster, or read a TikTok link.</p>
       </div>
-      <p class="d-note">Not using Claude? Copy the “Try saying” example from any card. The skill itself works best in Claude, but the idea still helps in other chatbots.</p>
-    </div>
-  </dialog>
-  <div id="toast" role="status" aria-live="polite"></div>
-  <noscript><p class="noscript">Turn on JavaScript to see the skills.</p></noscript>
+    </section>
+
+    <section class="chapter" id="ch-use">
+      <div class="copy">
+        <p class="kicker">03  How to use one</p>
+        <h2><span class="heavy">Copy the words.</span> <span class="soft">Paste into Claude.</span></h2>
+        <p class="body">Every skill on the shelf comes with the exact words to say and the steps to install it, written right there. You never have to dig through GitHub.</p>
+      </div>
+    </section>
+
+    <section class="chapter last" id="ch-share">
+      <div class="copy">
+        <p class="kicker">04  Made to share</p>
+        <h2><span class="heavy">For my friends</span> <span class="soft">and my kids.</span></h2>
+        <p class="body">Pick a job below, or open the whole shelf and try one today.</p>
+        <a class="cta" href="./shelf.html">Open the shelf</a>
+      </div>
+      <div class="doors" id="doors" aria-label="Skill categories"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>AI Skill Shelf</span>
+    <a href="./legacy.html">My old lesson workspace</a>
+  </footer>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    const D = window.SKILL_DATA;
+    const root = document.documentElement;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // ?pose=0..3 holds the 3D deck in one chapter's pose (used for design review screenshots).
+    const poseParam = new URLSearchParams(location.search).get('pose');
+    const previewPose = poseParam !== null && /^[0-3](\.\d+)?$/.test(poseParam) ? Number(poseParam) : null;
+
+    // ---------- Category doors (work without WebGL) ----------
+    if (D) {
+      const count = id => (D.skills.filter(s => s.cat === id).length + (D.collections || []).filter(c => c.cat === id).length);
+      document.getElementById('doors').innerHTML = D.categories.map(c =>
+        `<a class="door" data-cat="${c.id}" href="./shelf.html?cat=${c.id}"><span class="door-n">${count(c.id)} skills</span><span class="door-name">${c.label}</span></a>`).join('');
+    }
+
+    // ---------- Chapter progress in the nav ----------
+    const sections = [...document.querySelectorAll('.chapter')];
+    const links = [...document.querySelectorAll('.chapters a')];
+    // Each chapter is one screen tall, so progress is simply "screens scrolled", from 0 to 3.
+    function progress() {
+      const step = sections[1] ? sections[1].offsetTop - sections[0].offsetTop : innerHeight;
+      return Math.max(0, Math.min(sections.length - 1, scrollY / step));
+    }
+    function markChapter(t) {
+      const active = Math.min(links.length - 1, Math.round(t));
+      links.forEach((a, i) => a.toggleAttribute('aria-current', i === active));
+    }
+
+    // ---------- The 3D scene: a deck of glass skill cards ----------
+    async function start() {
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('stage'), antialias: true, powerPreference: 'high-performance' });
+      } catch { root.classList.add('no-webgl'); return; }
+      if (!D) { root.classList.add('no-webgl'); return; }
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color('#0b0d12');
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+      const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+
+      // Soft coloured light behind the glass, so the cards have something to bend.
+      const glow = document.createElement('canvas'); glow.width = glow.height = 1024;
+      const g = glow.getContext('2d'); g.fillStyle = '#0b0d12'; g.fillRect(0, 0, 1024, 1024);
+      const blob = (x, y, r, c) => { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(11,13,18,0)'); g.fillStyle = gr; g.fillRect(0, 0, 1024, 1024); };
+      blob(660, 430, 430, 'rgba(111,242,210,.55)'); blob(420, 660, 360, 'rgba(255,150,80,.38)'); blob(820, 780, 300, 'rgba(150,135,255,.32)'); blob(300, 300, 260, 'rgba(255,220,160,.18)');
+      const glowTex = new THREE.CanvasTexture(glow); glowTex.colorSpace = THREE.SRGBColorSpace;
+      const back = new THREE.Mesh(new THREE.PlaneGeometry(46, 46), new THREE.MeshBasicMaterial({ map: glowTex, toneMapped: false }));
+      back.position.z = -9; scene.add(back);
+
+      // Card faces drawn with the page fonts.
+      await Promise.all(['800 64px "Bricolage Grotesque"', '400 40px "Instrument Serif"', 'italic 400 40px "Instrument Serif"', '500 20px "JetBrains Mono"'].map(f => document.fonts.load(f).catch(() => {})));
+      const ids = ['tiktok-reader', 'awwwards', 'canvas-design', 'motion-design', 'humanizer', 'pptx', 'gsap', 'frontend-design', 'deep-research'];
+      const picks = ids.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
+      const hero = Math.max(0, picks.findIndex(s => s.id === 'humanizer'));
+      const label = Object.fromEntries(D.categories.map(c => [c.id, c.label]));
+      function wrap(ctx, text, x, y, max, lh, lines) {
+        const words = String(text).split(' '); let line = '', n = 0;
+        for (const w of words) {
+          const test = line ? line + ' ' + w : w;
+          if (ctx.measureText(test).width > max && line) { ctx.fillText(n === lines - 1 ? line + '…' : line, x, y + n * lh); line = w; if (++n >= lines) return; }
+          else line = test;
+        }
+        ctx.fillText(line, x, y + n * lh);
+      }
+      function face(s, isHero) {
+        const c = document.createElement('canvas'); c.width = 600; c.height = 800; const x = c.getContext('2d');
+        x.fillStyle = 'rgba(111,242,210,.95)'; x.font = '500 20px "JetBrains Mono"'; x.fillText(label[s.cat].toUpperCase(), 44, 70);
+        if (isHero) {
+          x.fillStyle = 'rgba(243,237,228,.96)'; x.font = 'italic 400 46px "Instrument Serif"';
+          wrap(x, '“' + s.say.replace(/\s*:\s*…$/, '…') + '”', 44, 210, 512, 54, 7);
+          x.font = '800 44px "Bricolage Grotesque"'; x.fillText(s.title, 44, 720);
+        } else {
+          x.fillStyle = 'rgba(243,237,228,.97)'; x.font = '800 64px "Bricolage Grotesque"'; wrap(x, s.title, 44, 560, 512, 66, 2);
+          x.fillStyle = 'rgba(243,237,228,.68)'; x.font = '400 30px "Instrument Serif"'; wrap(x, s.what, 44, 690, 512, 34, 2);
+        }
+        const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+      }
+
+      const glass = new THREE.MeshPhysicalMaterial({
+        color: '#ffffff', roughness: 0.14, transmission: 1, thickness: 0.55, ior: 1.5,
+        iridescence: 0.45, iridescenceIOR: 1.3, iridescenceThicknessRange: [120, 420],
+        clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.25,
+        attenuationColor: new THREE.Color('#c8fff1'), attenuationDistance: 2.6
+      });
+      const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 6, 0.1);
+      const faceGeo = new THREE.PlaneGeometry(1.5, 2.0);
+      const deck = new THREE.Group(); scene.add(deck);
+      const cards = picks.map((s, i) => {
+        const card = new THREE.Group();
+        const slab = new THREE.Mesh(slabGeo, glass); slab.userData.card = card; card.add(slab);
+        const f = new THREE.Mesh(faceGeo, new THREE.MeshBasicMaterial({ map: face(s, i === hero), transparent: true, toneMapped: false, depthWrite: false }));
+        f.position.z = 0.046; card.add(f);
+        card.userData = { s, slab, hover: 0 };
+        deck.add(card); return card;
+      });
+      // Glass shelf boards, shown in the last chapter.
+      const boards = [0, 1].map(() => { const b = new THREE.Mesh(new RoundedBoxGeometry(4.5, 0.06, 0.55, 4, 0.03), glass); deck.add(b); return b; });
+
+      // Four poses, one per chapter. Values: [x, y, z, rotX, rotY, rotZ, scale]
+      const n = cards.length, mid = (n - 1) / 2;
+      const poses = [
+        i => [2.25 + i * 0.035, -0.15 + i * 0.03, -i * 0.13, 0.08, -0.55 + i * 0.05, -0.2 + i * 0.045, 1],
+        i => { const k = i - mid; return [2.0 + k * 0.62, Math.sin(i * 1.7) * 0.22, -Math.abs(k) * 0.42 + (i === hero ? 0.7 : 0), 0.04, -k * 0.13, k * 0.035, i === hero ? 1.08 : 0.94]; },
+        i => i === hero ? [2.05, 0.05, 1.9, 0, -0.22, 0, 1.12] : (() => { const k = i - mid; return [2.5 + k * 0.68, Math.cos(i * 2.1) * 1.1, -3.2 - Math.abs(k) * 0.3, 0.1, -k * 0.1, k * 0.05, 0.9]; })(),
+        // A bookshelf: five cards on the top board, four on the bottom one, standing exactly on the glass.
+        i => { const row = i < 5 ? 0 : 1, col = row ? i - 5 : i, x = 0.25 + col * 0.84 + (row ? 0.42 : 0); return [x, row ? -0.85 : 0.7, 0, 0, -0.1, 0, 0.5]; }
+      ];
+      const boardPose = r => [1.93, r ? -1.41 : 0.14, 0];
+      cards.forEach((c, i) => { const p = poses[reduced ? 3 : previewPose !== null ? Math.round(previewPose) : 0](i); c.position.set(p[0], p[1], p[2]); c.rotation.set(p[3], p[4], p[5]); c.scale.setScalar(p[6]); });
+
+      // Layout for the screen size: on narrow screens the deck sits behind the text, centred.
+      let narrow = false;
+      function resize() {
+        const w = innerWidth, h = innerHeight; narrow = w < 820;
+        renderer.setSize(w, h, false); camera.aspect = w / h;
+        camera.position.set(0, 0, narrow ? 13 : 9.5); camera.updateProjectionMatrix();
+        deck.position.x = narrow ? -2.1 : 0; deck.position.y = narrow ? 1.6 : 0;
+      }
+      addEventListener('resize', resize); resize();
+
+      // Pointer: gentle parallax, and pick a card to open it.
+      const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(9, 9); let px = 0, py = 0, hovered = null;
+      addEventListener('pointermove', e => { px = e.clientX / innerWidth - 0.5; py = e.clientY / innerHeight - 0.5; ptr.set(px * 2, -py * 2); });
+      addEventListener('click', e => {
+        if (e.target.closest('a,button')) return;
+        if (hovered) location.href = './shelf.html#skill=' + hovered.userData.s.id;
+      });
+
+      const ease = t => t * t * (3 - 2 * t);
+      let last = performance.now(), running = true, clock = 0;
+      document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) { last = performance.now(); requestAnimationFrame(frame); } });
+      function frame(now) {
+        if (!running) return;
+        const dt = Math.min(0.05, (now - last) / 1000); last = now; clock += dt;
+        const t = reduced ? 3 : (previewPose ?? progress()); markChapter(t);
+        const a = Math.floor(t), b = Math.min(3, a + 1), f = ease(t - a), k = 1 - Math.exp(-dt * 5.5);
+
+        ray.setFromCamera(ptr, camera);
+        const hit = ray.intersectObjects(cards.map(c => c.userData.slab))[0];
+        hovered = hit ? hit.object.userData.card : null;
+        document.body.style.cursor = hovered ? 'pointer' : '';
+
+        cards.forEach((c, i) => {
+          const A = poses[a](i), B = poses[b](i), P = A.map((v, j) => v + (B[j] - v) * f);
+          const bob = reduced ? 0 : Math.sin(clock * 0.8 + i) * 0.04;
+          c.userData.hover += ((c === hovered ? 1 : 0) - c.userData.hover) * k;
+          c.position.x += (P[0] - c.position.x) * k;
+          c.position.y += (P[1] + bob - c.position.y) * k;
+          c.position.z += (P[2] + c.userData.hover * 0.35 - c.position.z) * k;
+          c.rotation.x += (P[3] - c.rotation.x) * k; c.rotation.y += (P[4] - c.rotation.y) * k; c.rotation.z += (P[5] - c.rotation.z) * k;
+          const sc = P[6] * (1 + c.userData.hover * 0.05); c.scale.setScalar(c.scale.x + (sc - c.scale.x) * k);
+        });
+        const show = Math.max(0, t - 2);
+        boards.forEach((bd, r) => { const p = boardPose(r); bd.position.set(p[0], p[1], p[2]); bd.scale.set(Math.max(0.001, ease(show)), 1, 1); bd.visible = show > 0.01; });
+
+        deck.rotation.y += ((reduced ? 0 : px * 0.18 + Math.sin(clock * 0.25) * 0.04) - deck.rotation.y) * k;
+        deck.rotation.x += ((reduced ? 0 : py * 0.1) - deck.rotation.x) * k;
+        renderer.render(scene, camera);
+        requestAnimationFrame(frame);
+      }
+      root.classList.add('scene-ready');
+      requestAnimationFrame(frame);
+    }
+
+    addEventListener('scroll', () => markChapter(progress()), { passive: true });
+    markChapter(0);
+    start().catch(() => root.classList.add('no-webgl'));
+  </script>
 </body>
 </html>
