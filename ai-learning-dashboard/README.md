@@ -13,14 +13,11 @@ There are two pages:
 - **Homepage** (`public/index.html`): a four-chapter 3D scroll story that explains what the shelf is for. A deck of glass skill cards (Three.js 0.170.0 from jsDelivr) fans out, brings one card forward, then lines up on a glass shelf. Click a card to open that skill. Six colour cards at the end open the shelf on one category.
 - **The shelf** (`public/shelf.html`, `shelf.css`, `shelf.js`): every skill grouped by what it helps with. Each skill opens a sheet with what it does, the exact words to say to Claude, and the install steps written out: a sentence to paste into Claude Code, PowerShell and Terminal commands, and a direct ZIP download for the Claude app. Nobody has to open GitHub.
 
-Look and feel: the warm, brown glass of "Glassy Dashboard V18" (TikTok @paulcodes4). A blurred room photo (`public/room.jpg`, Unsplash License) sits behind smoky brown glass windows, with ivory text, white pill buttons and a honey accent. The type follows my other sites: Bricolage Grotesque, Instrument Serif italic and JetBrains Mono.
+Look and feel: bright and colourful for every age, with Apple's discipline. A light base with soft colour fields behind white frosted glass, and Apple's system colours used as a fixed set: one per category, shown as app icons. The 3D deck is candy-coloured glass, each card its own colour. Category cards on the homepage are frosted glass with a turning 3D glass cube. The type follows my other sites: Bricolage Grotesque, Instrument Serif italic and JetBrains Mono.
 
-Motion and sound, in the spirit of my MPOB dashboard (`public/sound.js`, `public/pop.css`):
+Motion (`public/pop.css`), iOS-style: a pill springs to the chosen tab or chapter, icons shrink on press and spring back, rows cascade in when switching category, and every skill opens as a 3D pop-up that springs out from where you tapped. There is no sound. `?pose=0..3` on the homepage holds the 3D deck in one chapter's pose for design review.
 
-- Every skill opens as a 3D pop-up that flies out from where you clicked, with a turning glass cube for its category and a soft glass chime.
-- The pop-up reads the skill aloud with the browser's speech voice: what it does, what it is good for, and the words to say. **Listen** replays it; the sound-wave moves while it speaks.
-- On the homepage, click any glass card in the 3D deck to open its pop-up, or press **Play the tour** to have the page scroll itself through the four chapters while a voice reads them.
-- The round speaker button (bottom right) turns sound on or off, and the choice is remembered. Sound only starts after a click. `?pose=0..3` on the homepage holds the 3D deck in one chapter's pose for design review.
+**Prompt Motion ideas** show, for each of the eight ideas, its video clip (played from prompt-motion.com's own media server, never copied), the full prompt or install command with a Copy button, and a credit linking to the creator. The videos and prompts belong to their creators. If a network or antivirus blocks prompt-motion.com's media server, the clip shows a note and the prompt still works.
 
 ## Add or change a skill
 

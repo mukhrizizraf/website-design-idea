@@ -173,17 +173,9 @@
       <p class="repo">GitHub: <code>${esc(i.folderUrl || i.url)}</code><button class="btn small" type="button" data-copy="${esc(i.folderUrl || i.url)}" data-done="GitHub link copied.">Copy link</button></p>`;
   }
 
-  // ---------- detail sheets: a 3D pop-up that speaks ----------
-  const Sound = window.ShelfSound;
+  // ---------- detail sheets: a 3D pop-up ----------
   const cube = cat => `<div class="cube-wrap" data-cat="${cat}" aria-hidden="true"><div class="cube">${Array.from({ length: 6 }, () => `<i>${svg(P[cat] || P.all, 26)}</i>`).join('')}</div></div>`;
-  const listenBtn = id => `<button class="listen" type="button" data-listen="${esc(id)}"><span class="wave" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></span><span class="lbl">Listen</span></button>`;
   let lastClick = null;                      // where the visitor clicked, so the window flies out from there
-  function speak(item) {
-    const btn = $('#detail .listen'); if (!Sound || !btn) return;
-    const text = item.lessons ? `${item.title.charAt(0) + item.title.slice(1).toLowerCase()}. ${item.what} There are ${item.lessons.length} ideas to study, each with an exercise.` : Sound.narration(item, D.sources);
-    const ok = Sound.say(text, { onstart: () => btn.classList.add('speaking'), onend: () => btn.classList.remove('speaking') });
-    if (!ok) btn.classList.remove('speaking');
-  }
   function openSheet(id, push) {
     const d = $('#detail');
     const r = lastClick?.getBoundingClientRect?.();
@@ -197,9 +189,6 @@
     d.showModal();
     d.scrollTop = 0;
     if (push) history.replaceState(null, '', '#skill=' + id);
-    Sound?.sfx.open();
-    const item = items.find(x => x.id === id);
-    if (Sound?.on && item) setTimeout(() => { if (d.open) speak(item); }, 520);
   }
   function closeSheet(d) {
     if (!d.open) return;
@@ -207,20 +196,42 @@
     d.classList.add('closing');
     setTimeout(() => { d.classList.remove('closing'); d.close(); }, 240);
   }
+  // A clip loads only when someone presses play, straight from its creator's site. If the network
+  // or an antivirus blocks that server, the card says so and the prompt below still works.
+  function clip(l) {
+    if (!l.video) return '';
+    return `<div class="clip"><video preload="none" controls playsinline loop muted ${l.poster ? `poster="${esc(l.poster)}"` : ''} src="${esc(l.video)}" aria-label="${esc(l.title)} clip"></video>
+      <p class="clip-blocked" hidden>This clip could not load. Your network or antivirus may be blocking prompt-motion.com's video server. The prompt below still works.</p></div>`;
+  }
   function openCollection(c, push) {
-    const paused = c.externalLinksPaused;
     const li = list => list.map(x => `<li>${esc(x)}</li>`).join('');
+    const credit = l => {
+      const who = String(l.source || '').replace(/^Prompt Motion\s*·\s*/, '');
+      const name = l.creatorUrl ? `<a href="${esc(l.creatorUrl)}" target="_blank" rel="noopener noreferrer">${esc(who)}</a>` : esc(who);
+      return `By ${name}, via Prompt Motion. The video and prompt belong to their creator.`;
+    };
     $('#detail-body').innerHTML = `<div class="sheet">
-      <div class="sheet-top">${cube(c.cat)}<div><h2 id="d-title">${esc(c.title.charAt(0) + c.title.slice(1).toLowerCase())}</h2><p class="sheet-sub">${c.lessons.length} ideas to study, in ${esc(cats[c.cat].label)}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
+      <div class="sheet-top">${cube(c.cat)}<div><h2 id="d-title">${esc(c.title.charAt(0) + c.title.slice(1).toLowerCase())}</h2><p class="sheet-sub">${c.lessons.length} ideas, each with its clip and the exact prompt or install command</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(c.what)}</p>
-      <div class="sheet-actions">${listenBtn(c.id)}</div>
-      ${paused ? '<p class="note">Links to the original examples are paused after an antivirus warning. Every summary and exercise is still here.</p>' : ''}
-      <div style="margin-top:18px">${c.lessons.map(l => `<details class="lesson"><summary><strong>${esc(l.title)}</strong><small>${esc(String(l.source || '').replace(/^Prompt Motion\s*·\s*/, ''))}</small></summary>
-        <p>${esc(l.summary)}</p><h4>What to learn</h4><ul>${li(l.takeaways)}</ul><h4>Try it</h4><ol>${li(l.actions)}</ol>
-        ${!paused && l.sourceUrl ? `<a href="${esc(l.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open the original example</a>` : ''}</details>`).join('')}</div>
+      <div class="ideas">${c.lessons.map((l, i) => `<article class="idea">
+        <div class="idea-head"><span class="idea-n">${i + 1}</span><div><h3>${esc(l.title)}</h3><p class="idea-credit">${credit(l)}</p></div></div>
+        ${clip(l)}
+        <p class="idea-sum">${esc(l.summary)}</p>
+        ${l.prompt ? `<div class="prompt-box"><div class="prompt-top"><strong>The prompt</strong><button class="btn small primary" type="button" data-copy="${esc(l.prompt)}" data-done="Prompt copied. Paste it into Claude.">Copy prompt</button></div><pre class="prompt-text">${esc(l.prompt)}</pre></div>` : ''}
+        ${l.install ? `<div class="prompt-box"><div class="prompt-top"><strong>Install the skill</strong><button class="btn small primary" type="button" data-copy="${esc(l.install)}" data-done="Copied. Paste it into ${l.install.startsWith('/') ? 'Claude Code' : 'a terminal'}.">Copy</button></div><pre class="code">${esc(l.install)}</pre><p class="note">${l.install.startsWith('/') ? 'Type these into Claude Code, one line at a time.' : 'Paste into a terminal. It needs Node.js.'}</p></div>` : ''}
+        <details class="lesson"><summary><strong>What to learn and try</strong></summary><h4>What to learn</h4><ul>${li(l.takeaways)}</ul><h4>Try it</h4><ol>${li(l.actions)}</ol></details>
+      </article>`).join('')}</div>
       <div class="sheet-foot"><button class="btn primary" type="button" data-download="${esc(c.id)}">Download the lessons</button><a class="btn" href="./legacy.html#inbox">Open my lesson inbox</a><button class="btn" type="button" data-share="${esc(c.id)}">Copy a link to this</button></div>
       <p class="note">To keep these, download the lessons, then choose the file under Import from a chat in the lesson inbox.</p></div>`;
     openSheet(c.id, push);
+    // Show the "blocked" note if a clip fails to load.
+    $('#detail-body').querySelectorAll('.clip video').forEach(v => {
+      const blocked = () => { v.parentElement.querySelector('.clip-blocked').hidden = false; v.parentElement.classList.add('is-blocked'); };
+      v.addEventListener('error', blocked, { once: true });
+      // If even the preview image cannot load, say so straight away instead of showing a black box.
+      const poster = v.getAttribute('poster');
+      if (poster) { const probe = new Image(); probe.onerror = blocked; probe.src = poster; }
+    });
   }
   function download(id) {
     const c = collections.find(x => x.id === id); if (!c) return;
@@ -237,7 +248,6 @@
     $('#detail-body').innerHTML = `<div class="sheet">
       <div class="sheet-top">${cube(s.cat)}<div><h2 id="d-title">${esc(s.title)}</h2><p class="sheet-sub">${esc(cats[s.cat].label)}, ${esc(D.levels[s.level].label.toLowerCase())}, from ${esc(src.name)}${isNew(s) ? ', new this month' : ''}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(s.what)}</p>
-      <div class="sheet-actions">${listenBtn(s.id)}</div>
       <h3>Good for</h3><ul class="uses">${s.useFor.map(u => `<li>${esc(u)}</li>`).join('')}</ul>
       <h3>Say this to Claude</h3><div class="say"><p>“${esc(s.say)}”</p><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy</button></div>
       <p class="note">${esc(D.levels[s.level].hint)} In Claude Code you can also type <code>/${esc(s.members ? s.members[0][0] : s.id)}</code> to start it directly.</p>
@@ -247,24 +257,16 @@
     openSheet(s.id, push);
   }
   $('#detail').addEventListener('close', () => {
-    Sound?.stop(); Sound?.sfx.close();
+    $('#detail').querySelectorAll('video').forEach(v => v.pause());
     if (location.hash.startsWith('#skill=')) history.replaceState(null, '', location.pathname + location.search);
   });
   document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) closeSheet(d); }));
-  document.addEventListener('shelf-sound', e => { if (!e.detail) $('#detail .listen')?.classList.remove('speaking'); });
 
   // ---------- events ----------
   function render() { renderTabs(); renderShelf(); }
   document.addEventListener('click', e => {
     const t = e.target.closest('button, a'); if (!t) return;
     if (t.dataset.skill) { lastClick = t; openSkill(t.dataset.skill); }
-    else if (t.dataset.listen) {
-      if (t.classList.contains('speaking')) { Sound?.stop(); t.classList.remove('speaking'); }
-      else {
-        if (Sound && !Sound.on) Sound.set(true);
-        const item = items.find(x => x.id === t.dataset.listen); if (item) speak(item);
-      }
-    }
     else if (t.dataset.cat) { state.cat = t.dataset.cat; render(); if (matchMedia('(max-width: 760px)').matches) $('#shelf').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); }
     else if (t.dataset.step) { state.pick = (state.pick + Number(t.dataset.step) + picks.length) % picks.length; renderPick(); }
     else if (t.dataset.copy !== undefined) copy(t.dataset.copy, t.dataset.done || 'Copied. Paste it into Claude.');
