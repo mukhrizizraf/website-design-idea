@@ -1,12 +1,25 @@
 # AI LEARNING TOOLS
 
-**[Open the AI LEARNING TOOLS dashboard](https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/)**
+**Open or share the live dashboard**
+
+**<https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/>**
 
 A personal dashboard for learning web design, Shopify, motion and 3D, writing, cloud platforms, and Codex. Explore guided learning paths, turn video lessons into practice tasks, and track your progress.
 
 Your lessons and progress are saved in your browser. To move them from the local dashboard to the published version, export a workspace backup from the local version and restore it on the published dashboard.
 
 [Dashboard source and setup guide](ai-learning-dashboard/README.md), including the optional chat connection for sending lessons from Codex or Claude.
+
+## Where to push dashboard updates
+
+Copy this into your AI coding chat when asking it to update the dashboard.
+
+```text
+Update AI LEARNING TOOLS in the ai-learning-dashboard/ folder of
+https://github.com/mukhrizizraf/website-design-idea
+Commit and push the dashboard changes to the main branch.
+Live dashboard: https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/
+```
 
 ## Project gallery
 
