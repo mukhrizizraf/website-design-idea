@@ -1,27 +1,21 @@
-# Website design ideas
+# AI LEARNING TOOLS
 
-### ▶ [Open the MPOB home page](https://mukhrizizraf.github.io/website-design-idea/mpob-mandate-home/)
+**[Open the AI LEARNING TOOLS dashboard](https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/)**
 
-Link to share or open on a phone:
+A personal dashboard for learning web design, Shopify, motion and 3D, writing, cloud platforms, and Codex. Explore guided learning paths, turn video lessons into practice tasks, and track your progress.
 
-```text
-https://mukhrizizraf.github.io/website-design-idea/mpob-mandate-home/
-```
+Your lessons and progress are saved in your browser. To move them from the local dashboard to the published version, export a workspace backup from the local version and restore it on the published dashboard.
 
-**All homepage ideas:** [open the gallery](https://mukhrizizraf.github.io/website-design-idea/)
+[Dashboard source and setup guide](ai-learning-dashboard/README.md), including the optional chat connection for sending lessons from Codex or Claude.
 
-Website concepts and useful tools, one folder per project. These are try-outs, separate from the live apps they might one day feed into.
+## Project gallery
 
 | Project | Live page | Source and notes |
 |---|---|---|
-| MPOB Mandate Studio home | [Open](https://mukhrizizraf.github.io/website-design-idea/mpob-mandate-home/) | [mpob-mandate-home/src](mpob-mandate-home/src/README.md) |
 | AI LEARNING TOOLS | [Open](https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/) | [Setup and source](ai-learning-dashboard/README.md) |
+| MPOB Mandate Studio home | [Open](https://mukhrizizraf.github.io/website-design-idea/mpob-mandate-home/) | [Project notes](mpob-mandate-home/src/README.md) |
 
-## AI LEARNING TOOLS dashboard
-
-The AI LEARNING TOOLS dashboard is a separate addition; the MPOB project keeps its existing files and URL. Open AI LEARNING TOOLS from the gallery, or use the direct link above. Skills, lessons and progress are saved in your browser. When moving from the local version, export a workspace backup there and restore it on the GitHub Pages version; browser data does not move automatically between addresses.
-
-GitHub Pages serves the interface. The optional Node server and chat bridge require separate setup, described in the dashboard README. No personal lessons, videos, or connection tokens are included in this repository.
+[Browse the live project gallery](https://mukhrizizraf.github.io/website-design-idea/)
 
 ## Adding a project
 
