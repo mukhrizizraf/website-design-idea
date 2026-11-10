@@ -37,9 +37,9 @@ export function createServer({token=process.env.DASHBOARD_TOKEN||'', dataDir=pro
         queue=save.catch(()=>{});await save;return json(201,{lesson:entry});
       }
       if(!['GET','HEAD'].includes(req.method)){res.writeHead(405);return res.end();}
-      const files={'/':'index.html','/index.html':'index.html','/styles.css':'styles.css','/legacy.html':'legacy.html','/skills.js':'skills.js','/showcase.js':'showcase.js','/showcase.css':'showcase.css','/room.jpg':'room.jpg','/app.js':'app.js','/dashboard.js':'dashboard.js','/model.js':'model.js','/favicon.svg':'favicon.svg','/README.md':'../README.md'};
+      const files={'/':'index.html','/index.html':'index.html','/styles.css':'styles.css','/legacy.html':'legacy.html','/skills.js':'skills.js','/showcase.js':'showcase.js','/showcase.css':'showcase.css','/skill-shelf-icons.png':'skill-shelf-icons.png','/room.jpg':'room.jpg','/app.js':'app.js','/dashboard.js':'dashboard.js','/model.js':'model.js','/favicon.svg':'favicon.svg','/README.md':'../README.md'};
       const file=files[url.pathname];if(!file){res.writeHead(404);return res.end('Not found');}
-      const bytes=await readFile(resolve(root,'public',file));const types={html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',js:'text/javascript; charset=utf-8',svg:'image/svg+xml',jpg:'image/jpeg',md:'text/plain; charset=utf-8'};
+      const bytes=await readFile(resolve(root,'public',file));const types={html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',js:'text/javascript; charset=utf-8',svg:'image/svg+xml',jpg:'image/jpeg',png:'image/png',md:'text/plain; charset=utf-8'};
       res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
       res.writeHead(200,{'Content-Type':types[file.split('.').pop()]||'application/octet-stream','Cache-Control':'no-cache'});res.end(req.method==='HEAD'?undefined:bytes);
     }catch(e){console.error('Request failed:',e.message);if(!res.headersSent)json(500,{error:'The server could not complete this request. Check storage availability and server logs.'});else res.end();}
