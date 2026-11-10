@@ -1,4 +1,21 @@
-# AI LEARNING TOOLS — an AI learning workspace
+# AI Skill Shelf
+
+The main page (`public/index.html`) is a shared showcase of the AI skills I collect from GitHub, TikTok and friends. Each card explains, in plain words, what the skill does, what it is good for, how to start it in Claude Code or the Claude app, and an example request to copy. Everyone who opens the link sees the same list. The design is visionOS-style glass over a soft blurred room, inspired by "Glassy Dashboard V18" (TikTok @paulcodes4).
+
+## Add or change a skill
+
+1. Open `public/skills.js`.
+2. Copy one entry in the `skills` list and change its text. A pack has a `members` list.
+3. Run `npm test` to check that nothing is missing.
+4. Push. The live page updates in a minute or two.
+
+Share one skill directly with a link like `…/public/index.html#skill=humanizer`.
+
+## Old lesson workspace
+
+The earlier lesson and learning-path dashboard still works at `public/legacy.html`. Everything below describes that workspace.
+
+# AI LEARNING TOOLS — an AI learning workspace (legacy)
 
 A calm, responsive dashboard for turning discoveries into practical AI skills. Includes a skill library, four learning paths, video notes, chat imports, progress tracking, and a private browser workspace. Built with HTML, CSS, JavaScript and Node.js; no package dependencies.
 

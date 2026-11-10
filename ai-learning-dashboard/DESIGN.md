@@ -1,25 +1,25 @@
-# AI LEARNING TOOLS design system
+# AI Skill Shelf design system
 
-An Operate surface for deliberate daily learning. Quiet warm paper, botanical green, and restrained lime give a daytime workspace a sense of care. A persistent rail leads to distinct workspaces rather than a wall of metrics. The overview prioritizes the next action, with honest activity and a chosen path supporting it.
+A shared showcase of AI skills, styled like a visionOS window floating in a warm room. Inspired by "Glassy Dashboard V18" (TikTok @paulcodes4): a smoky glass app window with its sidebar inside, separate floating glass widgets beside it, white pill-shaped bar charts, serif display numbers, and a small grab handle under the window.
+
+Files: `public/index.html`, `public/showcase.css`, `public/showcase.js`, data in `public/skills.js`. The old lesson workspace keeps its own design in `public/styles.css` (`public/legacy.html`).
 
 ## Tokens
-- Background: `#f6f5f0`; surface: `#fffefa`; sidebar: `#eeefe7`.
-- Primary ink: `#252c27`; secondary: `#687066`; divider: `#dddfd5`.
-- Action green: `#234d3d`; lime: `#e8edbc`; sage: `#edf0e6`.
-- Headings: Manrope 500–750; body: DM Sans 400–650; local sans fallback.
-- Page title: 34px desktop / 28px mobile; body: 13–14px; supporting labels: 10–12px.
-- Panels: 14px radius, single border, no decorative shadows. Dialog uses a soft offset shadow.
-- Page spacing: 42px desktop / 20px mobile; grids: 16–26px gaps.
+- Background: a CSS-painted room (window light, lamp glow, shelf, TV, sofa, wood floor) blurred 26px, with a light dark overlay. No photo file.
+- Window glass: `rgba(32,27,23,.62)`, 40px backdrop blur, 1px white edge at 16%, 36px radius. Inner cards: white at 7.5%, 22px radius.
+- Blue widget: `rgba(96,150,230,.62) → rgba(46,86,170,.55)`.
+- Text: white; secondary white at 76%; faint white at 55%.
+- Accent: system blue `#0a84ff`. Level chips: Easy green, Medium amber, Technical red, each with a text label.
+- Type: Instrument Serif for the greeting, big numbers and dialog titles; Inter for everything else.
 
-## Behavior
-Native buttons, forms, dialog, checkboxes, and video controls. Visible keyboard focus and an accessible skip link. SVG line icons. Color is never the only state cue. Category tags are text-labelled. Hover, empty, invalid import, connection failure, and storage failure states are explicit.
+## Behaviour
+- Sidebar categories and the bar chart both filter the cards. Tapping the active bar clears it.
+- Difficulty filter (All, Easy, Medium, Technical) and live search across titles, uses and pack contents.
+- Cards lift 5px on hover. Tapping a card opens a floating detail window: what it does, good for, a "Try saying" example with Copy, how to start it in Claude Code and the Claude app, the pack contents, and the GitHub source.
+- `#skill=<id>` opens a skill directly, so one skill can be shared by link.
+- Every number is counted from `skills.js`. Packs count every skill inside.
 
-## Responsive composition
-238px desktop rail becomes a 76px icon rail at 900px, then bottom navigation at 600px. The overview uses a short skills list and stacks its columns below 800px. Library cards become a single column on phones. Dialogs stay within the viewport.
-
-## Motion
-
-A half-second checkmark confirms a saved or imported lesson. The [Lottie source](motion/lesson-saved.json) was rendered to a single-play animated PNG with LottieFiles dotLottie Web 0.82.1. The browser displays the same confirmation text if reduced motion is on or the image fails to load.
-
-## Content
-No simulated personal metrics. Starter guides carry a clear label. Notes are escaped before HTML rendering and source links accept HTTP/HTTPS only. Saving media and analyzing media are explained as distinct actions.
+## Responsive
+- Below 1180px the widgets move under the window and the window scrolls with the page.
+- Below 860px the sidebar becomes a swipeable row of category chips, and the KPI tiles show two per row.
+- Reduced motion turns off all animation. Without backdrop-filter support, the glass becomes solid.
