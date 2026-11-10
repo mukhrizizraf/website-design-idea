@@ -294,3 +294,22 @@ h1 .soft{display:block;margin-top:.06em;font:400 .82em/1 var(--serif);font-style
 .sheet-top .cube-wrap{margin:-14px 4px -14px -16px}
 .sheet-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
 @media (max-width:760px){.sheet-top .cube-wrap{display:none}}
+
+/* ---------- Jury fixes ---------- */
+/* Pages blend into each other instead of cutting (cross-document view transition) */
+@view-transition{navigation:auto}
+/* Every primary target answers a hover with motion, not a colour swap alone */
+.tab{transition:color .25s var(--ease),background .25s var(--ease),transform .25s var(--ease)}
+.tab:hover{background:rgba(243,237,228,.08);transform:translateY(-1px)}
+.row{transition:background .2s var(--ease),transform .3s var(--ease)}
+.row:hover{transform:translateX(6px)}
+.row:hover .row-name{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;text-decoration-color:rgba(232,190,138,.6)}
+.btn{transition:background .2s,box-shadow .2s,transform .25s var(--ease)}
+.btn:hover{transform:translateY(-2px)}
+.pick-name{transition:transform .25s var(--ease)}
+.pick-name:hover{transform:translateX(4px)}
+.link{display:inline-flex;align-items:center;min-height:28px;transition:text-decoration-color .2s,text-underline-offset .25s var(--ease)}
+.link:hover{text-underline-offset:8px}
+/* Tap targets at least 24 px tall */
+.brand{display:inline-flex;align-items:center;min-height:32px}
+@media (prefers-reduced-motion:reduce){.row:hover,.btn:hover,.tab:hover,.pick-name:hover{transform:none}}

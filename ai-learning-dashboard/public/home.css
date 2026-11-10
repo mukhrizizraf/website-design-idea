@@ -155,3 +155,11 @@ h1,h2{font-size:clamp(2.9rem,6.4vw,5.8rem);line-height:.9;letter-spacing:-.045em
   .pop-in{padding:22px 20px 22px}
   #pop h2{font-size:1.7rem}
 }
+
+/* ---------- Jury fixes ---------- */
+@view-transition{navigation:auto}
+.brand{min-height:32px}
+.brand .mark{transition:transform .35s var(--ease)}
+.brand:hover .mark{transform:rotate(6deg) translateY(-2px)}
+.foot a{display:inline-flex;align-items:center;min-height:28px}
+@media (prefers-reduced-motion:reduce){.brand:hover .mark{transform:rotate(-8deg)}}

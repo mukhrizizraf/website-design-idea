@@ -6,6 +6,15 @@
   <meta name="theme-color" content="#21180f">
   <meta name="description" content="AI Skill Shelf: every AI skill I find, kept in one place, with the words to use it and how to install it. Shared so others can learn too.">
   <title>AI Skill Shelf</title>
+  <link rel="canonical" href="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/index.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AI Skill Shelf">
+  <meta property="og:description" content="Every AI skill I find, kept in one place, with the words to use it and how to install it. Shared so others can learn too.">
+  <meta property="og:url" content="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/index.html">
+  <meta property="og:image" content="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <script>
     // Old shared links pointed at this page; send them to the shelf.
     if (/^#(skill=|guide)/.test(location.hash)) location.replace('./shelf.html' + location.hash);
@@ -208,7 +217,10 @@
         renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('stage'), antialias: true, powerPreference: 'high-performance' });
       } catch { root.classList.add('no-webgl'); return; }
       if (!D) { root.classList.add('no-webgl'); return; }
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+      // Frame rate first: the glass refraction is the heaviest step, so it renders at half
+      // resolution (it is blurry glass, the difference is not visible) and phones draw fewer pixels.
+      renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 820 ? 1.25 : 1.5));
+      renderer.transmissionResolutionScale = 0.5;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.0;
@@ -278,7 +290,7 @@
         clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.25,
         attenuationColor: new THREE.Color('#ffe7cc'), attenuationDistance: 2.6
       });
-      const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 6, 0.1);
+      const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 3, 0.1);
       const faceGeo = new THREE.PlaneGeometry(1.5, 2.0);
       const deck = new THREE.Group(); scene.add(deck);
       const cards = picks.map((s, i) => {
@@ -311,6 +323,9 @@
         renderer.setSize(w, h, false); camera.aspect = w / h;
         camera.position.set(0, 0, narrow ? 13 : 9.5); camera.updateProjectionMatrix();
         deck.position.x = narrow ? -2.1 : 0; deck.position.y = narrow ? 1.6 : 0;
+        // A phone only sees the middle of the room, which is the black TV. Slide the photo so the
+        // bright wall and lamp sit behind the deck instead, and the glass reads as glass.
+        back.position.x = narrow ? 7.5 : 0;
       }
       addEventListener('resize', resize); resize();
 
