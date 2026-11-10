@@ -313,3 +313,6 @@ h1 .soft{display:block;margin-top:.06em;font:400 .82em/1 var(--serif);font-style
 /* Tap targets at least 24 px tall */
 .brand{display:inline-flex;align-items:center;min-height:32px}
 @media (prefers-reduced-motion:reduce){.row:hover,.btn:hover,.tab:hover,.pick-name:hover{transform:none}}
+.link:hover{transform:translateX(3px)}
+.link{transition:text-decoration-color .2s,text-underline-offset .25s var(--ease),transform .25s var(--ease)}
+@media (prefers-reduced-motion:reduce){.link:hover{transform:none}}

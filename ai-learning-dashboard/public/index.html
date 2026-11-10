@@ -290,6 +290,13 @@
         clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.25,
         attenuationColor: new THREE.Color('#ffe7cc'), attenuationDistance: 2.6
       });
+      // Phones: real refraction needs a second render of the whole scene every frame, which is
+      // what held mid-range phones near 20 to 40 fps. A see-through frosted glass with the same
+      // reflections and iridescence looks nearly the same at this size and skips that pass.
+      if (innerWidth < 820) {
+        Object.assign(glass, { transmission: 0, transparent: true, opacity: 0.74, color: new THREE.Color('#5e4a3b'), roughness: 0.3, iridescence: 0.25, envMapIntensity: 0.9, depthWrite: true });
+        glass.needsUpdate = true;
+      }
       const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 3, 0.1);
       const faceGeo = new THREE.PlaneGeometry(1.5, 2.0);
       const deck = new THREE.Group(); scene.add(deck);
