@@ -36,6 +36,7 @@ window.SKILL_DATA = {
       "id": "prompt-motion-design-ideas",
       "title": "PROMPT MOTION DESIGN IDEAS",
       "cat": "motion",
+      "externalLinksPaused": true,
       "what": "Study eight examples of UI morphing, 3D camera moves, showreels and product demos.",
       "lessons": [
         {

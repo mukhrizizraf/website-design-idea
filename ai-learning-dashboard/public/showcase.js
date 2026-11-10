@@ -134,13 +134,14 @@
         <button class="close" type="button" data-close aria-label="Close">${icon('close')}</button>
       </div>
       <p class="d-what">${esc(collection.what)}</p>
+      ${collection.externalLinksPaused ? '<p class="d-note">External example links are paused after a reported antivirus warning. All eight summaries and exercises remain available here. Downloads include the notes and creator credits without the external links.</p>' : ''}
       <div class="collection-lessons">
         ${collection.lessons.map(lesson => `<details class="collection-lesson">
           <summary>${icon('play', 'i sm')}<span><strong>${esc(lesson.title)}</strong><small>${esc(lesson.source)}</small></span></summary>
           <p>${esc(lesson.summary)}</p>
           <h3>What to learn</h3><ul>${bullets(lesson.takeaways)}</ul>
           <h3>Try it</h3><ol>${bullets(lesson.actions)}</ol>
-          <a href="${esc(lesson.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open original example ${icon('arrow', 'i sm')}</a>
+          ${!collection.externalLinksPaused && lesson.sourceUrl ? `<a href="${esc(lesson.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open original example ${icon('arrow', 'i sm')}</a>` : ''}
         </details>`).join('')}
       </div>
       <div class="d-foot">
@@ -156,7 +157,8 @@
   function downloadCollection(id) {
     const collection = collections.find(item => item.id === id);
     if (!collection) return;
-    const file = new Blob([JSON.stringify({ lessons: collection.lessons }, null, 2)], { type: 'application/json' });
+    const lessons = collection.lessons.map(lesson => collection.externalLinksPaused ? { ...lesson, sourceUrl: '' } : lesson);
+    const file = new Blob([JSON.stringify({ lessons }, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(file);
     const link = document.createElement('a');
     link.href = url;

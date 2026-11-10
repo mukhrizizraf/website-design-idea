@@ -4,6 +4,8 @@
 
 Double-click **OPEN DASHBOARD.html** or **index.html** in the Google Drive folder to open this live dashboard. Both shortcuts require an internet connection. **PROMPT MOTION DESIGN IDEAS** is the first card under **Motion & 3D**, with eight ideas and custom ChatGPT Image icons.
 
+Prompt Motion's external example links are paused following a reported antivirus warning. The collection keeps its summaries, exercises and creator credits; downloaded lesson packs omit those external links. Original URLs remain in the source data for attribution. This is a precaution, not a malware determination.
+
 For offline use, open **public/index.html**. That is a separate local copy; GitHub updates do not automatically update files on your computer. Make shared changes in the `website-design-idea/ai-learning-dashboard` repository folder and merge current GitHub changes before pushing.
 
 The main page (`public/index.html`) is a shared showcase of the AI skills I collect from GitHub, TikTok and friends. Each card explains, in plain words, what the skill does, what it is good for, how to start it in Claude Code or the Claude app, and an example request to copy. Everyone who opens the link sees the same list. The design is visionOS-style glass over a soft blurred room, inspired by "Glassy Dashboard V18" (TikTok @paulcodes4).
