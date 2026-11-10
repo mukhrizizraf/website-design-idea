@@ -117,6 +117,30 @@
       document.getElementById('doors').innerHTML = D.categories.map(c =>
         `<a class="door" data-cat="${c.id}" href="./shelf.html?cat=${c.id}"><span class="cube-wrap" data-cat="${c.id}" aria-hidden="true"><span class="cube">${Array.from({ length: 6 }, () => `<i><svg viewBox="0 0 24 24"><path d="${GLYPH[c.id]}"/></svg></i>`).join('')}</span></span><span class="door-txt"><span class="door-n">${count(c.id)} skills</span><span class="door-name">${c.label}</span></span></a>`).join('');
     }
+    document.querySelectorAll('.door').forEach((d, i) => {
+      d.style.setProperty('--i', i);
+      // The tapped card morphs into that category's heading on the shelf (view transition).
+      d.addEventListener('click', () => { d.style.viewTransitionName = 'cat-card'; });
+    });
+    // Coming back to this page with the browser's Back button: clear the morph name again.
+    addEventListener('pageshow', () => document.querySelectorAll('.door').forEach(d => { d.style.viewTransitionName = ''; }));
+
+    // ---------- Fluid reveals: each chapter window tilts up into place when it scrolls into view ----------
+    // Positions are checked directly on load and on scroll, so nothing can stay hidden.
+    if (!reduced) {
+      root.classList.add('js-reveal');
+      const targets = [...document.querySelectorAll('.copy, .doors')];
+      const reveal = () => {
+        const limit = innerHeight * 0.88;
+        targets.forEach(el => { if (!el.classList.contains('in')) { const r = el.getBoundingClientRect(); if (r.top < limit && r.bottom > 0) el.classList.add('in'); } });
+      };
+      let tick = 0;
+      addEventListener('scroll', () => { if (!tick) tick = requestAnimationFrame(() => { tick = 0; reveal(); }); }, { passive: true });
+      addEventListener('resize', reveal);
+      addEventListener('load', reveal);
+      requestAnimationFrame(reveal);
+      setTimeout(reveal, 600);
+    }
 
     // ---------- Chapter progress in the nav ----------
     const sections = [...document.querySelectorAll('.chapter')];

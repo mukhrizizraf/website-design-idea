@@ -71,3 +71,33 @@ dialog.pop.closing{animation:pop-out .24s cubic-bezier(.4,0,1,1) both}
   dialog.pop[open],dialog.pop.closing{animation:none}
   .listen.speaking .wave b{animation:none;height:12px}
 }
+
+/* ==========================================================================
+   Seamless page transitions (cross-document View Transitions, both pages opt in).
+   The old page sinks back and blurs while the new one rises in; the brand stays put,
+   and a tapped category card morphs into that category's heading on the shelf.
+   ========================================================================== */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:vt-out .42s cubic-bezier(.4,0,.2,1) both}
+::view-transition-new(root){animation:vt-in .62s cubic-bezier(.22,1,.36,1) both}
+@keyframes vt-out{to{opacity:0;transform:scale(.95);filter:blur(10px)}}
+@keyframes vt-in{from{opacity:0;transform:translateY(28px) scale(1.03);filter:blur(10px)}}
+.brand{view-transition-name:brand}
+::view-transition-group(brand),::view-transition-group(cat-card){animation-duration:.62s;animation-timing-function:cubic-bezier(.22,1,.36,1)}
+::view-transition-old(cat-card),::view-transition-new(cat-card){height:100%;object-fit:cover}
+
+/* ---------- Floating 3D glass cubes (shelf background) ---------- */
+.floaters{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.floater{position:absolute;perspective:700px;animation:drift var(--d,20s) ease-in-out infinite alternate;animation-delay:var(--delay,0s)}
+.floater .cube{--s:var(--size,86px);--h:calc(var(--size,86px) / 2);margin:0;animation-duration:var(--spin,16s)}
+.floater .cube i{border-radius:22%}
+.floater .cube i svg{width:38%;height:38%}
+@keyframes drift{
+  0%{transform:translate3d(0,0,0) rotate(0)}
+  50%{transform:translate3d(var(--dx,40px),var(--dy,-60px),0) rotate(6deg)}
+  100%{transform:translate3d(calc(var(--dx,40px) * -.6),calc(var(--dy,-60px) * .5),0) rotate(-4deg)}}
+
+@media (prefers-reduced-motion:reduce){
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+  .floater,.floater .cube{animation:none}
+}

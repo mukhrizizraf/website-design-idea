@@ -111,7 +111,41 @@
       if (!list.length) return '';
       return `<section class="group" data-cat="${c.id}" aria-labelledby="g-${c.id}"><div class="group-head">${appIc(c.id)}<h2 id="g-${c.id}">${esc(c.label)}</h2><span>${list.length}</span></div><ul class="rows">${list.map((s, i) => row(s, i)).join('')}</ul></section>`;
     }).join('');
+    watchRows();
   }
+  // Rows cascade in as they scroll into view. Positions are checked directly (on render and on
+  // scroll), so a row can never stay hidden; reduced motion skips the effect entirely.
+  if (!reduced) document.documentElement.classList.add('js-reveal');
+  function watchRows() {
+    if (reduced) return;
+    const limit = innerHeight * 0.96;
+    document.querySelectorAll('.rows li:not(.seen)').forEach(li => { if (li.getBoundingClientRect().top < limit) li.classList.add('seen'); });
+  }
+  let rowTick = 0;
+  addEventListener('scroll', () => { if (!rowTick) rowTick = requestAnimationFrame(() => { rowTick = 0; watchRows(); }); }, { passive: true });
+  addEventListener('resize', watchRows);
+  setTimeout(() => document.querySelectorAll('.rows li').forEach(li => { if (li.getBoundingClientRect().top < innerHeight) li.classList.add('seen'); }), 1500);
+
+  // Floating 3D glass cubes behind the frosted window, one per category colour, drifting slowly.
+  (() => {
+    const box = $('#floaters'); if (!box) return;
+    const spots = [[6, 14, 92], [86, 10, 70], [92, 58, 104], [3, 70, 78], [48, 88, 64], [70, 30, 56]];
+    box.innerHTML = D.categories.map((c, i) => {
+      const [x, y, size] = spots[i % spots.length];
+      return `<div class="floater" data-cat="${c.id}" style="left:${x}%;top:${y}%;--size:${size}px;--d:${16 + i * 3}s;--delay:-${i * 2.5}s;--spin:${12 + i * 2}s;--dx:${i % 2 ? -50 : 60}px;--dy:${i % 3 ? -70 : 50}px">
+        <div class="cube">${Array.from({ length: 6 }, () => `<i>${svg(P[c.id] || P.all, 26)}</i>`).join('')}</div></div>`;
+    }).join('');
+  })();
+
+  // Arriving from a homepage category card: that card morphs into this category's heading.
+  window.addEventListener('pagereveal', e => {
+    const cat = new URLSearchParams(location.search).get('cat');
+    if (!e.viewTransition || !cat) return;
+    const head = document.querySelector(`.group[data-cat="${cat}"] .group-head`);
+    if (!head) return;
+    head.style.viewTransitionName = 'cat-card';
+    e.viewTransition.finished.finally(() => { head.style.viewTransitionName = ''; });
+  });
 
   // ---------- install steps, written out so nobody has to open GitHub ----------
   function install(s) {

@@ -450,3 +450,8 @@ dialog::backdrop{background:rgba(245,245,247,.4);-webkit-backdrop-filter:blur(10
 .clip video{aspect-ratio:16/10;object-fit:contain}
 .clip.is-blocked video{display:none}
 .clip.is-blocked{background:linear-gradient(145deg,#2c2c2e,#1d1d1f)}
+
+/* ---------- Rows cascade in as they scroll into view (only when the script runs) ---------- */
+.js-reveal .rows li{animation:none;opacity:0;transform:translateY(16px) scale(.98)}
+.js-reveal .rows li.seen{animation:row-in .6s both;animation-delay:calc(var(--i,0) * 32ms);animation-timing-function:var(--spring-fb);opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js-reveal .rows li{opacity:1;transform:none}}
