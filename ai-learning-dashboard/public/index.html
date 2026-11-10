@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#21180f">
+  <meta name="theme-color" content="#f5f5f7">
   <meta name="description" content="AI Skill Shelf: every AI skill I find, kept in one place, with the words to use it and how to install it. Shared so others can learn too.">
   <title>AI Skill Shelf</title>
   <link rel="canonical" href="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/index.html">
@@ -42,6 +42,7 @@
   <header class="nav">
     <a class="brand" href="./index.html"><span class="mark" aria-hidden="true"></span>AI Skill Shelf</a>
     <nav class="chapters" aria-label="Chapters">
+      <span class="ch-pill" aria-hidden="true"></span>
       <a href="#ch-saved" data-ch="0"><b>01</b>Saved</a>
       <a href="#ch-skill" data-ch="1"><b>02</b>One job</a>
       <a href="#ch-use" data-ch="2"><b>03</b>Use it</a>
@@ -117,8 +118,11 @@
     // ---------- Category doors (work without WebGL) ----------
     if (D) {
       const count = id => (D.skills.filter(s => s.cat === id).length + (D.collections || []).filter(c => c.cat === id).length);
+      const GLYPH = { design: 'M12 22a10 10 0 1 1 10-10c0 2.8-2.2 4-4 4h-2a2 2 0 0 0-1.5 3.3A1.6 1.6 0 0 1 12 22Z', motion: 'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z',
+        writing: 'M12 20h9 M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z', docs: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z M14 2v6h6',
+        coding: 'M16 18l6-6-6-6 M8 6l-6 6 6 6', workflow: 'M6 6h12v12H6z M9 9h6v6H9z M9 2v4 M15 2v4 M9 18v4 M15 18v4 M2 9h4 M2 15h4 M18 9h4 M18 15h4' };
       document.getElementById('doors').innerHTML = D.categories.map(c =>
-        `<a class="door" data-cat="${c.id}" href="./shelf.html?cat=${c.id}"><span class="door-n">${count(c.id)} skills</span><span class="door-name">${c.label}</span></a>`).join('');
+        `<a class="door" data-cat="${c.id}" href="./shelf.html?cat=${c.id}"><span class="door-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="${GLYPH[c.id]}"/></svg></span><span class="door-txt"><span class="door-n">${count(c.id)} skills</span><span class="door-name">${c.label}</span></span></a>`).join('');
     }
 
     // ---------- Chapter progress in the nav ----------
@@ -129,10 +133,23 @@
       const step = sections[1] ? sections[1].offsetTop - sections[0].offsetTop : innerHeight;
       return Math.max(0, Math.min(sections.length - 1, scrollY / step));
     }
+    // The pill under the active chapter springs to its new place and takes that chapter's colour.
+    const chPill = document.querySelector('.ch-pill');
+    const CH_COLORS = ['#ff375f', '#bf5af2', '#0a84ff', '#ff9f0a'];
+    let lastActive = -1;
     function markChapter(t) {
       const active = Math.min(links.length - 1, Math.round(t));
+      if (active === lastActive) return;
+      lastActive = active;
       links.forEach((a, i) => a.toggleAttribute('aria-current', i === active));
+      const a = links[active];
+      if (chPill && a && a.offsetWidth) {
+        chPill.style.width = a.offsetWidth + 'px';
+        chPill.style.transform = `translateX(${a.offsetLeft}px)`;
+        chPill.style.setProperty('--pill', CH_COLORS[active]);
+      }
     }
+    addEventListener('resize', () => { lastActive = -1; markChapter(progress()); });
 
     // ---------- Pop-up: a skill card from the deck flies forward and speaks ----------
     const Sound = window.ShelfSound;
@@ -222,38 +239,26 @@
       renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 820 ? 1.25 : 1.5));
       renderer.transmissionResolutionScale = 0.5;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMapping = THREE.NeutralToneMapping;      // keeps the vivid colours vivid
       renderer.toneMappingExposure = 1.0;
 
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color('#21180f');
+      scene.background = new THREE.Color('#f5f5f7');
       const pmrem = new THREE.PMREMGenerator(renderer);
       scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
       const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
 
-      // The warm room from the reference video, blurred and dimmed, stands behind the glass
-      // so the cards bend it like real glass. Opened as a local file, browsers block reading the
-      // photo into WebGL, so a warm gradient of the same room tones is painted instead.
-      const room = document.createElement('canvas'); room.width = 1600; room.height = 1067;
-      const g = room.getContext('2d');
-      const warmRoom = () => {
-        const gr = g.createLinearGradient(0, 0, 0, room.height);
-        gr.addColorStop(0, '#cbb8a2'); gr.addColorStop(0.42, '#9b7d61'); gr.addColorStop(0.72, '#5f4634'); gr.addColorStop(1, '#3a2a1f');
-        g.fillStyle = gr; g.fillRect(0, 0, room.width, room.height);
-      };
-      try {
-        const img = new Image(); img.src = './room.jpg';
-        await Promise.race([img.decode(), new Promise((_, no) => setTimeout(() => no(new Error('slow photo')), 4000))]);
-        g.filter = 'blur(9px) saturate(1.05)'; g.drawImage(img, -40, -30, room.width + 80, room.height + 60); g.filter = 'none';
-        g.getImageData(0, 0, 1, 1);            // throws if the browser marked the photo as off-limits
-      } catch { g.filter = 'none'; warmRoom(); }
-      const dim = g.createRadialGradient(room.width * 0.55, room.height * 0.4, 100, room.width * 0.55, room.height * 0.45, room.width * 0.75);
-      dim.addColorStop(0, 'rgba(18,12,8,.28)'); dim.addColorStop(1, 'rgba(18,12,8,.66)');
-      g.fillStyle = dim; g.fillRect(0, 0, room.width, room.height);
-      const roomTex = new THREE.CanvasTexture(room); roomTex.colorSpace = THREE.SRGBColorSpace;
-      const back = new THREE.Mesh(new THREE.PlaneGeometry(31.5, 21), new THREE.MeshBasicMaterial({ map: roomTex, toneMapped: false }));
+      // A bright wallpaper of soft colour fields (Apple's system colours) stands behind the glass,
+      // so the candy-coloured cards have colour to bend. Painted in code: no photo to load.
+      const wall = document.createElement('canvas'); wall.width = 1600; wall.height = 1067;
+      const g = wall.getContext('2d');
+      g.fillStyle = '#f5f5f7'; g.fillRect(0, 0, wall.width, wall.height);
+      const blob = (x, y, r, c) => { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(245,245,247,0)'); g.fillStyle = gr; g.fillRect(0, 0, wall.width, wall.height); };
+      blob(180, 160, 560, 'rgba(255,159,10,.75)'); blob(1450, 140, 600, 'rgba(94,92,230,.6)'); blob(1360, 940, 620, 'rgba(100,210,255,.75)');
+      blob(260, 960, 560, 'rgba(255,55,95,.6)'); blob(820, 520, 460, 'rgba(191,90,242,.45)'); blob(1050, 260, 320, 'rgba(255,214,10,.4)');
+      const wallTex = new THREE.CanvasTexture(wall); wallTex.colorSpace = THREE.SRGBColorSpace;
+      const back = new THREE.Mesh(new THREE.PlaneGeometry(31.5, 21), new THREE.MeshBasicMaterial({ map: wallTex, toneMapped: false }));
       back.position.set(0, 0.8, -9); scene.add(back);
-      document.body.classList.add('room-in-3d');
 
       // Card faces drawn with the page fonts.
       await Promise.all(['800 64px "Bricolage Grotesque"', '400 40px "Instrument Serif"', 'italic 400 40px "Instrument Serif"', '500 20px "JetBrains Mono"'].map(f => document.fonts.load(f).catch(() => {})));
@@ -272,14 +277,15 @@
       }
       function face(s, isHero) {
         const c = document.createElement('canvas'); c.width = 600; c.height = 800; const x = c.getContext('2d');
-        x.fillStyle = 'rgba(232,190,138,.95)'; x.font = '500 20px "JetBrains Mono"'; x.fillText(label[s.cat].toUpperCase(), 44, 70);
+        x.shadowColor = 'rgba(0,0,0,.28)'; x.shadowBlur = 10; x.shadowOffsetY = 2;   // white type stays crisp on candy glass
+        x.fillStyle = 'rgba(255,255,255,.92)'; x.font = '500 20px "JetBrains Mono"'; x.fillText(label[s.cat].toUpperCase(), 44, 70);
         if (isHero) {
-          x.fillStyle = 'rgba(243,237,228,.96)'; x.font = 'italic 400 46px "Instrument Serif"';
+          x.fillStyle = '#ffffff'; x.font = 'italic 400 46px "Instrument Serif"';
           wrap(x, '“' + s.say.replace(/\s*:\s*…$/, '…') + '”', 44, 210, 512, 54, 7);
           x.font = '800 44px "Bricolage Grotesque"'; x.fillText(s.title, 44, 720);
         } else {
-          x.fillStyle = 'rgba(243,237,228,.97)'; x.font = '800 64px "Bricolage Grotesque"'; wrap(x, s.title, 44, 560, 512, 66, 2);
-          x.fillStyle = 'rgba(243,237,228,.68)'; x.font = '400 30px "Instrument Serif"'; wrap(x, s.what, 44, 690, 512, 34, 2);
+          x.fillStyle = '#ffffff'; x.font = '800 64px "Bricolage Grotesque"'; wrap(x, s.title, 44, 560, 512, 66, 2);
+          x.fillStyle = 'rgba(255,255,255,.86)'; x.font = '400 30px "Instrument Serif"'; wrap(x, s.what, 44, 690, 512, 34, 2);
         }
         const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
       }
@@ -293,16 +299,27 @@
       // Phones: real refraction needs a second render of the whole scene every frame, which is
       // what held mid-range phones near 20 to 40 fps. A see-through frosted glass with the same
       // reflections and iridescence looks nearly the same at this size and skips that pass.
-      if (innerWidth < 820) {
-        Object.assign(glass, { transmission: 0, transparent: true, opacity: 0.74, color: new THREE.Color('#5e4a3b'), roughness: 0.3, iridescence: 0.25, envMapIntensity: 0.9, depthWrite: true });
+      const phone = innerWidth < 820;
+      if (phone) {
+        Object.assign(glass, { transmission: 0, transparent: true, opacity: 0.6, color: new THREE.Color('#ffffff'), roughness: 0.25, iridescence: 0.3, envMapIntensity: 1.0, depthWrite: true });
         glass.needsUpdate = true;
       }
+      // Candy glass: each card is tinted with its category colour, like an app icon made of glass.
+      const CAT = { design: '#ff375f', motion: '#bf5af2', writing: '#ff9f0a', docs: '#0a84ff', coding: '#00c7be', workflow: '#ff2d55' };
+      const tinted = {};
+      const glassFor = cat => {
+        if (tinted[cat]) return tinted[cat];
+        const m = glass.clone(), col = new THREE.Color(CAT[cat] || '#bf5af2');
+        if (phone) Object.assign(m, { color: col, opacity: 0.96 });
+        else Object.assign(m, { color: col.clone().lerp(new THREE.Color('#ffffff'), 0.35), attenuationColor: col, attenuationDistance: 0.9 });
+        return (tinted[cat] = m);
+      };
       const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 3, 0.1);
       const faceGeo = new THREE.PlaneGeometry(1.5, 2.0);
       const deck = new THREE.Group(); scene.add(deck);
       const cards = picks.map((s, i) => {
         const card = new THREE.Group();
-        const slab = new THREE.Mesh(slabGeo, glass); slab.userData.card = card; card.add(slab);
+        const slab = new THREE.Mesh(slabGeo, glassFor(s.cat)); slab.userData.card = card; card.add(slab);
         const f = new THREE.Mesh(faceGeo, new THREE.MeshBasicMaterial({ map: face(s, i === hero), transparent: true, toneMapped: false, depthWrite: false }));
         f.position.z = 0.046; card.add(f);
         card.userData = { s, slab, hover: 0 };
@@ -330,9 +347,8 @@
         renderer.setSize(w, h, false); camera.aspect = w / h;
         camera.position.set(0, 0, narrow ? 13 : 9.5); camera.updateProjectionMatrix();
         deck.position.x = narrow ? -2.1 : 0; deck.position.y = narrow ? 1.6 : 0;
-        // A phone only sees the middle of the room, which is the black TV. Slide the photo so the
-        // bright wall and lamp sit behind the deck instead, and the glass reads as glass.
-        back.position.x = narrow ? 7.5 : 0;
+        // A phone only sees a narrow strip of the wallpaper; slide it so warm orange and pink sit behind the deck.
+        back.position.x = narrow ? 4 : 0;
       }
       addEventListener('resize', resize); resize();
 

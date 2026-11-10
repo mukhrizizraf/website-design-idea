@@ -1,57 +1,69 @@
-/* AI Skill Shelf: shared pop-up pieces for both pages.
-   Floating speaker button, the spinning 3D glass cube, the Listen button with a live
-   sound-wave, and the 3D "pop" entrance for skill windows. Warm glass, as in Glassy Dashboard V18. */
+/* AI Skill Shelf: shared pop-up pieces for both pages, "vivid" theme.
+   Floating speaker button, the spinning 3D app-icon cube, the Listen button with a live
+   sound-wave, the springy 3D "pop" entrance, and the category colours (Apple system colours). */
+:root{
+  --spring-fb:cubic-bezier(.34,1.56,.64,1);
+}
+[data-cat="design"]{--a:#ff375f;--b:#ff9f0a}
+[data-cat="motion"]{--a:#bf5af2;--b:#5e5ce6}
+[data-cat="writing"]{--a:#ff9f0a;--b:#ffd60a}
+[data-cat="docs"]{--a:#0a84ff;--b:#64d2ff}
+[data-cat="coding"]{--a:#00c7be;--b:#0a84ff}
+[data-cat="workflow"]{--a:#ff2d55;--b:#bf5af2}
+[data-cat="all"]{--a:#1d1d1f;--b:#48484a}
+
+/* ---------- App icon: a bright rounded square with a white symbol ---------- */
+.app-ic{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:11px;color:#fff;
+  background:linear-gradient(145deg,var(--a,#8e8e93),var(--b,#636366));box-shadow:0 6px 14px color-mix(in srgb,var(--a,#8e8e93) 32%,transparent),inset 0 1px 0 rgba(255,255,255,.45)}
+.app-ic svg{width:19px;height:19px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- Floating speaker button (bottom right, like MPOB) ---------- */
-.sound{position:fixed;right:22px;bottom:22px;z-index:45;width:52px;height:52px;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:#f5efe6;
-  background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04)),rgba(44,33,25,.55);-webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 0 0 1px rgba(255,255,255,.1),0 14px 30px rgba(12,6,2,.35);transition:transform .25s cubic-bezier(.22,1,.36,1)}
-.sound:hover{transform:translateY(-2px)}
-.sound:active{transform:scale(.94)}
-.sound svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sound{position:fixed;right:22px;bottom:22px;z-index:45;width:52px;height:52px;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:#1d1d1f;
+  background:rgba(255,255,255,.8);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  box-shadow:inset 0 0 0 1px rgba(29,29,31,.08),0 12px 30px rgba(60,40,120,.18);transition:transform .5s var(--spring-fb)}
+.sound:hover{transform:translateY(-3px)}
+.sound:active{transform:scale(.9);transition-duration:.1s}
+.sound svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sound .off{display:none}
 .sound[aria-pressed="false"] .on{display:none}
 .sound[aria-pressed="false"] .off{display:block}
-.sound[aria-pressed="false"]{color:rgba(245,239,230,.6)}
+.sound[aria-pressed="false"]{color:rgba(29,29,31,.45)}
 
-/* ---------- 3D glass cube: one per category, slowly turning ---------- */
+/* ---------- 3D app-icon cube: one per category, slowly turning ---------- */
 .cube-wrap{flex:none;width:88px;height:88px;perspective:520px}
-.cube{--s:64px;--h:32px;position:relative;width:var(--s);height:var(--s);margin:12px;transform-style:preserve-3d;animation:cube-spin 11s linear infinite;transform:rotateX(-22deg) rotateY(30deg)}
-.cube i{position:absolute;inset:0;display:grid;place-items:center;border-radius:12px;
-  background:linear-gradient(150deg,rgba(255,255,255,.34),rgba(var(--tint,232,190,138),.18) 55%,rgba(255,255,255,.08));
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.38),inset 0 1px 0 rgba(255,255,255,.6),0 0 18px rgba(var(--tint,232,190,138),.25);
-  color:#fffaf2;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.cube i svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+.cube{--s:62px;--h:31px;position:relative;width:var(--s);height:var(--s);margin:13px;transform-style:preserve-3d;animation:cube-spin 11s linear infinite;transform:rotateX(-22deg) rotateY(30deg)}
+.cube i{position:absolute;inset:0;display:grid;place-items:center;border-radius:16px;color:#fff;
+  background:linear-gradient(145deg,var(--a,#ff375f),var(--b,#ff9f0a));box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 1px rgba(255,255,255,.25)}
+.cube i svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .cube i:nth-child(1){transform:translateZ(var(--h))}
 .cube i:nth-child(2){transform:rotateY(180deg) translateZ(var(--h))}
-.cube i:nth-child(3){transform:rotateY(90deg) translateZ(var(--h))}
-.cube i:nth-child(4){transform:rotateY(-90deg) translateZ(var(--h))}
-.cube i:nth-child(5){transform:rotateX(90deg) translateZ(var(--h))}
-.cube i:nth-child(6){transform:rotateX(-90deg) translateZ(var(--h))}
+.cube i:nth-child(3){transform:rotateY(90deg) translateZ(var(--h));filter:brightness(.88)}
+.cube i:nth-child(4){transform:rotateY(-90deg) translateZ(var(--h));filter:brightness(.88)}
+.cube i:nth-child(5){transform:rotateX(90deg) translateZ(var(--h));filter:brightness(1.08)}
+.cube i:nth-child(6){transform:rotateX(-90deg) translateZ(var(--h));filter:brightness(.8)}
 @keyframes cube-spin{from{transform:rotateX(-22deg) rotateY(30deg)}to{transform:rotateX(-22deg) rotateY(390deg)}}
-[data-cat="design"]{--tint:214,140,92}[data-cat="motion"]{--tint:232,190,138}[data-cat="writing"]{--tint:240,228,210}
-[data-cat="docs"]{--tint:196,166,136}[data-cat="coding"]{--tint:176,136,116}[data-cat="workflow"]{--tint:230,204,148}
 
 /* ---------- Listen button with a sound-wave that moves while the voice speaks ---------- */
-.listen{display:inline-flex;align-items:center;gap:10px;min-height:42px;padding:0 18px 0 14px;border:0;border-radius:999px;cursor:pointer;font:inherit;font-size:.9375rem;font-weight:600;color:#f5efe6;
-  background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),inset 0 1px 0 rgba(255,255,255,.2);transition:background .2s}
-.listen:hover{background:rgba(255,255,255,.17)}
-.listen:active{transform:scale(.97)}
+.listen{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px 0 14px;border:0;border-radius:999px;cursor:pointer;font:inherit;font-size:.9375rem;font-weight:700;color:#1d1d1f;
+  background:rgba(29,29,31,.06);box-shadow:inset 0 0 0 1px rgba(29,29,31,.08);transition:background .2s,transform .45s var(--spring-fb)}
+.listen:hover{background:rgba(29,29,31,.1)}
+.listen:active{transform:scale(.93);transition-duration:.1s}
 .wave{display:inline-flex;align-items:center;gap:3px;height:18px}
-.wave b{display:block;width:3px;height:6px;border-radius:3px;background:#e8be8a;transition:height .2s}
+.wave b{display:block;width:3px;height:6px;border-radius:3px;background:linear-gradient(#ff375f,#bf5af2);transition:height .2s}
 .listen.speaking .wave b{animation:wave 1s ease-in-out infinite}
 .listen.speaking .wave b:nth-child(2){animation-delay:.15s}.listen.speaking .wave b:nth-child(3){animation-delay:.3s}
 .listen.speaking .wave b:nth-child(4){animation-delay:.45s}.listen.speaking .wave b:nth-child(5){animation-delay:.6s}
 @keyframes wave{0%,100%{height:5px}50%{height:18px}}
 
-/* ---------- The 3D pop: a window that flies up out of the page from where it was opened ---------- */
-dialog.pop[open]{animation:pop-3d .62s cubic-bezier(.2,1,.3,1) both}
+/* ---------- The 3D pop: a window springs up out of the page from where it was tapped ---------- */
+dialog.pop[open]{animation:pop-3d .7s both;animation-timing-function:var(--spring-fb);
+  animation-timing-function:linear(0,.009,.035 2.1%,.141,.281 6.7%,.723 12.9%,.938 16.7%,1.017,1.077,1.121,1.149 24.3%,1.159,1.163,1.161,1.154 29.9%,1.129 32.8%,1.051 39.6%,1.017 43.1%,.991,.977 51%,.974 53.8%,.975 57.1%,.997 69.8%,1.003 76.9%,1)}
 @keyframes pop-3d{
-  0%{opacity:0;transform:perspective(1200px) translate3d(var(--fx,0),var(--fy,60px),-260px) rotateX(24deg) rotateY(var(--fr,-12deg)) scale(.72);filter:blur(10px)}
-  60%{opacity:1;filter:blur(0)}
-  100%{opacity:1;transform:perspective(1200px) translate3d(0,0,0) rotateX(0) rotateY(0) scale(1);filter:blur(0)}}
-dialog.pop.closing{animation:pop-out .26s cubic-bezier(.4,0,1,1) both}
-@keyframes pop-out{to{opacity:0;transform:perspective(1200px) translate3d(0,24px,-120px) rotateX(10deg) scale(.92);filter:blur(6px)}}
+  0%{opacity:0;transform:perspective(1200px) translate3d(var(--fx,0),var(--fy,60px),-240px) rotateX(20deg) rotateY(var(--fr,-12deg)) scale(.6)}
+  30%{opacity:1}
+  100%{opacity:1;transform:perspective(1200px) translate3d(0,0,0) rotateX(0) rotateY(0) scale(1)}}
+dialog.pop.closing{animation:pop-out .24s cubic-bezier(.4,0,1,1) both}
+@keyframes pop-out{to{opacity:0;transform:perspective(1200px) translate3d(0,20px,-100px) rotateX(8deg) scale(.9)}}
 
 @media (max-width:760px){.sound{right:14px;bottom:92px;width:46px;height:46px}}
 @media (prefers-reduced-motion:reduce){

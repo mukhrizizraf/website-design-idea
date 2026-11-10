@@ -43,11 +43,30 @@
   }
 
   // ---------- category tabs (toolbar) and phone tab bar ----------
+  // Tabs are built once; switching only moves the pill, so it can spring from the old tab to the new one.
+  const appIc = cat => `<span class="app-ic" data-cat="${cat}" aria-hidden="true">${svg(P[cat] || P.all, 19)}</span>`;
+  let tabsBuilt = false;
+  function placePill(container, pillSel, current) {
+    const pill = container.querySelector(pillSel), el = container.querySelector(current);
+    if (!pill || !el || !el.offsetWidth) return;
+    pill.style.width = el.offsetWidth + 'px';
+    pill.style.transform = `translateX(${el.offsetLeft}px)`;
+  }
   function renderTabs() {
     const list = [{ id: 'all', label: 'All', short: 'All' }, ...D.categories];
-    $('#tabs').innerHTML = list.map(c => `<button class="tab" type="button" data-cat="${c.id}" aria-current="${state.cat === c.id}">${esc(c.short || c.label)}</button>`).join('');
-    $('#tabbar').innerHTML = list.map(c => `<button class="tb" type="button" data-cat="${c.id}" aria-current="${state.cat === c.id}" aria-label="${esc(c.label)}"><b>${svg(P[c.id] || P.all)}</b><span>${esc(c.short || c.label)}</span></button>`).join('');
+    if (!tabsBuilt) {
+      $('#tabs').innerHTML = '<span class="tab-pill" aria-hidden="true"></span>' + list.map(c => `<button class="tab" type="button" data-cat="${c.id}" aria-current="false">${appIc(c.id)}${esc(c.short || c.label)}</button>`).join('');
+      $('#tabbar').innerHTML = '<span class="tb-pill" aria-hidden="true"></span>' + list.map(c => `<button class="tb" type="button" data-cat="${c.id}" aria-current="false" aria-label="${esc(c.label)}"><b data-cat="${c.id}">${svg(P[c.id] || P.all)}</b><span>${esc(c.short || c.label)}</span></button>`).join('');
+      tabsBuilt = true;
+    }
+    document.querySelectorAll('.tab, .tb').forEach(b => b.setAttribute('aria-current', String(b.dataset.cat === state.cat)));
+    requestAnimationFrame(() => {
+      placePill($('#tabs'), '.tab-pill', '.tab[aria-current="true"]');
+      placePill($('#tabbar'), '.tb-pill', '.tb[aria-current="true"]');
+    });
   }
+  addEventListener('resize', () => { if (tabsBuilt) renderTabs(); });
+  document.fonts?.ready?.then(() => { if (tabsBuilt) renderTabs(); });
 
   // ---------- the pick card: the exact words to say ----------
   function renderPick() {
@@ -73,8 +92,9 @@
   }
 
   // ---------- the shelf: grouped rows ----------
-  function row(s) {
-    return `<li><button class="row" type="button" data-skill="${esc(s.id)}">
+  function row(s, i) {
+    return `<li style="--i:${i}"><button class="row" type="button" data-skill="${esc(s.id)}">
+      ${appIc(s.cat)}
       <span class="row-name">${esc(s.title)}${isNew(s) ? '<span class="new">New</span>' : ''}</span>
       <span class="row-what">${esc(s.what)}</span>
       <span class="row-meta lv-${s.lessons ? 'ideas' : s.members ? 'pack' : s.level}">${esc(levelLabel(s))}</span></button></li>`;
@@ -89,7 +109,7 @@
     $('#groups').innerHTML = D.categories.map(c => {
       const list = found.filter(s => s.cat === c.id);
       if (!list.length) return '';
-      return `<section class="group" data-cat="${c.id}" aria-labelledby="g-${c.id}"><div class="group-head"><i class="swatch" aria-hidden="true"></i><h2 id="g-${c.id}">${esc(c.label)}</h2><span>${list.length}</span></div><ul class="rows">${list.map(row).join('')}</ul></section>`;
+      return `<section class="group" data-cat="${c.id}" aria-labelledby="g-${c.id}"><div class="group-head">${appIc(c.id)}<h2 id="g-${c.id}">${esc(c.label)}</h2><span>${list.length}</span></div><ul class="rows">${list.map((s, i) => row(s, i)).join('')}</ul></section>`;
     }).join('');
   }
 
