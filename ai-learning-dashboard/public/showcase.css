@@ -26,37 +26,8 @@ code{font-family:ui-monospace,'Cascadia Code',Consolas,monospace;font-size:.92em
 .skip{position:fixed;left:16px;top:-80px;z-index:60;background:#111;color:#fff;padding:12px 16px;border-radius:12px}
 .skip:focus{top:16px}
 .noscript{position:fixed;inset:auto 0 40% 0;text-align:center}
-.i{display:inline-block;width:22px;height:22px;flex:none;vertical-align:middle}
-.i.sm{width:17px;height:17px}.i.xs{width:13px;height:13px;margin-left:3px}
-/* One ChatGPT Image atlas, with each icon occupying one cell of the grid. */
-.shelf-icon{background:url('./skill-shelf-icons.png') var(--icon-x,0%) var(--icon-y,0%)/500% 500% no-repeat}
-.shelf-icon--grid{--icon-x:0%;--icon-y:0%}
-.shelf-icon--palette{--icon-x:25%;--icon-y:0%}
-.shelf-icon--sparkles{--icon-x:50%;--icon-y:0%}
-.shelf-icon--pen{--icon-x:75%;--icon-y:0%}
-.shelf-icon--file{--icon-x:100%;--icon-y:0%}
-.shelf-icon--code{--icon-x:0%;--icon-y:25%}
-.shelf-icon--cpu{--icon-x:25%;--icon-y:25%}
-.shelf-icon--book{--icon-x:50%;--icon-y:25%}
-.shelf-icon--sprout{--icon-x:75%;--icon-y:25%}
-.shelf-icon--box{--icon-x:100%;--icon-y:25%}
-.shelf-icon--branch{--icon-x:0%;--icon-y:50%}
-.shelf-icon--chart{--icon-x:25%;--icon-y:50%}
-.shelf-icon--globe{--icon-x:50%;--icon-y:50%}
-.shelf-icon--star{--icon-x:75%;--icon-y:50%}
-.shelf-icon--terminal{--icon-x:100%;--icon-y:50%}
-.shelf-icon--chat{--icon-x:0%;--icon-y:75%}
-.shelf-icon--link{--icon-x:25%;--icon-y:75%}
-.shelf-icon--copy{--icon-x:50%;--icon-y:75%}
-.shelf-icon--arrow{--icon-x:75%;--icon-y:75%}
-.shelf-icon--bulb{--icon-x:100%;--icon-y:75%}
-.shelf-icon--search{--icon-x:0%;--icon-y:100%}
-.shelf-icon--close{--icon-x:25%;--icon-y:100%}
-.shelf-icon--download{--icon-x:50%;--icon-y:100%}
-.shelf-icon--play{--icon-x:75%;--icon-y:100%}
-.shelf-icon--shelf{--icon-x:100%;--icon-y:100%}
-.avatar .shelf-icon{width:29px;height:29px}
-.close .shelf-icon,.intro-close .shelf-icon{vertical-align:middle}
+.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.i.sm{width:14px;height:14px}.i.xs{width:11px;height:11px;margin-left:3px}
 
 /* ---------- Room photo ---------- */
 .room{position:fixed;inset:-24px;z-index:-1;background:#3a2f27 url(room.jpg) center 40%/cover no-repeat;filter:blur(2.5px) saturate(1.08)}
@@ -73,10 +44,13 @@ code{font-family:ui-monospace,'Cascadia Code',Consolas,monospace;font-size:.92em
 .card::before,.glass-card::before,.seg::before,.search::before{background:linear-gradient(150deg,rgba(255,255,255,.35),rgba(255,255,255,.06) 40%,rgba(255,255,255,.03) 70%,rgba(255,255,255,.16))}
 
 /* ---------- Layout ---------- */
-.stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;max-width:1480px;margin:0 auto;padding:44px 48px 18px;align-items:start}
-.window-wrap{display:flex;flex-direction:column;align-items:center;min-width:0}
-.window{width:100%;height:calc(100vh - 104px);min-height:560px;display:grid;grid-template-columns:236px minmax(0,1fr);border-radius:38px;overflow:hidden}
-.handle{width:84px;height:6px;border-radius:6px;margin-top:14px;background:rgba(255,255,255,.7);box-shadow:0 2px 10px rgba(0,0,0,.3)}
+/* Desktop: the stage is exactly one screen tall, so the page never scrolls.
+   Only the skill list scrolls, inside the window. Both columns share the same top and bottom. */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;grid-template-rows:minmax(0,1fr);gap:24px;max-width:1480px;margin:0 auto;
+  height:100vh;height:100dvh;padding:clamp(14px,4.5vh,44px) 48px clamp(8px,1.6vh,18px);align-items:stretch}
+.window-wrap{display:flex;flex-direction:column;align-items:center;min-width:0;min-height:0;height:100%}
+.window{flex:1;width:100%;min-height:0;display:grid;grid-template-columns:236px minmax(0,1fr);border-radius:38px;overflow:hidden}
+.handle{flex:none;width:84px;height:6px;border-radius:6px;margin-top:12px;background:rgba(255,255,255,.7);box-shadow:0 2px 10px rgba(0,0,0,.3)}
 
 /* ---------- Sidebar inside the window ---------- */
 .side{display:flex;flex-direction:column;padding:26px 14px 18px;background:rgba(255,255,255,.035);border-right:1px solid var(--edge-soft);overflow-y:auto}
@@ -109,7 +83,7 @@ code{font-family:ui-monospace,'Cascadia Code',Consolas,monospace;font-size:.92em
 h1{font-family:var(--serif);font-weight:400;font-size:48px;line-height:1.02;letter-spacing:-.5px;text-shadow:0 2px 20px rgba(0,0,0,.25)}
 .lede{margin-top:10px;font-size:14px;line-height:1.55;color:var(--muted);max-width:60ch}
 .search{position:relative;flex:0 0 270px;border-radius:999px}
-.search .shelf-icon{position:absolute;left:13px;top:50%;width:20px;height:20px;transform:translateY(-50%)}
+.search svg{position:absolute;left:15px;top:50%;width:16px;height:16px;transform:translateY(-50%);fill:none;stroke:var(--faint);stroke-width:2;stroke-linecap:round}
 .search input{width:100%;height:44px;padding:0 16px 0 42px;border-radius:999px;border:0;background:rgba(255,255,255,.08);font-size:13px;outline:none;transition:background .25s,box-shadow .25s}
 .search input::placeholder{color:var(--faint)}
 .search input:focus{background:rgba(255,255,255,.13);box-shadow:0 0 0 2px rgba(94,234,212,.55),0 0 24px rgba(45,212,191,.3)}
@@ -164,8 +138,8 @@ h1{font-family:var(--serif);font-weight:400;font-size:48px;line-height:1.02;lett
 /* Icon tiles: tinted glass per category, thin white-ish line icon */
 .c-ic{--tint:255,255,255;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;flex:none;color:rgb(var(--tint));
   background:linear-gradient(150deg,rgba(var(--tint),.28),rgba(var(--tint),.08));box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 0 1px rgba(var(--tint),.28),0 6px 18px rgba(var(--tint),.16)}
-.c-ic .i{width:29px;height:29px}
-.c-ic.lg{width:60px;height:60px;border-radius:19px}.c-ic.lg .i{width:38px;height:38px}
+.c-ic .i{width:20px;height:20px}
+.c-ic.lg{width:60px;height:60px;border-radius:19px}.c-ic.lg .i{width:28px;height:28px}
 [data-cat="design"]{--tint:244,171,252}[data-cat="motion"]{--tint:147,197,253}[data-cat="writing"]{--tint:252,211,77}
 [data-cat="docs"]{--tint:110,231,183}[data-cat="coding"]{--tint:203,213,225}[data-cat="workflow"]{--tint:94,234,212}
 /* Fixed line counts so every card in a row lines up: title 2 lines, text 4 lines, one-line footer. */
@@ -181,7 +155,8 @@ h1{font-family:var(--serif);font-weight:400;font-size:48px;line-height:1.02;lett
 
 /* ---------- Floating widgets ---------- */
 /* Right column is exactly as tall as the window, so both end on the same line. */
-.widgets{display:flex;flex-direction:column;gap:16px;position:sticky;top:44px;height:calc(100vh - 104px);min-height:560px}
+.widgets{display:flex;flex-direction:column;gap:16px;min-height:0;height:calc(100% - 18px);overflow-y:auto;scrollbar-width:none;border-radius:30px}
+.widgets::-webkit-scrollbar{display:none}
 #w-cats,#w-featured{flex:none}
 #w-sources{flex:1;min-height:0;display:flex;flex-direction:column}
 #w-sources .src-list{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-right:2px;
@@ -221,12 +196,28 @@ h1{font-family:var(--serif);font-weight:400;font-size:48px;line-height:1.02;lett
 .feat small{display:block;font-size:11.5px;color:var(--muted)}
 .credit{font-size:10.5px;color:rgba(255,255,255,.5);margin:10px 12px 0}
 .credit a{color:inherit}
-#w-sources{min-height:150px}
+#w-sources{min-height:120px}
+#w-sources .src-list{-webkit-mask:linear-gradient(180deg,transparent 0,#000 10px,#000 82%,transparent);mask:linear-gradient(180deg,transparent 0,#000 10px,#000 82%,transparent);padding-top:4px}
 .kpi .k-top span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi .chip{max-width:100%;overflow:hidden;text-overflow:ellipsis;display:inline-block}
 /* Narrower desktop: number tiles as a tidy 2 x 2 instead of 4 squeezed tiles */
-@media (max-width:1360px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Number tiles: 4 across only when the content area is wide enough, otherwise an even 2 x 2 */
+.content{container-type:inline-size}
+@container (max-width:780px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Thinner bars on shorter screens so they still read as bars, not blobs */
+@media (max-height:820px) and (min-width:1181px){.bar span.fill{max-width:20px}}
+@media (max-height:680px) and (min-width:1181px){.bar span.fill{max-width:14px}}
 /* Short screens: compact the right column so all three widgets fit the window height */
+/* Very short screens (small laptop, browser bar + taskbar): drop the extra lines so everything still fits */
+@media (max-height:680px) and (min-width:1181px){
+  .w-sub,.feat small{display:none}
+  .w-big{font-size:28px!important}
+  .bars{height:58px!important}
+  .widget{padding:12px 14px!important}
+  .widgets{gap:12px}
+  .head{margin-bottom:14px}
+  h1{font-size:38px}
+}
 @media (max-height:820px) and (min-width:1181px){
   .widget{padding:15px 16px}
   .w-big{font-size:34px}
@@ -269,17 +260,6 @@ dialog[open]{animation:pop .45s var(--ease)}
 .members code{display:inline-block;margin-bottom:3px;color:#fff;background:none;padding:0}
 .d-foot{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:24px;padding-top:18px;border-top:1px solid var(--edge-soft)}
 .d-note{margin-top:16px;font-size:12.5px;line-height:1.6;color:var(--muted)}
-.collection-lessons{margin-top:20px;border-top:1px solid var(--edge-soft)}
-.collection-lesson{padding:12px 0;border-bottom:1px solid var(--edge-soft);font-size:14px;line-height:1.55}
-.collection-lesson summary{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:4px 0;list-style:none}
-.collection-lesson summary::-webkit-details-marker{display:none}
-.collection-lesson summary .shelf-icon{margin-top:2px}
-.collection-lesson[open] summary .shelf-icon{transform:rotate(90deg)}
-.collection-lesson summary small{display:block;margin-top:2px;color:var(--muted)}
-.collection-lesson p{margin:10px 0}
-.collection-lesson h3{font-size:13px;margin:12px 0 4px}
-.collection-lesson ul,.collection-lesson ol{margin:0 0 12px;padding-left:22px}
-.collection-lesson a{color:#b9deff;text-underline-offset:3px}
 #guide .d-top h2{font-size:32px}
 
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,12px);opacity:0;pointer-events:none;z-index:70;padding:11px 18px;border-radius:999px;font-size:13px;
@@ -296,8 +276,9 @@ dialog[open]{animation:pop .45s var(--ease)}
 
 /* ---------- Responsive ---------- */
 @media (max-width:1180px){
-  .stage{grid-template-columns:1fr;padding:28px 28px 24px}
-  .widgets{position:static;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:auto;min-height:0}
+  .stage{grid-template-columns:1fr;grid-template-rows:auto;height:auto;padding:28px 28px 24px}
+  .window-wrap{height:auto}
+  .widgets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:auto;min-height:0;overflow:visible}
   #w-sources .src-list{overflow:visible;-webkit-mask:none;mask:none}
   .window{height:auto;min-height:0}
   .content{overflow:visible}

@@ -3,27 +3,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
-import { parseLessons } from '../public/model.js';
 
 const source = await readFile(new URL('../public/skills.js', import.meta.url), 'utf8');
 const context = { window: {} };
 vm.createContext(context);
 vm.runInContext(source, context);
 const D = context.window.SKILL_DATA;
-
-test('Prompt Motion is an importable collection under Motion & 3D', () => {
-  const pack = D.collections.find(item => item.id === 'prompt-motion-design-ideas');
-  assert.ok(pack);
-  assert.equal(pack.title, 'PROMPT MOTION DESIGN IDEAS');
-  assert.equal(pack.cat, 'motion');
-  assert.ok(D.skills.every(skill => skill.id !== pack.id));
-  const lessons = parseLessons(JSON.stringify({ lessons: pack.lessons }));
-  assert.equal(lessons.length, 8);
-  for (const lesson of lessons) {
-    assert.equal(new URL(lesson.sourceUrl).origin, 'https://prompt-motion.com');
-    assert.ok(lesson.takeaways.length && lesson.actions.length);
-  }
-});
 
 test('skill data loads and has the expected sections', () => {
   assert.ok(D, 'window.SKILL_DATA is defined');

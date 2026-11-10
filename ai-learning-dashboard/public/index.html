@@ -25,13 +25,13 @@
       <div class="window">
         <aside class="side">
           <div class="profile">
-            <span class="avatar" aria-hidden="true"><span class="i shelf-icon shelf-icon--shelf"></span></span>
+            <span class="avatar" aria-hidden="true">AI</span>
             <span><strong>AI Skill Shelf</strong><small>Shared with friends &amp; family</small></span>
           </div>
           <nav aria-label="Skill categories" id="cat-nav"></nav>
           <div class="side-bottom">
-            <button class="side-link" id="open-guide" type="button"><span class="i shelf-icon shelf-icon--bulb" aria-hidden="true"></span>What is a skill?</button>
-            <button class="side-link" id="share-page" type="button"><span class="i shelf-icon shelf-icon--link" aria-hidden="true"></span>Share this page</button>
+            <button class="side-link" id="open-guide" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6 M10 22h4 M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2Z"/></svg>What is a skill?</button>
+            <button class="side-link" id="share-page" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7 M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>Share this page</button>
             <p class="credit">Background photo from <a href="https://unsplash.com/photos/cozy-living-room-with-fireplace-and-television-XwgC9tsm7jU" target="_blank" rel="noopener">Unsplash</a></p>
           </div>
         </aside>
@@ -43,13 +43,13 @@
               <p class="lede">These are the AI skills I collect from GitHub, TikTok and friends. Tap a card to see what it does and how to use it.</p>
             </div>
             <label class="search">
-              <span class="i shelf-icon shelf-icon--search" aria-hidden="true"></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 16l5 5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"/></svg>
               <input id="q" type="search" placeholder="Search skills…" aria-label="Search skills" autocomplete="off">
             </label>
           </header>
 
           <section class="intro glass-card" id="intro" aria-label="How skills work">
-            <button class="intro-close" id="intro-close" type="button" aria-label="Hide this tip"><span class="i sm shelf-icon shelf-icon--close" aria-hidden="true"></span></button>
+            <button class="intro-close" id="intro-close" type="button" aria-label="Hide this tip">×</button>
             <div><b>1</b><p><strong>A skill is a ready-made instruction pack.</strong> It teaches Claude to do one job really well.</p></div>
             <div><b>2</b><p><strong>Add it once.</strong> Some are already built into Claude. Others you download from GitHub.</p></div>
             <div><b>3</b><p><strong>Then just ask.</strong> Use normal words, or type <code>/</code> and the skill name.</p></div>
@@ -81,11 +81,11 @@
   <dialog id="detail" aria-labelledby="d-title"><div id="detail-body"></div></dialog>
   <dialog id="guide" aria-labelledby="g-title">
     <div class="d-inner">
-      <div class="d-top"><h2 id="g-title">What is a skill?</h2><button class="close" type="button" data-close aria-label="Close"><span class="i shelf-icon shelf-icon--close" aria-hidden="true"></span></button></div>
+      <div class="d-top"><h2 id="g-title">What is a skill?</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="d-what">A <strong>skill</strong> is a small folder of instructions (a <code>SKILL.md</code> file, sometimes with helper files). When Claude sees that your request matches a skill, it reads those instructions and follows them. It's like giving Claude a recipe card for one job.</p>
       <div class="how">
-        <div class="how-card"><h3><span class="i sm shelf-icon shelf-icon--terminal" aria-hidden="true"></span>In Claude Code</h3><p>Put the skill folder in <code>~/.claude/skills/</code>. Then ask in normal words, or type <code>/</code> and the skill name, like <code>/humanizer</code>.</p></div>
-        <div class="how-card"><h3><span class="i sm shelf-icon shelf-icon--chat" aria-hidden="true"></span>In the Claude app</h3><p>Word, PowerPoint, Excel and PDF skills are already built in. For other skills, zip the skill folder and upload it under <em>Settings → Capabilities → Skills</em>.</p></div>
+        <div class="how-card"><h3><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l6-6-6-6 M12 19h8"/></svg>In Claude Code</h3><p>Put the skill folder in <code>~/.claude/skills/</code>. Then ask in normal words, or type <code>/</code> and the skill name, like <code>/humanizer</code>.</p></div>
+        <div class="how-card"><h3><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg>In the Claude app</h3><p>Word, PowerPoint, Excel and PDF skills are already built in. For other skills, zip the skill folder and upload it under <em>Settings → Capabilities → Skills</em>.</p></div>
       </div>
       <p class="d-note">Not using Claude? Copy the “Try saying” example from any card. The skill itself works best in Claude, but the idea still helps in other chatbots.</p>
     </div>
