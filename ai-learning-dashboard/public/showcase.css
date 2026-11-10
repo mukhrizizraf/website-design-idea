@@ -29,7 +29,7 @@ code{font-family:ui-monospace,'Cascadia Code',Consolas,monospace;font-size:.92em
 .i{display:inline-block;width:22px;height:22px;flex:none;vertical-align:middle}
 .i.sm{width:17px;height:17px}.i.xs{width:13px;height:13px;margin-left:3px}
 /* One ChatGPT Image atlas, with each icon occupying one cell of the grid. */
-.shelf-icon{background:url('./skill-shelf-icons.png') var(--icon-x,0%) var(--icon-y,0%)/500% 500% no-repeat}
+.shelf-icon{background:url('./skill-shelf-icons.png?v=20261110-motion-icons') var(--icon-x,0%) var(--icon-y,0%)/500% 500% no-repeat}
 .shelf-icon--grid{--icon-x:0%;--icon-y:0%}
 .shelf-icon--palette{--icon-x:25%;--icon-y:0%}
 .shelf-icon--sparkles{--icon-x:50%;--icon-y:0%}

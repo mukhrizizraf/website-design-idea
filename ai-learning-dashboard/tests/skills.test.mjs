@@ -56,6 +56,6 @@ test('source links are https GitHub pages or empty', () => {
 
 test('the main page loads the showcase scripts', async () => {
   const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
-  assert.match(html, /<script defer src="\.\/skills\.js"><\/script>/);
-  assert.match(html, /<script defer src="\.\/showcase\.js"><\/script>/);
+  assert.match(html, /<script defer src="\.\/skills\.js(?:\?v=[\w-]+)?"><\/script>/);
+  assert.match(html, /<script defer src="\.\/showcase\.js(?:\?v=[\w-]+)?"><\/script>/);
 });

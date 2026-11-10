@@ -1,5 +1,11 @@
 # AI Skill Shelf
 
+[Open the live AI LEARNING TOOLS dashboard](https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/index.html)
+
+Double-click **OPEN DASHBOARD.html** or **index.html** in the Google Drive folder to open this live dashboard. Both shortcuts require an internet connection. **PROMPT MOTION DESIGN IDEAS** is the first card under **Motion & 3D**, with eight ideas and custom ChatGPT Image icons.
+
+For offline use, open **public/index.html**. That is a separate local copy; GitHub updates do not automatically update files on your computer. Make shared changes in the `website-design-idea/ai-learning-dashboard` repository folder and merge current GitHub changes before pushing.
+
 The main page (`public/index.html`) is a shared showcase of the AI skills I collect from GitHub, TikTok and friends. Each card explains, in plain words, what the skill does, what it is good for, how to start it in Claude Code or the Claude app, and an example request to copy. Everyone who opens the link sees the same list. The design is visionOS-style glass over a soft blurred room, inspired by "Glassy Dashboard V18" (TikTok @paulcodes4).
 
 ## Add or change a skill
@@ -21,7 +27,7 @@ A calm, responsive dashboard for turning discoveries into practical AI skills. I
 
 ## Start locally
 
-For personal use, you can double-click **OPEN DASHBOARD.html** in this folder. It opens the dashboard directly without starting a server. Open it from the synced folder on your computer, not Google Drive's online file preview. The direct-file edition supports the skill library, notes, imports and progress; browser storage support may vary. For the chat bridge, use the local server below. Direct-file and server views have separate browser storage, so export/import a backup to move between them.
+For the personal lesson workspace, double-click **public/legacy.html** in this folder. It opens directly without starting a server. Open it from the synced folder on your computer, not Google Drive's online file preview. The direct-file edition supports the skill library, notes, imports and progress; browser storage support may vary. For the chat bridge, use the local server below. Direct-file and server views have separate browser storage, so export/import a backup to move between them.
 
 Install Node.js 22 or later, open this directory in a terminal, then run:
 
