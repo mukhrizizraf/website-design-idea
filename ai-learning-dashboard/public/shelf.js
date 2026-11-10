@@ -153,19 +153,47 @@
       <p class="repo">GitHub: <code>${esc(i.folderUrl || i.url)}</code><button class="btn small" type="button" data-copy="${esc(i.folderUrl || i.url)}" data-done="GitHub link copied.">Copy link</button></p>`;
   }
 
-  // ---------- detail sheets ----------
+  // ---------- detail sheets: a 3D pop-up that speaks ----------
+  const Sound = window.ShelfSound;
+  const cube = cat => `<div class="cube-wrap" data-cat="${cat}" aria-hidden="true"><div class="cube">${Array.from({ length: 6 }, () => `<i>${svg(P[cat] || P.all, 26)}</i>`).join('')}</div></div>`;
+  const listenBtn = id => `<button class="listen" type="button" data-listen="${esc(id)}"><span class="wave" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></span><span class="lbl">Listen</span></button>`;
+  let lastClick = null;                      // where the visitor clicked, so the window flies out from there
+  function speak(item) {
+    const btn = $('#detail .listen'); if (!Sound || !btn) return;
+    const text = item.lessons ? `${item.title.charAt(0) + item.title.slice(1).toLowerCase()}. ${item.what} There are ${item.lessons.length} ideas to study, each with an exercise.` : Sound.narration(item, D.sources);
+    const ok = Sound.say(text, { onstart: () => btn.classList.add('speaking'), onend: () => btn.classList.remove('speaking') });
+    if (!ok) btn.classList.remove('speaking');
+  }
   function openSheet(id, push) {
     const d = $('#detail');
-    if (!d.open) d.showModal();
+    const r = lastClick?.getBoundingClientRect?.();
+    if (r) {
+      d.style.setProperty('--fx', `${Math.round(r.left + r.width / 2 - innerWidth / 2)}px`);
+      d.style.setProperty('--fy', `${Math.round(r.top + r.height / 2 - innerHeight / 2)}px`);
+      d.style.setProperty('--fr', `${r.left + r.width / 2 < innerWidth / 2 ? 14 : -14}deg`);
+    }
+    d.classList.remove('closing');
+    if (d.open) { d.close(); }
+    d.showModal();
     d.scrollTop = 0;
     if (push) history.replaceState(null, '', '#skill=' + id);
+    Sound?.sfx.open();
+    const item = items.find(x => x.id === id);
+    if (Sound?.on && item) setTimeout(() => { if (d.open) speak(item); }, 520);
+  }
+  function closeSheet(d) {
+    if (!d.open) return;
+    if (reduced) { d.close(); return; }
+    d.classList.add('closing');
+    setTimeout(() => { d.classList.remove('closing'); d.close(); }, 240);
   }
   function openCollection(c, push) {
     const paused = c.externalLinksPaused;
     const li = list => list.map(x => `<li>${esc(x)}</li>`).join('');
     $('#detail-body').innerHTML = `<div class="sheet">
-      <div class="sheet-top"><div><h2 id="d-title">${esc(c.title.charAt(0) + c.title.slice(1).toLowerCase())}</h2><p class="sheet-sub">${c.lessons.length} ideas to study, in ${esc(cats[c.cat].label)}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
+      <div class="sheet-top">${cube(c.cat)}<div><h2 id="d-title">${esc(c.title.charAt(0) + c.title.slice(1).toLowerCase())}</h2><p class="sheet-sub">${c.lessons.length} ideas to study, in ${esc(cats[c.cat].label)}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(c.what)}</p>
+      <div class="sheet-actions">${listenBtn(c.id)}</div>
       ${paused ? '<p class="note">Links to the original examples are paused after an antivirus warning. Every summary and exercise is still here.</p>' : ''}
       <div style="margin-top:18px">${c.lessons.map(l => `<details class="lesson"><summary><strong>${esc(l.title)}</strong><small>${esc(String(l.source || '').replace(/^Prompt Motion\s*·\s*/, ''))}</small></summary>
         <p>${esc(l.summary)}</p><h4>What to learn</h4><ul>${li(l.takeaways)}</ul><h4>Try it</h4><ol>${li(l.actions)}</ol>
@@ -187,8 +215,9 @@
     if (s.lessons) { openCollection(s, push); return; }
     const src = D.sources[s.src] || { name: 'Unknown' };
     $('#detail-body').innerHTML = `<div class="sheet">
-      <div class="sheet-top"><div><h2 id="d-title">${esc(s.title)}</h2><p class="sheet-sub">${esc(cats[s.cat].label)}, ${esc(D.levels[s.level].label.toLowerCase())}, from ${esc(src.name)}${isNew(s) ? ', new this month' : ''}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
+      <div class="sheet-top">${cube(s.cat)}<div><h2 id="d-title">${esc(s.title)}</h2><p class="sheet-sub">${esc(cats[s.cat].label)}, ${esc(D.levels[s.level].label.toLowerCase())}, from ${esc(src.name)}${isNew(s) ? ', new this month' : ''}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(s.what)}</p>
+      <div class="sheet-actions">${listenBtn(s.id)}</div>
       <h3>Good for</h3><ul class="uses">${s.useFor.map(u => `<li>${esc(u)}</li>`).join('')}</ul>
       <h3>Say this to Claude</h3><div class="say"><p>“${esc(s.say)}”</p><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy</button></div>
       <p class="note">${esc(D.levels[s.level].hint)} In Claude Code you can also type <code>/${esc(s.members ? s.members[0][0] : s.id)}</code> to start it directly.</p>
@@ -197,14 +226,25 @@
       <div class="sheet-foot"><button class="btn" type="button" data-share="${esc(s.id)}">Copy a link to this skill</button></div></div>`;
     openSheet(s.id, push);
   }
-  $('#detail').addEventListener('close', () => { if (location.hash.startsWith('#skill=')) history.replaceState(null, '', location.pathname + location.search); });
-  document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+  $('#detail').addEventListener('close', () => {
+    Sound?.stop(); Sound?.sfx.close();
+    if (location.hash.startsWith('#skill=')) history.replaceState(null, '', location.pathname + location.search);
+  });
+  document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) closeSheet(d); }));
+  document.addEventListener('shelf-sound', e => { if (!e.detail) $('#detail .listen')?.classList.remove('speaking'); });
 
   // ---------- events ----------
   function render() { renderTabs(); renderShelf(); }
   document.addEventListener('click', e => {
     const t = e.target.closest('button, a'); if (!t) return;
-    if (t.dataset.skill) openSkill(t.dataset.skill);
+    if (t.dataset.skill) { lastClick = t; openSkill(t.dataset.skill); }
+    else if (t.dataset.listen) {
+      if (t.classList.contains('speaking')) { Sound?.stop(); t.classList.remove('speaking'); }
+      else {
+        if (Sound && !Sound.on) Sound.set(true);
+        const item = items.find(x => x.id === t.dataset.listen); if (item) speak(item);
+      }
+    }
     else if (t.dataset.cat) { state.cat = t.dataset.cat; render(); if (matchMedia('(max-width: 760px)').matches) $('#shelf').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); }
     else if (t.dataset.step) { state.pick = (state.pick + Number(t.dataset.step) + picks.length) % picks.length; renderPick(); }
     else if (t.dataset.copy !== undefined) copy(t.dataset.copy, t.dataset.done || 'Copied. Paste it into Claude.');
@@ -215,7 +255,7 @@
       sheet.querySelectorAll('.way').forEach(b => b.setAttribute('aria-selected', String(b === t)));
       sheet.querySelectorAll('.way-panel').forEach(p => { p.hidden = p.dataset.panel !== t.dataset.way; });
     }
-    else if (t.hasAttribute('data-close')) t.closest('dialog').close();
+    else if (t.hasAttribute('data-close')) closeSheet(t.closest('dialog'));
     else if (t.id === 'clear') { state.cat = 'all'; state.q = ''; state.easy = false; $('#q').value = ''; $('#easy').checked = false; render(); }
     else if (t.id === 'open-guide') $('#guide').showModal();
     else if (t.id === 'share-page') copy(pageUrl(), 'Page link copied.');
