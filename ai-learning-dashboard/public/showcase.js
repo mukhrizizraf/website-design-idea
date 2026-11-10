@@ -42,7 +42,7 @@
 
   // ---------- helpers ----------
   const levelChip = l => `<span class="chip ${l}"><i class="dot"></i>${esc(D.levels[l].label)}</span>`;
-  const catChip = c => `<span class="chip">${svg(catIcon[c], 'i sm')}${esc(cats[c].label)}</span>`;
+  const catChip = c => `<span class="chip cat">${svg(catIcon[c], 'i sm')}<span class="t">${esc(cats[c].label)}</span></span>`;
   function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2400); }
   async function copy(text, done) {
     try { await navigator.clipboard.writeText(text); }
@@ -128,7 +128,7 @@
 
     const feat = D.featured.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
     $('#w-featured').innerHTML = `<div class="w-head"><span>Try these first</span>${svg('star')}</div>
-      <ul class="feat-list">${feat.map(s => `<li><button class="feat" type="button" data-skill="${s.id}">${tile(s.cat)}<span><strong>${esc(s.title)}${isNew(s) ? ' <span class="chip new">New</span>' : ''}</strong><small>${esc(s.useFor[0])}</small></span></button></li>`).join('')}</ul>`;
+      <ul class="feat-list">${feat.map(s => `<li><button class="feat" type="button" data-skill="${s.id}">${tile(s.cat)}<span class="f-txt"><strong><span class="t">${esc(s.title)}</span>${isNew(s) ? '<span class="chip new">New</span>' : ''}</strong><small>${esc(s.useFor[0])}</small></span></button></li>`).join('')}</ul>`;
   }
 
   // ---------- detail window ----------

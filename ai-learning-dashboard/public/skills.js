@@ -5,12 +5,12 @@
 // added ('YYYY-MM-DD', optional: shows a "New" badge for 30 days and sorts the skill to the top).
 window.SKILL_DATA = {
   categories: [
-    { id: 'design', label: 'Design & websites', short: 'Design', icon: '🎨' },
+    { id: 'design', label: 'Web & design', short: 'Design', icon: '🎨' },
     { id: 'motion', label: 'Motion & 3D', short: 'Motion', icon: '✨' },
     { id: 'writing', label: 'Writing & research', short: 'Writing', icon: '✍️' },
-    { id: 'docs', label: 'Documents & slides', short: 'Docs', icon: '📄' },
+    { id: 'docs', label: 'Docs & slides', short: 'Docs', icon: '📄' },
     { id: 'coding', label: 'Coding helpers', short: 'Coding', icon: '🛠️' },
-    { id: 'workflow', label: 'AI tools & workflow', short: 'AI tools', icon: '🧠' }
+    { id: 'workflow', label: 'AI tools', short: 'AI tools', icon: '🧠' }
   ],
   levels: {
     easy: { label: 'Easy', hint: 'Anyone can use it. Just ask in normal words.' },
