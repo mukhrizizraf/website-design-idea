@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#3a2f27">
+  <meta name="theme-color" content="#2a221d">
   <meta name="description" content="The AI skills I collect from GitHub and TikTok, explained simply: what each one does and how to use it.">
   <title>AI Skill Shelf</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
@@ -17,8 +17,8 @@
 <body>
   <a class="skip" href="#content">Skip to skills</a>
 
-  <!-- Soft blurred "room" behind the glass, painted with CSS (no photo needed). -->
-  <div class="room" aria-hidden="true"><i class="r-window"></i><i class="r-lamp"></i><i class="r-shelf"></i><i class="r-tv"></i><i class="r-sofa"></i><i class="r-plant"></i><i class="r-floor"></i></div>
+  <!-- Real room photo behind the glass (Unsplash License), softly blurred and dimmed. -->
+  <div class="room" aria-hidden="true"></div>
 
   <div class="stage">
     <div class="window-wrap">
@@ -30,8 +30,8 @@
           </div>
           <nav aria-label="Skill categories" id="cat-nav"></nav>
           <div class="side-bottom">
-            <button class="side-link" id="open-guide" type="button"><span aria-hidden="true">💡</span>What is a skill?</button>
-            <button class="side-link" id="share-page" type="button"><span aria-hidden="true">🔗</span>Share this page</button>
+            <button class="side-link" id="open-guide" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6 M10 22h4 M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2Z"/></svg>What is a skill?</button>
+            <button class="side-link" id="share-page" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7 M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>Share this page</button>
           </div>
         </aside>
 
@@ -71,8 +71,12 @@
       <section class="widget w-blue" id="w-cats"></section>
       <section class="widget" id="w-sources"></section>
       <section class="widget" id="w-featured"></section>
+      <p class="credit">Background photo from <a href="https://unsplash.com/photos/cozy-living-room-with-fireplace-and-television-XwgC9tsm7jU" target="_blank" rel="noopener">Unsplash</a></p>
     </aside>
   </div>
+
+  <!-- Phone only: floating glass tab bar (style from "Glassy Navigation Tabs V5"). -->
+  <nav class="tabbar" id="tabbar" aria-label="Skill categories"></nav>
 
   <dialog id="detail" aria-labelledby="d-title"><div id="detail-body"></div></dialog>
   <dialog id="guide" aria-labelledby="g-title">
@@ -80,8 +84,8 @@
       <div class="d-top"><h2 id="g-title">What is a skill?</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="d-what">A <strong>skill</strong> is a small folder of instructions (a <code>SKILL.md</code> file, sometimes with helper files). When Claude sees that your request matches a skill, it reads those instructions and follows them. It's like giving Claude a recipe card for one job.</p>
       <div class="how">
-        <div class="how-card"><h3>💻 In Claude Code</h3><p>Put the skill folder in <code>~/.claude/skills/</code>. Then ask in normal words, or type <code>/</code> and the skill name, like <code>/humanizer</code>.</p></div>
-        <div class="how-card"><h3>💬 In the Claude app</h3><p>Word, PowerPoint, Excel and PDF skills are already built in. For other skills, zip the skill folder and upload it under <em>Settings → Capabilities → Skills</em>.</p></div>
+        <div class="how-card"><h3><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l6-6-6-6 M12 19h8"/></svg>In Claude Code</h3><p>Put the skill folder in <code>~/.claude/skills/</code>. Then ask in normal words, or type <code>/</code> and the skill name, like <code>/humanizer</code>.</p></div>
+        <div class="how-card"><h3><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg>In the Claude app</h3><p>Word, PowerPoint, Excel and PDF skills are already built in. For other skills, zip the skill folder and upload it under <em>Settings → Capabilities → Skills</em>.</p></div>
       </div>
       <p class="d-note">Not using Claude? Copy the “Try saying” example from any card. The skill itself works best in Claude, but the idea still helps in other chatbots.</p>
     </div>

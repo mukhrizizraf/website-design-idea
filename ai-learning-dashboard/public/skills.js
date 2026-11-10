@@ -1,15 +1,16 @@
 // My AI skill collection. To add a skill, copy one entry in `skills`, change the text, save, and push.
 // Fields: id, title, cat (a category id), icon (one emoji), level ('easy' | 'medium' | 'technical'),
 // what (one plain sentence), useFor (2-3 short uses), say (an example request), src (a source id),
-// builtIn (true if the Claude app already has it), members (only for packs: [name, what it does]).
+// builtIn (true if the Claude app already has it), members (only for packs: [name, what it does]),
+// added ('YYYY-MM-DD', optional: shows a "New" badge for 30 days and sorts the skill to the top).
 window.SKILL_DATA = {
   categories: [
-    { id: 'design', label: 'Design & websites', icon: '🎨' },
-    { id: 'motion', label: 'Motion & 3D', icon: '✨' },
-    { id: 'writing', label: 'Writing & research', icon: '✍️' },
-    { id: 'docs', label: 'Documents & slides', icon: '📄' },
-    { id: 'coding', label: 'Coding helpers', icon: '🛠️' },
-    { id: 'workflow', label: 'AI tools & workflow', icon: '🧠' }
+    { id: 'design', label: 'Design & websites', short: 'Design', icon: '🎨' },
+    { id: 'motion', label: 'Motion & 3D', short: 'Motion', icon: '✨' },
+    { id: 'writing', label: 'Writing & research', short: 'Writing', icon: '✍️' },
+    { id: 'docs', label: 'Documents & slides', short: 'Docs', icon: '📄' },
+    { id: 'coding', label: 'Coding helpers', short: 'Coding', icon: '🛠️' },
+    { id: 'workflow', label: 'AI tools & workflow', short: 'AI tools', icon: '🧠' }
   ],
   levels: {
     easy: { label: 'Easy', hint: 'Anyone can use it. Just ask in normal words.' },
@@ -22,15 +23,24 @@ window.SKILL_DATA = {
     emil: { name: 'Emil Kowalski', url: 'https://github.com/emilkowalski/skills' },
     gsap: { name: 'GreenSock (GSAP) official', url: 'https://github.com/greensock/gsap-skills' },
     designdna: { name: 'zanwei/design-dna', url: 'https://github.com/zanwei/design-dna' },
+    juliobsz: { name: 'juliobsz/skills', url: 'https://github.com/juliobsz/skills' },
     claudemem: { name: 'thedotmack/claude-mem', url: 'https://github.com/thedotmack/claude-mem' },
     claudeapp: { name: 'Claude app', url: '' },
     plugin: { name: 'Claude plugin', url: '' },
     community: { name: 'Community', url: '' },
-    me: { name: 'Made by me', url: '' }
+    downloaded: { name: 'Downloaded', url: '' }
   },
-  featured: ['humanizer', 'canvas-design', 'pptx'],
+  featured: ['tiktok-reader', 'humanizer', 'canvas-design'],
   skills: [
     // ---------- Design & websites ----------
+    { id: 'awwwards', title: 'Awwwards Website Builder', cat: 'design', icon: '🏆', level: 'medium', src: 'juliobsz', added: '2026-11-10',
+      what: 'Builds an award-quality website from one sentence, aiming for the level of sites that win Awwwards "Site of the Day".',
+      useFor: ['Portfolios and personal sites', 'Product or brand launch pages', 'Landing pages that must impress'],
+      say: 'Use /awwwards to make me a portfolio. My name is Ana and I teach biology.' },
+    { id: 'jury', title: 'Website Jury', cat: 'design', icon: '⚖️', level: 'easy', src: 'juliobsz', added: '2026-11-10',
+      what: 'Scores any website the way an Awwwards judge would, with screenshots, speed checks and a ranked list of fixes.',
+      useFor: ['Checking your site before you share it', 'Comparing your site with award winners', 'Getting a clear, ranked fix list'],
+      say: 'Use /jury to score my site: https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/' },
     { id: 'frontend-design', title: 'Frontend Design', cat: 'design', icon: '🎨', level: 'easy', src: 'anthropic',
       what: 'Helps Claude design web pages that look distinctive and professional instead of generic.',
       useFor: ['Landing pages and portfolios', 'Fixing a page that looks plain or "AI-made"', 'Choosing fonts, colours and layout'],
@@ -252,10 +262,10 @@ window.SKILL_DATA = {
       what: 'Helps you make your own new skill, test it and improve it.',
       useFor: ['Turning a routine you repeat into a skill', 'Improving a skill that misfires', 'Sharing your workflow'],
       say: 'Help me turn my "lecture notes to slides" routine into a skill.' },
-    { id: 'tiktok-reader', title: 'TikTok Reader', cat: 'workflow', icon: '🎵', level: 'easy', src: 'me',
-      what: 'Reads a TikTok video\'s caption, author and stats from its link. It cannot watch the video itself.',
-      useFor: ['Saving design ideas from TikTok', 'Getting the hashtags and creator', 'Checking for subtitles'],
-      say: 'Read this TikTok and tell me what design idea it shows: <link>' },
+    { id: 'tiktok-reader', title: 'TikTok Reader', cat: 'workflow', icon: '🎵', level: 'easy', src: 'downloaded', added: '2026-11-10',
+      what: 'Pulls the caption, creator, hashtags and stats out of a TikTok link, so Claude can use the idea in the video. It reads the text, not the picture or sound.',
+      useFor: ['Saving design ideas you find on TikTok', 'Getting the creator, hashtags and music', 'Checking if the video has subtitles'],
+      say: 'Use tiktok-reader on this link and tell me what design idea it shows: <paste TikTok link>' },
     { id: 'claude-mem', title: 'Claude-Mem (Memory)', cat: 'workflow', icon: '🧠', level: 'medium', src: 'claudemem',
       what: 'Gives Claude a long-term memory of past sessions, plus a to-do list that carries over.',
       useFor: ['Continuing work across days', 'Remembering your preferences', 'Tracking open tasks'],

@@ -4,12 +4,14 @@ A shared showcase of AI skills, styled like a visionOS window floating in a warm
 
 Files: `public/index.html`, `public/showcase.css`, `public/showcase.js`, data in `public/skills.js`. The old lesson workspace keeps its own design in `public/styles.css` (`public/legacy.html`).
 
+Tabs and the teal glow come from a second reference, "Glassy Navigation Tabs V5" (same creator): a spotlight cone on the active level tab and active sidebar item, and on phones a floating glass tab bar whose active icon lifts into a glowing teal circle.
+
 ## Tokens
-- Background: a CSS-painted room (window light, lamp glow, shelf, TV, sofa, wood floor) blurred 26px, with a light dark overlay. No photo file.
-- Window glass: `rgba(32,27,23,.62)`, 40px backdrop blur, 1px white edge at 16%, 36px radius. Inner cards: white at 7.5%, 22px radius.
-- Blue widget: `rgba(96,150,230,.62) → rgba(46,86,170,.55)`.
-- Text: white; secondary white at 76%; faint white at 55%.
-- Accent: system blue `#0a84ff`. Level chips: Easy green, Medium amber, Technical red, each with a text label.
+- Background: a real room photo (`public/room.jpg`, Unsplash License, credited under the widgets), blurred 2.5px and dimmed with a vignette so white text stays readable.
+- Glass: white 16% → 5% gradient over `rgba(24,20,17,.44)`, 30px backdrop blur, saturate 180%, a bright 1px gradient edge (masked pseudo-element) and a top inner highlight. Window radius 38px, widgets 30px, cards 24px.
+- Accent: teal `#2dd4bf` / `#5eead4` with a soft glow. Level chips: Easy green, Medium amber, Technical red, each with a text label. "New" chip: teal with glow, shown for 30 days after a skill's `added` date.
+- Icons: thin line icons (Lucide-style, 1.75 stroke). Card tiles are tinted glass per category.
+- Text: white; secondary white at 80%; faint white at 58%.
 - Type: Instrument Serif for the greeting, big numbers and dialog titles; Inter for everything else.
 
 ## Behaviour
@@ -21,5 +23,5 @@ Files: `public/index.html`, `public/showcase.css`, `public/showcase.js`, data in
 
 ## Responsive
 - Below 1180px the widgets move under the window and the window scrolls with the page.
-- Below 860px the sidebar becomes a swipeable row of category chips, and the KPI tiles show two per row.
+- Below 860px the sidebar is replaced by the floating glass tab bar at the bottom, and the KPI tiles show two per row.
 - Reduced motion turns off all animation. Without backdrop-filter support, the glass becomes solid.
