@@ -73,12 +73,13 @@ code{font-family:ui-monospace,'Cascadia Code',Consolas,monospace;font-size:.92em
 .card::before,.glass-card::before,.seg::before,.search::before{background:linear-gradient(150deg,rgba(255,255,255,.35),rgba(255,255,255,.06) 40%,rgba(255,255,255,.03) 70%,rgba(255,255,255,.16))}
 
 /* ---------- Layout ---------- */
-/* Desktop: the stage is exactly one screen tall, so the page never scrolls.
-   Only the skill list scrolls, inside the window. Both columns share the same top and bottom. */
-.stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;grid-template-rows:minmax(0,1fr);gap:24px;max-width:1480px;margin:0 auto;
-  height:100vh;height:100dvh;padding:clamp(14px,4.5vh,44px) 48px clamp(8px,1.6vh,18px);align-items:stretch}
-.window-wrap{display:flex;flex-direction:column;align-items:center;min-width:0;min-height:0;height:100%}
-.window{flex:1;width:100%;min-height:0;display:grid;grid-template-columns:236px minmax(0,1fr);border-radius:38px;overflow:hidden}
+/* Desktop: window and widget column share ONE height that never shrinks below 760px.
+   Tall screens: it fills the screen. Short screens: the page scrolls a little, but both
+   columns move together (nothing is pinned), so tops and bottoms always line up and nothing gets squashed. */
+.stage{--panel-h:max(760px,calc(100dvh - 88px));display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;max-width:1480px;margin:0 auto;
+  padding:40px 48px 28px;align-items:start}
+.window-wrap{display:flex;flex-direction:column;align-items:center;min-width:0}
+.window{width:100%;height:var(--panel-h);display:grid;grid-template-columns:236px minmax(0,1fr);border-radius:38px;overflow:hidden}
 .handle{flex:none;width:84px;height:6px;border-radius:6px;margin-top:12px;background:rgba(255,255,255,.7);box-shadow:0 2px 10px rgba(0,0,0,.3)}
 
 /* ---------- Sidebar inside the window ---------- */
@@ -184,7 +185,7 @@ h1{font-family:var(--serif);font-weight:400;font-size:48px;line-height:1.02;lett
 
 /* ---------- Floating widgets ---------- */
 /* Right column is exactly as tall as the window, so both end on the same line. */
-.widgets{display:flex;flex-direction:column;gap:16px;min-height:0;height:calc(100% - 18px);overflow-y:auto;scrollbar-width:none;border-radius:30px}
+.widgets{display:flex;flex-direction:column;gap:16px;height:var(--panel-h);overflow-y:auto;scrollbar-width:none;border-radius:30px}
 .widgets::-webkit-scrollbar{display:none}
 #w-cats,#w-featured{flex:none}
 #w-sources{flex:1;min-height:0;display:flex;flex-direction:column}
@@ -232,30 +233,10 @@ h1{font-family:var(--serif);font-weight:400;font-size:48px;line-height:1.02;lett
 /* Narrower desktop: number tiles as a tidy 2 x 2 instead of 4 squeezed tiles */
 /* Number tiles: 4 across only when the content area is wide enough, otherwise an even 2 x 2 */
 .content{container-type:inline-size}
-@container (max-width:780px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-/* Thinner bars on shorter screens so they still read as bars, not blobs */
-@media (max-height:820px) and (min-width:1181px){.bar span.fill{max-width:20px}}
-@media (max-height:680px) and (min-width:1181px){.bar span.fill{max-width:14px}}
-/* Short screens: compact the right column so all three widgets fit the window height */
-/* Very short screens (small laptop, browser bar + taskbar): drop the extra lines so everything still fits */
-@media (max-height:680px) and (min-width:1181px){
-  .w-sub,.feat small{display:none}
-  .w-big{font-size:28px!important}
-  .bars{height:58px!important}
-  .widget{padding:12px 14px!important}
-  .widgets{gap:12px}
-  .head{margin-bottom:14px}
-  h1{font-size:38px}
-}
-@media (max-height:820px) and (min-width:1181px){
-  .widget{padding:15px 16px}
-  .w-big{font-size:34px}
-  .bars{height:92px;margin-top:10px}
-  .feat-list{gap:7px;margin-top:9px}
-  .feat{padding:6px}
-  .feat .c-ic{width:32px;height:32px;border-radius:10px}
-  .feat .c-ic .i{width:16px;height:16px}
-}
+@container (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Greeting stays on one line; the text block takes the free space beside the search box */
+.head>div:first-child{flex:1;min-width:0}
+h1{white-space:nowrap}
 .credit a{color:inherit}
 
 /* ---------- Detail dialog (a floating window) ---------- */
@@ -316,8 +297,7 @@ dialog[open]{animation:pop .45s var(--ease)}
 
 /* ---------- Responsive ---------- */
 @media (max-width:1180px){
-  .stage{grid-template-columns:1fr;grid-template-rows:auto;height:auto;padding:28px 28px 24px}
-  .window-wrap{height:auto}
+  .stage{grid-template-columns:1fr;padding:28px 28px 24px}
   .widgets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:auto;min-height:0;overflow:visible}
   #w-sources .src-list{overflow:visible;-webkit-mask:none;mask:none}
   .window{height:auto;min-height:0}
