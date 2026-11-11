@@ -8,7 +8,7 @@ Files: homepage `public/index.html` + `home.css`; shelf `public/shelf.html` + `s
 
 - Background `#f5f5f7` with radial colour fields (orange, indigo, sky, pink, purple). Glass: white 78% → 52%, 28px backdrop blur, saturate 180%, white top edge.
 - Text `#1d1d1f`; secondary at 74%; faint at 50%.
-- Category colours (gradient pairs): Web & design `#ff375f → #ff9f0a`, Motion & 3D `#bf5af2 → #5e5ce6`, Writing `#ff9f0a → #ffd60a`, Docs `#0a84ff → #64d2ff`, Coding `#00c7be → #0a84ff`, AI tools `#ff2d55 → #bf5af2`.
+- Category colours (gradient pairs): Web & design `#ff375f → #ff9f0a`, Motion & 3D `#bf5af2 → #5e5ce6`, Writing `#ff9f0a → #ffd60a`, Docs `#0a84ff → #64d2ff`, Coding `#30d158 → #00b5a8`, AI tools `#ff2d55 → #bf5af2`.
 - 3D deck cards use a rainbow order so neighbours never match: `#ff375f #ff8a00 #e0a400 #28b44f #00a8a0 #0a84ff #5e5ce6 #a94fe0 #e8344e`.
 - Level chips: Easy green, Medium orange, Technical pink, each with a text label. "New": pink text for 30 days after `added`.
 - Type: Bricolage Grotesque (800, tight tracking) for headings and UI; Instrument Serif italic for the coloured second line and quoted prompts; JetBrains Mono for small tags and code.
