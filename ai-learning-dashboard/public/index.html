@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./home.css?v=202611111429">
+  <link rel="stylesheet" href="./home.css?v=20261111-focus">
   <link rel="stylesheet" href="./pop.css?v=202611111429">
   <script type="importmap">
     { "imports": {
@@ -32,7 +32,6 @@
     } }
   </script>
   <script defer src="./skills.js?v=202611111429"></script>
-  <script defer src="./vibe.js?v=202611111429"></script>
   <script defer src="./toys.js?v=202611111429"></script>
 </head>
 <body>
@@ -56,10 +55,20 @@
     <section class="chapter" id="ch-saved">
       <div class="copy">
         <p class="kicker">01  Saved, not lost</p>
-        <h1><span class="heavy">All my AI tricks,</span> <span class="soft">all in one spot.</span></h1>
-        <p class="body">The best AI skills I found on TikTok, GitHub and from friends, all kept here. No more scrolling WhatsApp till your thumb hurts.</p>
-        <p class="cue"><span aria-hidden="true"></span>Scroll down, I'll show you</p>
+        <h1><span class="heavy">Find an AI skill.</span> <span class="soft">Put it to work.</span></h1>
+        <p class="body">Useful skills for Claude, collected from TikTok, GitHub and friends. See what each one does, how to set it up, and exactly what to ask.</p>
+        <div class="hero-actions"><a class="cta" href="./shelf.html">Browse skills</a><a class="hero-secondary" href="#ch-skill">How it works</a></div>
+        <p class="hero-note">Plain-English examples. Setup steps included.</p>
       </div>
+
+      <section class="quick-start" aria-labelledby="quick-title">
+        <div class="quick-heading"><h2 id="quick-title">Start with something useful.</h2><p>Three easy skills. Pick a job and see the steps.</p></div>
+        <div class="quick-grid">
+          <a class="quick-card" href="./shelf.html#skill=pptx"><span class="quick-label">DOCS &amp; SLIDES · BUILT IN TO CLAUDE APP</span><h3>Turn notes into slides</h3><p>Make a clear presentation from the notes you already have.</p><blockquote>“Make a 10-slide PowerPoint from my lecture notes.”</blockquote><span class="quick-link">Try PowerPoint Slides <span aria-hidden="true">↗</span></span></a>
+          <a class="quick-card" href="./shelf.html#skill=canvas-design"><span class="quick-label">WEB &amp; DESIGN · INSTALL FIRST</span><h3>Make a poster</h3><p>Turn an idea into a poster you can print or share.</p><blockquote>“Use canvas-design to make an A3 poster for our school science fair.”</blockquote><span class="quick-link">Try Canvas Design <span aria-hidden="true">↗</span></span></a>
+          <a class="quick-card" href="./shelf.html#skill=xlsx"><span class="quick-label">DOCS &amp; SLIDES · BUILT IN TO CLAUDE APP</span><h3>Build a simple tracker</h3><p>Keep a routine organised with a spreadsheet and a chart.</p><blockquote>“Make an Excel tracker for my kids’ weekly reading with a chart.”</blockquote><span class="quick-link">Try Excel Spreadsheets <span aria-hidden="true">↗</span></span></a>
+        </div>
+      </section>
     </section>
 
     <section class="chapter" id="ch-skill">
@@ -146,10 +155,16 @@
     // ---------- Chapter progress in the nav ----------
     const sections = [...document.querySelectorAll('.chapter')];
     const links = [...document.querySelectorAll('.chapters a')];
-    // Each chapter is one screen tall, so progress is simply "screens scrolled", from 0 to 3.
+    // Use actual chapter positions: the first chapter also contains the starter cards.
     function progress() {
-      const step = sections[1] ? sections[1].offsetTop - sections[0].offsetTop : innerHeight;
-      return Math.max(0, Math.min(sections.length - 1, scrollY / step));
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const start = sections[i].offsetTop;
+        if (scrollY >= start) {
+          const next = sections[i + 1];
+          return next ? i + Math.min(1, (scrollY - start) / Math.max(1, next.offsetTop - start)) : i;
+        }
+      }
+      return 0;
     }
     // The pill under the active chapter springs to its new place and takes that chapter's colour.
     const chPill = document.querySelector('.ch-pill');
