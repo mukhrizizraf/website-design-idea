@@ -158,3 +158,13 @@ dialog.pop.closing{animation:pop-out .24s cubic-bezier(.4,0,1,1) both}
 }
 /* Shelf: the vibe layer sits above the room colours and below the floating cubes and the window */
 body > .room{z-index:-2}
+
+/* Phones: keep ribbons below the 3D deck (behind the text windows), and stop any sideways scroll */
+html,body{overflow-x:hidden;overflow-x:clip}
+@media (max-width:820px){
+  .vibe-home .ribbon{-webkit-mask:none;mask:none}
+  .vibe-home .r1{top:64%}
+  .vibe-home .r2{top:88%}
+  .vibe-home .b1{top:auto;bottom:46%;left:4%}
+  .vibe-home .b5{display:none}
+}
