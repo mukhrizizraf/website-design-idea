@@ -1,161 +1,53 @@
 # AI Skill Shelf
 
-[Open the live AI LEARNING TOOLS dashboard](https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/index.html)
+**Live:** <https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/>
 
-Double-click **OPEN DASHBOARD.html** or **index.html** in the Google Drive folder to open this live dashboard. Both shortcuts require an internet connection. **PROMPT MOTION DESIGN IDEAS** is the first card under **Motion & 3D**, with eight ideas and custom ChatGPT Image icons.
+Every AI skill I find on TikTok, GitHub and from friends, kept in one place and shared so others can learn too. Each skill explains what it does, gives the exact words to say to Claude, and writes out the install steps so nobody has to open GitHub.
 
-Prompt Motion's external example links are paused following a reported antivirus warning. The collection keeps its summaries, exercises and creator credits; downloaded lesson packs omit those external links. Original URLs remain in the source data for attribution. This is a precaution, not a malware determination.
+Double-click **OPEN DASHBOARD.html** or **index.html** in this folder to open the live site (needs internet). To see local edits before publishing, open **public/index.html** instead.
 
-For offline use, open **public/index.html**. That is a separate local copy; GitHub updates do not automatically update files on your computer. Make shared changes in the `website-design-idea/ai-learning-dashboard` repository folder and merge current GitHub changes before pushing.
+## Pages
 
-The main page (`public/index.html`) is a shared showcase of the AI skills I collect from GitHub, TikTok and friends. Each card explains, in plain words, what the skill does, what it is good for, how to start it in Claude Code or the Claude app, and an example request to copy. Everyone who opens the link sees the same list. The design is visionOS-style glass over a soft blurred room, inspired by "Glassy Dashboard V18" (TikTok @paulcodes4).
+- **Homepage** (`public/index.html`, `home.css`): a four-chapter 3D scroll story that explains the purpose. A deck of candy-coloured glass skill cards (Three.js 0.170.0 from jsDelivr) fans out, brings one card forward, then lines up on a glass shelf. Click a card to open that skill. Six frosted-glass category cards with turning 3D cubes open the shelf on one category.
+- **The shelf** (`public/shelf.html`, `shelf.css`, `shelf.js`): every skill grouped by what it helps with, with search and an "Easy ones only" switch. Each skill opens a sheet with what it does, the words to say to Claude, and install steps: a sentence to paste into Claude Code, PowerShell and Terminal commands, and a ZIP download for the Claude app.
+
+Share one skill with a link like `…/public/shelf.html#skill=humanizer`. Older `index.html#skill=…` links forward to the shelf.
+
+## Look and motion
+
+Bright and colourful for every age, with Apple's discipline: a light base with soft colour fields behind white frosted glass, and Apple's system colours as a fixed set, one per category, shown as app icons. Type follows my other sites: Bricolage Grotesque, Instrument Serif italic and JetBrains Mono. Details are in [DESIGN.md](DESIGN.md).
+
+Motion is iOS-style (`public/pop.css`): a pill springs to the chosen tab or chapter, icons shrink on press and spring back, rows cascade in, and skills open as 3D pop-ups that spring out from where you tapped. Pages blend into each other with view transitions, and a tapped homepage category card morphs into its heading on the shelf. There is no sound. Reduced motion turns the effects off.
+
+## Prompt Motion ideas
+
+The **Prompt Motion design ideas** card (Motion & 3D) shows eight ideas from prompt-motion.com. Each has its video clip, played from prompt-motion.com's own media server and never copied, the full prompt or install command with a Copy button, and a credit linking to the creator. The videos and prompts belong to their creators.
+
+Links to prompt-motion.com pages stay off after an antivirus warning on this computer. Avast also blocks `media.prompt-motion.com` here, so on this PC the clips show a "blocked" note; the prompts still work, and visitors without that block see the clips.
 
 ## Add or change a skill
 
 1. Open `public/skills.js`.
-2. Copy one entry in the `skills` list and change its text. A pack has a `members` list.
-3. Run `npm test` to check that nothing is missing.
-4. Push. The live page updates in a minute or two.
+2. Copy one entry in the `skills` list and change its text. A pack has a `members` list. For a skill from a new GitHub repo, add the repo to `sources` with `repo`, `branch` and `dir` (the folder that holds the skill folders) so the install steps can be written for it.
+3. Optional: `added: 'YYYY-MM-DD'` shows a "New" badge for 30 days and puts the skill first.
+4. Run `npm test`, then publish (see below).
 
-Share one skill directly with a link like `…/public/index.html#skill=humanizer`.
+A skill without a public source (for example a skill made on this computer) shows "no public download link yet" instead of install steps.
 
-## Old lesson workspace
+## Publish
 
-The earlier lesson and learning-path dashboard still works at `public/legacy.html`. Everything below describes that workspace.
+This folder is the source. The live site is served by GitHub Pages from the `main` branch of [website-design-idea](https://github.com/mukhrizizraf/website-design-idea), folder `ai-learning-dashboard/`. To publish, copy the changed files into that repo folder, run `npm test` there, then commit and push. The live page updates in about a minute.
 
-# AI LEARNING TOOLS — an AI learning workspace (legacy)
+## Run locally
 
-A calm, responsive dashboard for turning discoveries into practical AI skills. Includes a skill library, four learning paths, video notes, chat imports, progress tracking, and a private browser workspace. Built with HTML, CSS, JavaScript and Node.js; no package dependencies.
-
-## Start locally
-
-For the personal lesson workspace, double-click **public/legacy.html** in this folder. It opens directly without starting a server. Open it from the synced folder on your computer, not Google Drive's online file preview. The direct-file edition supports the skill library, notes, imports and progress; browser storage support may vary. For the chat bridge, use the local server below. Direct-file and server views have separate browser storage, so export/import a backup to move between them.
-
-Install Node.js 22 or later, open this directory in a terminal, then run:
+Install Node.js 22 or later, then:
 
 ```sh
-npm start
+npm start      # http://127.0.0.1:4173
+npm test       # all tests
+npm run build  # static copy in dist/
 ```
 
-Open http://127.0.0.1:4173. No install step or AI API key is required. Stop the server with Ctrl+C.
+## Still included: lesson API and bridge
 
-## What works
-
-- Search and filter nine editable-in-source starter guides across web design, Shopify, motion/3D, writing, cloud platforms, and coding agents.
-- Bookmark skills, check off exercises, copy prompts, and set your confidence level.
-- Choose a learning path and see actual progress; no fabricated streaks or completed work.
-- Save video links, notes, transcripts, takeaways, and practice steps.
-- Attach and play local video files up to 250 MB when the browser has storage available. Browser codec support determines playback.
-- Paste one lesson, an array, or `{ "lessons": [...] }` as JSON, including fenced JSON copied from a chat.
-- Export/restore workspace data. Video attachments remain separate from JSON backups.
-- Receive lessons through the authenticated API and the included local MCP bridge.
-
-Starter guides are authored practice suggestions, not installed third-party skills or endorsements. Impeccable and other tools are learning topics; the dashboard does not install those tools.
-
-## From a TikTok or YouTube video to a lesson
-
-### Works immediately: chat import
-
-1. In **Video inbox → Import from a chat**, copy the video-analysis prompt.
-2. Supply your video or transcript to your preferred chat, subject to its file and video capabilities. A URL alone does not guarantee that the chat can view the video.
-3. Ask it to use the prompt and return a structured lesson.
-4. Paste the JSON back into the inbox, then click **Import lessons**.
-
-This dashboard does not download videos, transcribe audio, or analyze footage itself. Saving a video alone saves an attachment. The chat must actually have access to the content before it can summarize it. No AI service is called by this project, and no AI API key is stored in the browser.
-
-### Direct delivery: local Codex / Claude MCP bridge
-
-`bridge.mjs` is a local stdio MCP server exposing `save_lesson`. It implements the 2025-11-25 handshake and also negotiates older listed versions. It can be used with local MCP-capable clients; it is not a remotely hosted MCP server or an automatic integration with every ordinary web chat.
-
-Start the dashboard with a long random token in the server environment. For example, in PowerShell:
-
-```powershell
-$env:DASHBOARD_TOKEN = [Convert]::ToHexString([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
-npm start
-```
-
-Keep the same token in the MCP client's private configuration and enter it in **Connections & data**. Do not commit it or put it in frontend files. The server uses the variable for that process; a `.env` file is not automatically loaded. To use one, explicitly launch with Node's `--env-file` option and keep the file ignored.
-
-Configure a local MCP client with an entry equivalent to this (replace paths and token locally):
-
-```json
-{
-  "mcpServers": {
-    "practice": {
-      "command": "node",
-      "args": ["/absolute/path/to/ai-learning-dashboard/bridge.mjs"],
-      "env": {
-        "DASHBOARD_URL": "http://127.0.0.1:4173",
-        "DASHBOARD_TOKEN": "YOUR_PRIVATE_TOKEN_AT_LEAST_24_CHARACTERS"
-      }
-    }
-  }
-}
-```
-
-Configuration location and format vary by client. This is the generic JSON form, not a config file to paste indiscriminately into every client. On Windows use forward slashes or doubled backslashes in JSON paths. Restart/reload the client's MCP connection after configuring it.
-
-Then ask the configured agent: “Analyze this transcript and save the lesson to AI LEARNING TOOLS using save_lesson.” The dashboard polls every 30 seconds while its tab is connected. The server retains incoming lessons even when the dashboard is closed. Each browser remembers already imported server IDs, so deleting a local lesson does not immediately reimport it. API retries can create duplicates; the save operation is intentionally not advertised as idempotent.
-
-The bridge was tested against the bundled server using actual JSON-RPC messages. It has not been installed into your personal chat settings. Protocol reference: [MCP 2025-11-25 lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle).
-
-### Hosted chat integration
-
-For web-based chats with authenticated HTTP tool support, host the Node server behind HTTPS and use `integrations/openapi.json` as the API description. Replace its example server URL. Use Bearer authentication with the server token. Availability and configuration depend on your chat product and account; normal chats do not automatically gain this tool. A remote MCP connection requires an additional remote MCP transport adapter; the included bridge uses local stdio only.
-
-API:
-
-- `GET /api/health`: readiness, no private data.
-- `POST /api/lessons`: validated lesson JSON, requires `Authorization: Bearer TOKEN`.
-- `GET /api/lessons`: incoming lessons, same authentication.
-
-Example lesson:
-
-```json
-{
-  "title": "Design with clearer hierarchy",
-  "category": "Web design",
-  "source": "Claude",
-  "sourceUrl": "",
-  "summary": "A faithful summary of the source material.",
-  "takeaways": ["A concrete technique from the video."],
-  "actions": ["Try the technique on one page."],
-  "transcript": ""
-}
-```
-
-Allowed categories: Web design, Shopify, Motion & 3D, Writing, Cloud platforms, Codex & AI.
-
-## GitHub project integration
-
-This dashboard lives in `ai-learning-dashboard/` inside [website-design-idea](https://github.com/mukhrizizraf/website-design-idea), alongside the existing MPOB project. The repository homepage links to both. The existing Pages publishing configuration is preserved; no dashboard-only deployment workflow replaces the gallery or MPOB site.
-
-Open [AI LEARNING TOOLS](https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/). The folder entry redirects to `public/index.html`. All browser assets use relative paths. For future changes, edit this folder, run `npm test` and `npm run build`, then commit the source and regenerated `public/dashboard.js` from the repository root. Never commit private workspace exports, videos or connection tokens.
-
-GitHub Pages serves the personal dashboard without a backend. To receive chat lessons, run the server separately with:
-
-- `DASHBOARD_TOKEN`: long random shared secret, at least 24 characters.
-- `HOST=0.0.0.0`: only when your hosting platform requires external binding.
-- `PORT`: hosting platform port (default 4173).
-- `DATA_DIR`: durable storage mount. Default `./data` is ignored by Git.
-- `ALLOWED_ORIGIN`: exact frontend origin, e.g. `https://YOUR-USER.github.io` (no repository path or trailing slash).
-
-Use HTTPS, persistent storage, one server process, and host-level rate limiting for a public deployment. The JSON-file store serializes writes in one process; it is not a multi-instance database. API lesson bodies are limited to 1 MB, and the server retains at most 10,000 lessons. Archive/manage server data before reaching that cap. Do not deploy this to an ephemeral/serverless filesystem expecting durable storage.
-
-## Data boundaries
-
-- Personal progress, notes, and imported lessons live in localStorage for the current browser origin; different ports/domains are separate workspaces.
-- Videos live in IndexedDB. Browser eviction, clearing site data, or moving devices can remove them. Keep original videos separately.
-- The optional server inbox is shared among anyone holding its token. This is suitable for a personal or trusted-group inbox, not separate private accounts.
-- Browser edits do not write back to the shared server; only incoming lessons sync. Export/restore moves personal progress between devices.
-- Restoring a backup replaces local notes/progress and assigns new lesson IDs; video attachments are not restored.
-- Google Fonts loads DM Sans and Manrope when online; fallback fonts work if it is blocked.
-
-## Development
-
-```sh
-npm test
-npm run build
-```
-
-Tests cover import formats, unsafe URLs, validation, authentication, CORS, concurrent writes, persistence after server restart, private-file isolation, and end-to-end MCP delivery. Frontend source is in `public/`. Starter skills and paths are in `public/model.js`. Runtime data and secrets are ignored; the build copies only public files and this README.
+`server.mjs` also has an authenticated lesson API (`/api/lessons`, needs `DASHBOARD_TOKEN`), and `bridge.mjs` is a local MCP server with a `save_lesson` tool. They fed the old lesson workspace, which has been removed, so no page uses them now. `integrations/openapi.json` describes the API.

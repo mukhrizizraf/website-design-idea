@@ -1,17 +1,21 @@
-# AI LEARNING TOOLS
+# AI Skill Shelf
 <!-- impeccable:product-schema 1 -->
 
 ## Platform
 web
 
 ## Users and purpose
-The user and others learning how to use AI, coding agents, and cloud platforms. Convert an overwhelming stream of video tips into organized skills and concrete practice.
+Friends, family and anyone curious about AI. The owner collects AI skills from TikTok, GitHub and friends, and shares them so others can learn. The site also shows the owner's skill in using AI. It should be friendly, not technical: plain words, and every skill explained by what it does and how to use it.
 
 ## Confirmed workflows
-Multiple tabs for skills, web design (including Impeccable and Shopify), motion/3D, writing, proofreading, article reviews, cloud platforms, and Codex. Both ChatGPT/Codex and Claude should be supported as lesson sources. Source should be ready to push to GitHub later.
+- A homepage with 3D motion that explains what the shelf is for.
+- A shelf of skills grouped by job, each with the exact words to say to Claude and install steps written out, so nobody has to open GitHub.
+- Easy to add new skills over time (`public/skills.js`).
+- Shareable links to one skill.
+- Published on GitHub Pages from the website-design-idea repository.
 
-## Implementation assumptions
-AI LEARNING TOOLS is a working name. Personal browser storage is the initial edition; no account system was specified. Plain JavaScript with a zero-dependency Node server was chosen for portability. The first delivery is local, with deployment files prepared for later GitHub publication.
+## Look
+Bright, colourful and playful for all ages, with professional, Apple-like polish: glass, 3D shapes, spring motion and seamless page transitions. The owner rejected generic "AI-made" looks, mint or green accents, and the earlier brown theme.
 
 ## Boundaries
-No raw-video AI analysis is included. The selected chat analyzes accessible footage or a transcript and exports a structured lesson. The included local bridge and HTTP API accept that lesson. Chat integration requires user-specific configuration; cloud access needs hosting. Starter guides are authored suggestions, not installed skills or user history.
+No accounts and no tracking. No sound. Videos and prompts from other creators are credited and linked from their own servers, never copied. The site does not install anything itself; it gives the steps.

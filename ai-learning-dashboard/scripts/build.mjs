@@ -1,5 +1,4 @@
 import { cp, mkdir } from 'node:fs/promises';
-import './bundle.mjs';
 await mkdir('dist',{recursive:true});
 await cp('README.md','public/README.md');
 await cp('public','dist',{recursive:true});

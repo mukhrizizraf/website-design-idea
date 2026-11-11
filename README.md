@@ -1,31 +1,29 @@
-# AI LEARNING TOOLS
+# AI Skill Shelf
 
-**Open or share the live dashboard**
+**Open or share the live site**
 
 **<https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/>**
 
-A personal dashboard for learning web design, Shopify, motion and 3D, writing, cloud platforms, and Codex. Explore guided learning paths, turn video lessons into practice tasks, and track your progress.
+Every AI skill I find on TikTok, GitHub and from friends, kept in one place and shared so others can learn too. A 3D homepage explains the idea; the shelf explains each skill, gives the words to say to Claude, and writes out the install steps.
 
-Your lessons and progress are saved in your browser. To move them from the local dashboard to the published version, export a workspace backup from the local version and restore it on the published dashboard.
+[Source, how to add a skill, and how to publish](ai-learning-dashboard/README.md)
 
-[Dashboard source and setup guide](ai-learning-dashboard/README.md), including the optional chat connection for sending lessons from Codex or Claude.
+## Where to push updates
 
-## Where to push dashboard updates
-
-Copy this into your AI coding chat when asking it to update the dashboard.
+The working copy lives in `I:\My Drive\AI LEARNING\ai-learning-dashboard`. Publishing means copying the changed files into this repo's `ai-learning-dashboard/` folder, running `npm test` there, and pushing to `main`. See [ai-learning-dashboard/CLAUDE.md](ai-learning-dashboard/CLAUDE.md) for the details an AI coding assistant needs.
 
 ```text
-Update AI LEARNING TOOLS in the ai-learning-dashboard/ folder of
-https://github.com/mukhrizizraf/website-design-idea
-Commit and push the dashboard changes to the main branch.
-Live dashboard: https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/
+Update the AI Skill Shelf. Edit I:\My Drive\AI LEARNING\ai-learning-dashboard,
+then publish the changed files to the ai-learning-dashboard/ folder of
+https://github.com/mukhrizizraf/website-design-idea (main branch).
+Live site: https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/
 ```
 
 ## Project gallery
 
 | Project | Live page | Source and notes |
 |---|---|---|
-| AI LEARNING TOOLS | [Open](https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/) | [Setup and source](ai-learning-dashboard/README.md) |
+| AI Skill Shelf | [Open](https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/) | [Setup and source](ai-learning-dashboard/README.md) |
 | MPOB Mandate Studio home | [Open](https://mukhrizizraf.github.io/website-design-idea/mpob-mandate-home/) | [Project notes](mpob-mandate-home/src/README.md) |
 
 [Browse the live project gallery](https://mukhrizizraf.github.io/website-design-idea/)
