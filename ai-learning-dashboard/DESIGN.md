@@ -29,3 +29,7 @@ Files: homepage `public/index.html` + `home.css`; shelf `public/shelf.html` + `s
 
 - Below 820 to 860px: chapter nav hides, the deck floats behind the text, and the shelf uses a floating glass tab bar with app icons at the bottom.
 - Category cards go from 3 to 2 per row; shelf rows put the level chip beside the name.
+
+## Background ("vibing on Claude")
+
+`public/vibe.js` adds a playful layer behind both pages: two tilted ribbons scrolling real prompts from `skills.js` (one black, one rainbow), iMessage-style chat bubbles that bob and type, and a spinning "Made with Claude, ask anything" sticker. The shelf adds a giant outlined "just ask."; the homepage paints "just ask." and "Claude can do that." into the 3D wallpaper so the glass books bend them. Book covers have their own art (big skill symbol, pattern, glow, sparkles, category tag), and the books break into a galaxy of dust between chapters 3 and 4 (`?dust=0..1` freezes it for review). No Anthropic logo is used.
