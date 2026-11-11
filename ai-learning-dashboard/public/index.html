@@ -392,72 +392,6 @@
       // Glass shelf boards, shown in the last chapter.
       const boards = [0, 1].map(() => { const b = new THREE.Mesh(new RoundedBoxGeometry(4.2, 0.06, 0.55, 4, 0.03), glass); deck.add(b); return b; });
 
-      // ---------- Dust: every book can break into coloured dust, swirl, and rebuild itself ----------
-      // Each particle remembers its spot on its book. The shader mixes between that spot (glued to the
-      // book as it moves) and a swirling vortex. One number, uS, drives it: 0 = solid books, 1 = all dust.
-      // The dissolve sweeps across each book from left to right, so it reads as breaking apart.
-      const PER = phone ? 650 : 1500, count = PER * cards.length;
-      const aLocal = new Float32Array(count * 3), aRnd = new Float32Array(count * 3), aSeed = new Float32Array(count), aCard = new Float32Array(count), aCol = new Float32Array(count * 3);
-      const tmp = new THREE.Color(), white = new THREE.Color('#ffffff');
-      for (let ci = 0, p = 0; ci < cards.length; ci++) {
-        const base = new THREE.Color(RAINBOW[ci % RAINBOW.length]);
-        for (let j = 0; j < PER; j++, p++) {
-          aLocal[p * 3] = (Math.random() - .5) * 1.56; aLocal[p * 3 + 1] = (Math.random() - .5) * 2.08; aLocal[p * 3 + 2] = (Math.random() - .5) * .08;
-          aSeed[p] = Math.random(); aCard[p] = ci;
-          aRnd[p * 3] = Math.random(); aRnd[p * 3 + 1] = Math.random(); aRnd[p * 3 + 2] = Math.random();
-          tmp.copy(base).lerp(white, Math.random() < .12 ? .85 : Math.random() * .35);
-          aCol[p * 3] = tmp.r; aCol[p * 3 + 1] = tmp.g; aCol[p * 3 + 2] = tmp.b;
-        }
-      }
-      const dustGeo = new THREE.BufferGeometry();
-      dustGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
-      dustGeo.setAttribute('aLocal', new THREE.BufferAttribute(aLocal, 3));
-      dustGeo.setAttribute('aSeed', new THREE.BufferAttribute(aSeed, 1));
-      dustGeo.setAttribute('aRnd', new THREE.BufferAttribute(aRnd, 3));
-      dustGeo.setAttribute('aCard', new THREE.BufferAttribute(aCard, 1));
-      dustGeo.setAttribute('aCol', new THREE.BufferAttribute(aCol, 3));
-      const dustMat = new THREE.ShaderMaterial({
-        transparent: true, depthWrite: false,
-        uniforms: {
-          uCards: { value: cards.map(() => new THREE.Matrix4()) }, uS: { value: 0 }, uTime: { value: 0 }, uMode: { value: 0 }, uBurst: { value: 0 }, uHeat: { value: 0 },
-          uCenter: { value: new THREE.Vector3(2.2, 0, 0) }, uSize: { value: phone ? 4.6 : 4.2 }, uPixel: { value: renderer.getPixelRatio() }
-        },
-        vertexShader: `
-          uniform mat4 uCards[${cards.length}]; uniform float uS, uTime, uSize, uPixel, uMode, uBurst, uHeat; uniform vec3 uCenter;
-          attribute vec3 aLocal, aCol, aRnd; attribute float aSeed, aCard;
-          varying vec3 vCol; varying float vA;
-          void main() {
-            vec3 anchor = (uCards[int(aCard + .5)] * vec4(aLocal, 1.)).xyz;
-            float thr = (.45 * ((aLocal.x + .78) / 1.56) + .1 * aSeed) * (1. - uMode); // galaxy: left side leaves first; supernova: all at once
-            float s = smoothstep(0., 1., clamp((uS * 1.55 - thr), 0., 1.));
-            // A tilted, spinning galaxy: inner dust turns faster than outer dust, like a real swirl.
-            float rad = .35 + pow(aRnd.y, .7) * 3.;
-            float ang = aRnd.x * 6.2831 + aCard * .7 + uTime * (1.9 / (.6 + rad));
-            float arm = sin(ang * 2. - rad * 1.6) * .18;                          // two soft spiral arms
-            vec3 disk = vec3(cos(ang) * (rad + arm), (aRnd.z - .5) * (.18 + .12 * rad), sin(ang) * (rad + arm));
-            float tilt = .95; float ct = cos(tilt), st = sin(tilt);
-            vec3 vortex = uCenter + vec3(disk.x, disk.y * ct - disk.z * st, disk.y * st + disk.z * ct);
-            vec3 swirl = vec3(sin(aRnd.x * 40. + uTime * 2.), cos(aRnd.y * 31. + uTime * 1.7), sin(aRnd.z * 17. + uTime)) * .28 * sin(3.1416 * s);
-            // Supernova: dust flies out on a ragged shell from the impact point.
-            vec3 dir = normalize(aRnd * 2. - 1. + vec3(.001));
-            vec3 burst = uCenter + dir * (.25 + pow(aSeed, .6) * 4.2) * uBurst * vec3(1.15, .85, .7) + vec3(0., -.5 * uBurst * uBurst * aRnd.z, 0.);
-            vec3 p = mix(anchor, mix(vortex, burst, uMode), s) + swirl * (1. - uMode * .7);
-            vec4 mv = modelViewMatrix * vec4(p, 1.);
-            gl_Position = projectionMatrix * mv;
-            gl_PointSize = uSize * uPixel * (.55 + aSeed * .9) * (10. / -mv.z);
-            vCol = mix(aCol, vec3(1., .96, .82), uHeat * (1. - aSeed * .5)); vA = smoothstep(0., .06, uS);
-            gl_PointSize *= 1. + uHeat * 1.6;
-          }`,
-        fragmentShader: `
-          varying vec3 vCol; varying float vA;
-          void main() {
-            float d = length(gl_PointCoord - .5); if (d > .5) discard;
-            gl_FragColor = vec4(vCol, smoothstep(.5, .1, d) * vA);
-          }`
-      });
-      const dust = new THREE.Points(dustGeo, dustMat); dust.frustumCulled = false; scene.add(dust);
-      const dustParam = new URLSearchParams(location.search).get('dust');   // ?dust=0..1 freezes the effect for review
-      const dustFixed = dustParam !== null && /^(0|1|0?\.\d+)$/.test(dustParam) ? Number(dustParam) : null;
       const outCubic = v => 1 - Math.pow(1 - v, 3);
       const centerV = new THREE.Vector3();
 
@@ -473,6 +407,14 @@
       const ring2 = ring.clone(); ring2.material = ring.material.clone(); ring2.material.color.set('#bf5af2'); scene.add(ring2);
       const CORE = new THREE.Vector3(2.3, 0.1, -0.4);   // impact point, in the deck's own space
       const clamp01 = v => Math.min(1, Math.max(0, v));
+      const bounce = v => { const n1 = 7.5625, d1 = 2.75; if (v < 1 / d1) return n1 * v * v; if (v < 2 / d1) return n1 * (v -= 1.5 / d1) * v + .75; if (v < 2.5 / d1) return n1 * (v -= 2.25 / d1) * v + .9375; return n1 * (v -= 2.625 / d1) * v + .984375; };
+      const outBack = v => 1 + 2.70158 * Math.pow(v - 1, 3) + 1.70158 * Math.pow(v - 1, 2);
+      const clockParam = new URLSearchParams(location.search).get('clock');   // ?clock=seconds freezes time for review
+      const clockFixed = clockParam !== null && /^\d+(\.\d+)?$/.test(clockParam) ? Number(clockParam) : null;
+      // One cutting plane per shelf row: books are hidden below their board while they rise.
+      const UP = new THREE.Vector3(0, 1, 0), graves = [new THREE.Plane(UP.clone(), 1000), new THREE.Plane(UP.clone(), 1000)];
+      renderer.localClippingEnabled = true;
+      cards.forEach((c, i) => c.children.forEach(m => { m.material.clippingPlanes = [graves[i < 5 ? 0 : 1]]; }));
 
       // Four poses, one per chapter. Values: [x, y, z, rotX, rotY, rotZ, scale]
       const n = cards.length, mid = (n - 1) / 2;
@@ -511,7 +453,7 @@
       document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) { last = performance.now(); requestAnimationFrame(frame); } });
       function frame(now) {
         if (!running) return;
-        const dt = Math.min(0.05, (now - last) / 1000); last = now; clock += dt;
+        const dt = Math.min(0.05, (now - last) / 1000); last = now; clock += dt; if (clockFixed !== null) clock = clockFixed;
         const t = reduced ? 3 : (previewPose ?? progress()); markChapter(t);
         const a = Math.floor(t), b = Math.min(3, a + 1), f = ease(t - a), k = 1 - Math.exp(-dt * 5.5);
 
@@ -520,16 +462,21 @@
         hovered = hit ? hit.object.userData.card : null;
         document.body.style.cursor = hovered ? 'pointer' : '';
 
-        // Supernova timeline between chapters 3 and 4 (sn = 0..1): collide, blast, rebuild.
+        // Between chapters 3 and 4 (sn = 0..1): collide, flash, then rise out of the shelf.
         const sn = (!reduced && t > 2 && t < 3) ? t - 2 : -1;
         const collide = sn >= 0 ? Math.pow(clamp01(sn / 0.4), 2) : 0;
         const blasted = sn >= 0.42;
+        const introOn = !reduced && t < 1 && (previewPose === null || clockFixed !== null);
 
         cards.forEach((c, i) => {
           let P;
           if (blasted) {
-            // Hidden inside the dust: wait on the shelf so the dust rebuilds them right there.
-            P = poses[3](i);
+            // After the blast: each book climbs up out of its shelf board, shaking, like rising from a grave.
+            P = poses[3](i).slice();
+            const e = clamp01((sn - 0.52 - i * 0.035) / 0.18), up = outBack(e);
+            P[1] -= (1 - up) * 1.05;
+            P[3] += 0.35 * (1 - e);
+            P[5] += Math.sin(clock * 16 + i * 2) * 0.14 * (e > 0 ? 1 - e : 0);
             c.position.set(P[0], P[1], P[2]); c.rotation.set(P[3], P[4], P[5]); c.scale.setScalar(P[6]);
             return;
           }
@@ -544,46 +491,36 @@
             P[3] += spin * (i % 2 ? 1 : -0.7); P[4] += spin * (i % 3 ? 0.8 : -1); P[5] += spin * (i % 2 ? -0.6 : 0.9);
             P[6] *= 1 - collide * 0.55;
           }
+          // Page opens: the books tumble down from the sky one by one and land in a stack.
+          let kk = k;
+          if (introOn) {
+            const e = clamp01((clock - 0.25 - (n - 1 - i) * 0.14) / 0.85);
+            if (e < 1) { const d = 1 - bounce(e); P[1] += d * 8; P[3] += d * 5 * (i % 2 ? 1 : -1); P[5] += d * 3 * (i % 3 ? -1 : 1); kk = 1; }
+          }
           const bob = reduced ? 0 : Math.sin(clock * 0.8 + i) * 0.04;
           c.userData.hover += ((c === hovered ? 1 : 0) - c.userData.hover) * k;
-          c.position.x += (P[0] - c.position.x) * k;
-          c.position.y += (P[1] + bob - c.position.y) * k;
-          c.position.z += (P[2] + c.userData.hover * 0.35 - c.position.z) * k;
+          c.position.x += (P[0] - c.position.x) * kk;
+          c.position.y += (P[1] + bob - c.position.y) * kk;
+          c.position.z += (P[2] + c.userData.hover * 0.35 - c.position.z) * kk;
           // A hovered book swings gently, like it was just touched.
           const swing = reduced ? 0 : Math.sin(clock * 5.5) * 0.06 * c.userData.hover;
-          c.rotation.x += (P[3] - c.rotation.x) * k; c.rotation.y += (P[4] - c.rotation.y) * k; c.rotation.z += (P[5] + swing - c.rotation.z) * k;
-          const sc = P[6] * (1 + c.userData.hover * 0.05); c.scale.setScalar(c.scale.x + (sc - c.scale.x) * k);
+          c.rotation.x += (P[3] - c.rotation.x) * kk; c.rotation.y += (P[4] - c.rotation.y) * kk; c.rotation.z += (P[5] + swing - c.rotation.z) * kk;
+          const sc = P[6] * (1 + c.userData.hover * 0.05); c.scale.setScalar(c.scale.x + (sc - c.scale.x) * kk);
         });
-        const show = reduced ? 1 : sn >= 0 ? clamp01((sn - 0.68) / 0.32) : (t >= 3 ? 1 : 0);
+        const show = reduced ? 1 : sn >= 0 ? clamp01((sn - 0.43) / 0.08) : (t >= 3 ? 1 : 0);
         boards.forEach((bd, r) => { const p = boardPose(r); bd.position.set(p[0], p[1], p[2]); bd.scale.set(Math.max(0.001, ease(show)), 1, 1); bd.visible = show > 0.01; });
 
         deck.rotation.y += ((reduced ? 0 : px * 0.18 + Math.sin(clock * 0.25) * 0.04) - deck.rotation.y) * k;
         deck.rotation.x += ((reduced ? 0 : py * 0.1) - deck.rotation.x) * k;
 
-        // Dust: gathers into the books when the page opens, and the books break into dust and
-        // rebuild themselves on the shelf between chapters 3 and 4.
-        let S = 0, mode = 0, burst = 0, heat = 0, flashK = 0, ringK = -1;
-        if (!reduced) {
-          const intro = previewPose !== null ? 0 : 1 - outCubic(clamp01((clock - .25) / 2.4));
-          S = intro;
-          if (sn >= 0.4) {
-            mode = 1;
-            S = sn < 0.75 ? clamp01((sn - 0.4) / 0.04) : 1 - ease(clamp01((sn - 0.75) / 0.25));
-            burst = sn < 0.75 ? outCubic(clamp01((sn - 0.4) / 0.35)) : 1;
-            heat = Math.exp(-Math.pow((sn - 0.44) / 0.08, 2));
-            flashK = Math.exp(-Math.pow((sn - 0.43) / 0.045, 2));
-            ringK = clamp01((sn - 0.41) / 0.34);
-          }
-          if (dustFixed !== null) { S = dustFixed; mode = 0; }
-        }
+        // Impact flash and shockwaves when the books collide.
+        let flashK = 0, ringK = -1;
+        if (sn >= 0.4) { flashK = Math.exp(-Math.pow((sn - 0.43) / 0.045, 2)); ringK = clamp01((sn - 0.41) / 0.34); }
         scene.updateMatrixWorld();
-        cards.forEach((c, i) => { dustMat.uniforms.uCards.value[i].copy(c.matrixWorld); c.visible = S < 0.1 && !(sn >= 0.42 && sn < 0.97); });
+        cards.forEach(c => { c.visible = !(sn >= 0.42 && sn < 0.5); });
+        // While books rise, each row is cut off at its shelf board, so they come up out of it.
+        graves.forEach((pl, r) => { if (sn >= 0.42) pl.set(UP, -(r ? -1.38 : 0.17)).applyMatrix4(deck.matrixWorld); else pl.set(UP, 1000); });
         centerV.copy(CORE).applyMatrix4(deck.matrixWorld);
-        Object.assign(dustMat.uniforms.uMode, { value: mode }); dustMat.uniforms.uBurst.value = burst; dustMat.uniforms.uHeat.value = heat;
-        dustMat.uniforms.uCenter.value.copy(centerV);
-        dustMat.uniforms.uS.value = S;
-        dustMat.uniforms.uTime.value = clock;
-        dust.visible = S > 0.005;
         // Flash and shockwaves
         flash.visible = flashK > 0.01; flash.position.copy(centerV); flash.scale.setScalar(0.5 + flashK * 6.5); flash.material.opacity = Math.min(1, flashK * 1.3);
         [ring, ring2].forEach((r, j) => {
