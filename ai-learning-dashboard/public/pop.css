@@ -168,3 +168,49 @@ html,body{overflow-x:hidden;overflow-x:clip}
   .vibe-home .b1{top:auto;bottom:46%;left:4%}
   .vibe-home .b5{display:none}
 }
+
+/* ==========================================================================
+   Cartoon 3D toys (toys.js): one per category, each with its own motion.
+   Depth slices behind the face give them real thickness when they turn.
+   ========================================================================== */
+.toy{display:block;flex:none;width:var(--toy,64px);height:var(--toy,64px);perspective:420px}
+.toy-spin{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d}
+.toy svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.toy-slice{transform:translateZ(var(--z));filter:brightness(.55) saturate(1.2)}
+.toy-face{transform:translateZ(0);filter:drop-shadow(0 6px 6px rgba(60,40,120,.18))}
+/* Each category moves differently */
+.toy-design .toy-spin{animation:toy-turn 7s linear infinite}
+.toy-design .toy-brush{transform-origin:62px 92px;animation:toy-paint 1.6s ease-in-out infinite}
+.toy-motion .toy-spin{animation:toy-swing 3.2s ease-in-out infinite}
+.toy-motion .toy-arm{transform-origin:16px 40px;animation:toy-clap 1.4s cubic-bezier(.6,0,.4,1) infinite}
+.toy-writing .toy-spin{animation:toy-tilt 2.4s ease-in-out infinite}
+.toy-writing .toy-pencil{transform-origin:20px 90px;animation:toy-scrib .5s ease-in-out infinite alternate}
+.toy-writing .toy-scribble{stroke-dasharray:40;animation:toy-draw 1.6s linear infinite}
+.toy-docs .toy-spin{animation:toy-flip 4.5s cubic-bezier(.65,0,.35,1) infinite}
+.toy-coding .toy-spin{animation:toy-hop 1.8s cubic-bezier(.34,1.56,.64,1) infinite}
+.toy-coding .toy-screen{animation:toy-blink 1.8s steps(2) infinite}
+.toy-workflow .toy-spin{animation:toy-bob 2.6s ease-in-out infinite}
+.toy-workflow .toy-bulb{animation:toy-glow 1s ease-in-out infinite alternate}
+.toy-workflow .toy-eyes{transform-origin:50px 45px;animation:toy-look 4s ease-in-out infinite}
+.toy-all .toy-spin{animation:toy-turn 9s linear infinite}
+@keyframes toy-turn{from{transform:rotateY(0) rotateX(-12deg)}to{transform:rotateY(360deg) rotateX(-12deg)}}
+@keyframes toy-swing{0%,100%{transform:rotateY(-35deg) rotateZ(-4deg)}50%{transform:rotateY(35deg) rotateZ(4deg)}}
+@keyframes toy-clap{0%,60%,100%{transform:rotate(0)}30%{transform:rotate(-22deg)}}
+@keyframes toy-tilt{0%,100%{transform:rotateY(-28deg) rotateX(10deg)}50%{transform:rotateY(28deg) rotateX(-6deg)}}
+@keyframes toy-scrib{from{transform:translate(-3px,1px) rotate(-4deg)}to{transform:translate(4px,-1px) rotate(3deg)}}
+@keyframes toy-draw{from{stroke-dashoffset:40}to{stroke-dashoffset:-40}}
+@keyframes toy-flip{0%,20%{transform:rotateY(0)}50%,70%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+@keyframes toy-hop{0%,100%{transform:translateY(0) rotateY(-20deg)}40%{transform:translateY(-14%) rotateY(20deg)}}
+@keyframes toy-blink{50%{fill:#00c7be}}
+@keyframes toy-bob{0%,100%{transform:translateY(0) rotateY(-25deg) rotateZ(-5deg)}50%{transform:translateY(-8%) rotateY(25deg) rotateZ(5deg)}}
+@keyframes toy-glow{to{fill:#ffd60a}}
+@keyframes toy-look{0%,40%,100%{transform:translateX(0)}50%,70%{transform:translateX(4px)}80%,90%{transform:translateX(-4px)}}
+@keyframes toy-paint{50%{transform:rotate(-14deg)}}
+/* Faster when you hover a card */
+a:hover .toy .toy-spin,button:hover .toy .toy-spin{animation-duration:1.4s}
+@media (prefers-reduced-motion:reduce){.toy *{animation:none!important}}
+/* Toy sizes in each place */
+.door .door-toy{--toy:70px;margin:2px 0 0 -4px}
+.door .cube-wrap{display:none}
+.group-head .head-toy{--toy:44px;margin:-6px 0 -6px -6px}
+.floater .float-toy{--toy:var(--size,86px)}

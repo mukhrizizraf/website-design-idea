@@ -105,7 +105,7 @@
   const glyphFor = s => G[SKILL_GLYPH[s.id]] || G.cube;
   const appIc = (cat, path) => `<span class="app-ic" data-cat="${cat}" aria-hidden="true">${svg(path || P[cat] || P.all, 19)}</span>`;
   // Category headings: a small 3D cube that turns non-stop.
-  const headCube = cat => `<span class="head-cube cube-wrap" data-cat="${cat}" aria-hidden="true"><span class="cube">${Array.from({ length: 6 }, () => `<i>${svg(P[cat] || P.all, 26)}</i>`).join('')}</span></span>`;
+  const headCube = cat => window.ShelfToys ? ShelfToys.toy(cat, 'head-toy') : '';
   let tabsBuilt = false;
   function placePill(container, pillSel, current) {
     const pill = container.querySelector(pillSel), el = container.querySelector(current);
@@ -194,7 +194,7 @@
     box.innerHTML = D.categories.map((c, i) => {
       const [x, y, size] = spots[i % spots.length];
       return `<div class="floater" data-cat="${c.id}" style="left:${x}%;top:${y}%;--size:${size}px;--d:${16 + i * 3}s;--delay:-${i * 2.5}s;--spin:${12 + i * 2}s;--dx:${i % 2 ? -50 : 60}px;--dy:${i % 3 ? -70 : 50}px">
-        <div class="cube">${Array.from({ length: 6 }, () => `<i>${svg(P[c.id] || P.all, 26)}</i>`).join('')}</div></div>`;
+        ${window.ShelfToys ? ShelfToys.toy(c.id, 'float-toy') : ''}</div>`;
     }).join('');
   })();
 

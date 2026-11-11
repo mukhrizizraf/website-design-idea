@@ -33,6 +33,7 @@
   </script>
   <script defer src="./skills.js"></script>
   <script defer src="./vibe.js"></script>
+  <script defer src="./toys.js"></script>
 </head>
 <body>
   <a class="skip" href="#ch-share">Skip to the shelf link</a>
@@ -115,7 +116,7 @@
         writing: 'M12 20h9 M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z', docs: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z M14 2v6h6',
         coding: 'M16 18l6-6-6-6 M8 6l-6 6 6 6', workflow: 'M6 6h12v12H6z M9 9h6v6H9z M9 2v4 M15 2v4 M9 18v4 M15 18v4 M2 9h4 M2 15h4 M18 9h4 M18 15h4' };
       document.getElementById('doors').innerHTML = D.categories.map(c =>
-        `<a class="door" data-cat="${c.id}" href="./shelf.html?cat=${c.id}"><span class="cube-wrap" data-cat="${c.id}" aria-hidden="true"><span class="cube">${Array.from({ length: 6 }, () => `<i><svg viewBox="0 0 24 24"><path d="${GLYPH[c.id]}"/></svg></i>`).join('')}</span></span><span class="door-txt"><span class="door-n">${count(c.id)} skills</span><span class="door-name">${c.label}</span></span></a>`).join('');
+        `<a class="door" data-cat="${c.id}" href="./shelf.html?cat=${c.id}">${window.ShelfToys ? ShelfToys.toy(c.id, 'door-toy') : ''}<span class="door-txt"><span class="door-n">${count(c.id)} skills</span><span class="door-name">${c.label}</span></span></a>`).join('');
     }
     document.querySelectorAll('.door').forEach((d, i) => {
       d.style.setProperty('--i', i);
