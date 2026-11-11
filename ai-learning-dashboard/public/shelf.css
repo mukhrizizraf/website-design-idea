@@ -470,3 +470,21 @@ dialog::backdrop{background:rgba(245,245,247,.4);-webkit-backdrop-filter:blur(10
 .home-btn:active{transform:scale(.92);transition-duration:.08s}
 .toolbar{gap:14px;padding-left:14px}
 @media (max-width:760px){.home-btn{padding:0 10px}.home-btn span{display:none}}
+
+/* ---------- Shelf page's own 3D motion ---------- */
+/* The pick card flips like a trading card when you go to the next or previous one */
+.pick.flip-out{animation:flip-out .23s cubic-bezier(.4,0,1,1) forwards}
+.pick.flip-out-r{animation:flip-out-r .23s cubic-bezier(.4,0,1,1) forwards}
+.pick.flip-in{animation:flip-in .55s cubic-bezier(.34,1.56,.64,1)}
+.pick.flip-in-r{animation:flip-in-r .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes flip-out{to{transform:rotateY(-90deg) scale(.94)}}
+@keyframes flip-out-r{to{transform:rotateY(90deg) scale(.94)}}
+@keyframes flip-in{from{transform:rotateY(90deg) scale(.94)}}
+@keyframes flip-in-r{from{transform:rotateY(-90deg) scale(.94)}}
+/* Switching category: rows swing in from depth, one after another, and headings drop in */
+.swapping .rows li.seen{animation:row-swing .7s both;animation-delay:calc(var(--i,0) * 45ms);animation-timing-function:cubic-bezier(.34,1.4,.64,1)}
+.swapping .group-head{animation:head-drop .6s cubic-bezier(.34,1.56,.64,1) both}
+.rows{perspective:900px}
+@keyframes row-swing{from{opacity:0;transform:perspective(900px) rotateX(-55deg) translateY(-18px) translateZ(-60px)}}
+@keyframes head-drop{from{opacity:0;transform:translateY(-24px) scale(.9)}}
+@media (prefers-reduced-motion:reduce){.pick[class*="flip"],.swapping .rows li.seen,.swapping .group-head{animation:none}}

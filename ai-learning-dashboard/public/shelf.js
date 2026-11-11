@@ -354,8 +354,15 @@
   document.addEventListener('click', e => {
     const t = e.target.closest('button, a'); if (!t) return;
     if (t.dataset.skill) { lastClick = t; openSkill(t.dataset.skill); }
-    else if (t.dataset.cat) { state.cat = t.dataset.cat; render(); if (matchMedia('(max-width: 760px)').matches) $('#shelf').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); }
-    else if (t.dataset.step) { state.pick = (state.pick + Number(t.dataset.step) + picks.length) % picks.length; renderPick(); }
+    else if (t.dataset.cat) { state.cat = t.dataset.cat; document.documentElement.classList.add('swapping'); setTimeout(() => document.documentElement.classList.remove('swapping'), 900); render(); if (matchMedia('(max-width: 760px)').matches) $('#shelf').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); }
+    else if (t.dataset.step) {
+      // The pick card flips over in 3D; the new words appear on its far side.
+      const dir = Number(t.dataset.step), card = $('#pick');
+      state.pick = (state.pick + dir + picks.length) % picks.length;
+      if (reduced) { renderPick(); return; }
+      card.classList.remove('flip-in', 'flip-in-r'); card.classList.add(dir > 0 ? 'flip-out' : 'flip-out-r');
+      setTimeout(() => { renderPick(); card.classList.remove('flip-out', 'flip-out-r'); void card.offsetWidth; card.classList.add(dir > 0 ? 'flip-in' : 'flip-in-r'); }, 230);
+    }
     else if (t.dataset.copy !== undefined) copy(t.dataset.copy, t.dataset.done || 'Copied! Now paste it into Claude.');
     else if (t.dataset.share) copy(pageUrl() + '#skill=' + t.dataset.share, 'Link copied! Send it to a friend.');
     else if (t.dataset.way) {

@@ -23,17 +23,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./home.css">
-  <link rel="stylesheet" href="./pop.css">
+  <link rel="stylesheet" href="./home.css?v=202611111429">
+  <link rel="stylesheet" href="./pop.css?v=202611111429">
   <script type="importmap">
     { "imports": {
         "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
         "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
     } }
   </script>
-  <script defer src="./skills.js"></script>
-  <script defer src="./vibe.js"></script>
-  <script defer src="./toys.js"></script>
+  <script defer src="./skills.js?v=202611111429"></script>
+  <script defer src="./vibe.js?v=202611111429"></script>
+  <script defer src="./toys.js?v=202611111429"></script>
 </head>
 <body>
   <a class="skip" href="#ch-share">Skip to the shelf link</a>
@@ -282,36 +282,60 @@
         x.beginPath(); x.moveTo(cx, cy - r); x.quadraticCurveTo(cx, cy, cx + r, cy); x.quadraticCurveTo(cx, cy, cx, cy + r);
         x.quadraticCurveTo(cx, cy, cx - r, cy); x.quadraticCurveTo(cx, cy, cx, cy - r); x.fill();
       }
+      // Cartoon covers that match the cartoon icons: flat bright colour, chunky black outlines,
+      // comic halftone dots, the skill's symbol in a white sticker badge, and a comic title label.
+      const CARTOON = ['#ff375f', '#ff9f0a', '#ffd60a', '#30d158', '#00c7be', '#0a84ff', '#5e5ce6', '#bf5af2', '#ff2d55'];
       function face(s, isHero, i) {
         const c = document.createElement('canvas'); c.width = 600; c.height = 800; const x = c.getContext('2d');
-        pattern(x, i % 4);
-        // Soft glow behind the symbol.
-        const gx = isHero ? 470 : 300, gy = isHero ? 150 : 300, gr = isHero ? 170 : 260;
-        const glow = x.createRadialGradient(gx, gy, 0, gx, gy, gr); glow.addColorStop(0, 'rgba(255,255,255,.42)'); glow.addColorStop(1, 'rgba(255,255,255,0)');
-        x.fillStyle = glow; x.fillRect(0, 0, 600, 800);
-        // The skill's own symbol, drawn large.
+        const ink = '#1d1d1f', col = CARTOON[i % CARTOON.length];
+        // Cover: flat colour inside a thick black border
+        x.fillStyle = col; x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.fill();
+        // Halftone dots, bigger towards the bottom-right corner
+        x.save(); x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.clip();
+        x.fillStyle = 'rgba(0,0,0,.13)';
+        for (let yy = 30; yy < 800; yy += 26) for (let xx = 30; xx < 600; xx += 26) {
+          const r = Math.max(0, ((xx + yy) / 1400) * 8 - 2.2); if (r > 0) { x.beginPath(); x.arc(xx + (yy / 26 % 2) * 13, yy, r, 0, Math.PI * 2); x.fill(); }
+        }
+        // Cartoon shine stripe
+        x.fillStyle = 'rgba(255,255,255,.28)'; x.beginPath(); x.moveTo(60, 14); x.lineTo(150, 14); x.lineTo(14, 260); x.lineTo(14, 120); x.fill();
+        x.restore();
+        x.lineWidth = 14; x.strokeStyle = ink; x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.stroke();
+        // Category tag: black pill with white text
+        x.font = '700 22px "JetBrains Mono"';
+        const tag = label[s.cat].toUpperCase(), tw = x.measureText(tag).width + 40;
+        x.fillStyle = ink; x.beginPath(); x.roundRect(48, 48, tw, 48, 24); x.fill();
+        x.fillStyle = '#fff'; x.fillText(tag, 68, 80);
+        // Sticker badge with the skill's symbol (white circle, black outline, hard shadow)
+        const bx = isHero ? 450 : 300, by = isHero ? 200 : 300, br = isHero ? 92 : 150;
+        x.fillStyle = ink; x.beginPath(); x.arc(bx + 10, by + 12, br, 0, Math.PI * 2); x.fill();
+        x.fillStyle = '#fff'; x.beginPath(); x.arc(bx, by, br, 0, Math.PI * 2); x.fill();
+        x.lineWidth = 10; x.strokeStyle = ink; x.stroke();
         const path = COVER[s.id];
         if (path) {
-          const scale = isHero ? 6 : 11, size = 24 * scale;
-          x.save(); x.translate(gx - size / 2, gy - size / 2); x.scale(scale, scale);
-          x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#ffffff'; x.lineWidth = 1.7;
-          x.shadowColor = 'rgba(0,0,0,.25)'; x.shadowBlur = 3; x.shadowOffsetY = .6;
-          x.stroke(new Path2D(path)); x.restore();
+          const scale = br * 1.25 / 24;
+          x.save(); x.translate(bx - 12 * scale, by - 12 * scale); x.scale(scale, scale);
+          x.lineCap = 'round'; x.lineJoin = 'round';
+          x.strokeStyle = ink; x.lineWidth = 3.4; x.stroke(new Path2D(path));
+          x.strokeStyle = col; x.lineWidth = 1.5; x.stroke(new Path2D(path));
+          x.restore();
         }
-        x.fillStyle = 'rgba(255,255,255,.9)'; sparkle(x, isHero ? 360 : 470, isHero ? 90 : 150, 22); sparkle(x, isHero ? 540 : 130, isHero ? 250 : 430, 14);
-        // Category tag.
-        x.font = '500 20px "JetBrains Mono"';
-        const tag = label[s.cat].toUpperCase(), tw = x.measureText(tag).width + 36;
-        x.fillStyle = 'rgba(255,255,255,.24)'; x.beginPath(); x.roundRect(36, 40, tw, 44, 22); x.fill();
-        x.fillStyle = '#ffffff'; x.fillText(tag, 54, 69);
-        x.shadowColor = 'rgba(0,0,0,.28)'; x.shadowBlur = 10; x.shadowOffsetY = 2;   // white type stays crisp on candy glass
+        // Sparkle stickers
+        const spark = (cx, cy, r) => { x.beginPath(); x.moveTo(cx, cy - r); x.quadraticCurveTo(cx, cy, cx + r, cy); x.quadraticCurveTo(cx, cy, cx, cy + r); x.quadraticCurveTo(cx, cy, cx - r, cy); x.quadraticCurveTo(cx, cy, cx, cy - r); x.closePath(); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 5; x.strokeStyle = ink; x.stroke(); };
+        spark(isHero ? 320 : 500, isHero ? 120 : 150, 26); spark(isHero ? 545 : 110, isHero ? 330 : 470, 18);
         if (isHero) {
-          x.fillStyle = '#ffffff'; x.font = 'italic 400 46px "Instrument Serif"';
-          wrap(x, '“' + s.say.replace(/\s*:\s*…$/, '…') + '”', 44, 330, 512, 54, 6);
-          x.font = '800 44px "Bricolage Grotesque"'; x.fillText(s.title, 44, 730);
+          // Speech bubble with the words to say
+          x.fillStyle = ink; x.beginPath(); x.roundRect(48, 330, 512, 230, 34); x.fill();
+          x.fillStyle = "#fff"; x.beginPath(); x.roundRect(40, 320, 512, 230, 34); x.fill(); x.lineWidth = 8; x.strokeStyle = ink; x.stroke();
+          x.fillStyle = ink; x.font = 'italic 400 44px "Instrument Serif"';
+          wrap(x, '“' + s.say.replace(/\s*:\s*…$/, '…') + '”', 70, 384, 450, 50, 5);
+          x.font = '800 54px "Bricolage Grotesque"'; x.fillStyle = '#fff'; x.lineWidth = 12; x.strokeStyle = ink;
+          x.strokeText(s.title, 48, 720); x.fillText(s.title, 48, 720);
         } else {
-          x.fillStyle = '#ffffff'; x.font = '800 64px "Bricolage Grotesque"'; wrap(x, s.title, 44, 590, 512, 66, 2);
-          x.fillStyle = 'rgba(255,255,255,.88)'; x.font = '400 30px "Instrument Serif"'; wrap(x, s.what, 44, 712, 512, 34, 2);
+          // Comic title label
+          x.fillStyle = ink; x.beginPath(); x.roundRect(50, 532, 512, 210, 28); x.fill();
+          x.fillStyle = '#fff'; x.beginPath(); x.roundRect(40, 520, 512, 210, 28); x.fill(); x.lineWidth = 8; x.strokeStyle = ink; x.stroke();
+          x.fillStyle = ink; x.font = '800 58px "Bricolage Grotesque"'; wrap(x, s.title, 68, 592, 460, 60, 2);
+          x.fillStyle = 'rgba(29,29,31,.72)'; x.font = '400 28px "Instrument Serif"'; wrap(x, s.what, 68, 696, 460, 30, 1);
         }
         const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
       }
@@ -340,7 +364,7 @@
         return m;
       };
       const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 3, 0.1);
-      const faceGeo = new THREE.PlaneGeometry(1.5, 2.0);
+      const faceGeo = new THREE.PlaneGeometry(1.58, 2.1);
       const deck = new THREE.Group(); scene.add(deck);
       const cards = picks.map((s, i) => {
         const card = new THREE.Group();
@@ -380,16 +404,16 @@
       const dustMat = new THREE.ShaderMaterial({
         transparent: true, depthWrite: false,
         uniforms: {
-          uCards: { value: cards.map(() => new THREE.Matrix4()) }, uS: { value: 0 }, uTime: { value: 0 },
+          uCards: { value: cards.map(() => new THREE.Matrix4()) }, uS: { value: 0 }, uTime: { value: 0 }, uMode: { value: 0 }, uBurst: { value: 0 }, uHeat: { value: 0 },
           uCenter: { value: new THREE.Vector3(2.2, 0, 0) }, uSize: { value: phone ? 4.6 : 4.2 }, uPixel: { value: renderer.getPixelRatio() }
         },
         vertexShader: `
-          uniform mat4 uCards[${cards.length}]; uniform float uS, uTime, uSize, uPixel; uniform vec3 uCenter;
+          uniform mat4 uCards[${cards.length}]; uniform float uS, uTime, uSize, uPixel, uMode, uBurst, uHeat; uniform vec3 uCenter;
           attribute vec3 aLocal, aCol, aRnd; attribute float aSeed, aCard;
           varying vec3 vCol; varying float vA;
           void main() {
             vec3 anchor = (uCards[int(aCard + .5)] * vec4(aLocal, 1.)).xyz;
-            float thr = .45 * ((aLocal.x + .78) / 1.56) + .1 * aSeed;            // left side leaves first
+            float thr = (.45 * ((aLocal.x + .78) / 1.56) + .1 * aSeed) * (1. - uMode); // galaxy: left side leaves first; supernova: all at once
             float s = smoothstep(0., 1., clamp((uS * 1.55 - thr), 0., 1.));
             // A tilted, spinning galaxy: inner dust turns faster than outer dust, like a real swirl.
             float rad = .35 + pow(aRnd.y, .7) * 3.;
@@ -399,11 +423,15 @@
             float tilt = .95; float ct = cos(tilt), st = sin(tilt);
             vec3 vortex = uCenter + vec3(disk.x, disk.y * ct - disk.z * st, disk.y * st + disk.z * ct);
             vec3 swirl = vec3(sin(aRnd.x * 40. + uTime * 2.), cos(aRnd.y * 31. + uTime * 1.7), sin(aRnd.z * 17. + uTime)) * .28 * sin(3.1416 * s);
-            vec3 p = mix(anchor, vortex, s) + swirl;
+            // Supernova: dust flies out on a ragged shell from the impact point.
+            vec3 dir = normalize(aRnd * 2. - 1. + vec3(.001));
+            vec3 burst = uCenter + dir * (.25 + pow(aSeed, .6) * 4.2) * uBurst * vec3(1.15, .85, .7) + vec3(0., -.5 * uBurst * uBurst * aRnd.z, 0.);
+            vec3 p = mix(anchor, mix(vortex, burst, uMode), s) + swirl * (1. - uMode * .7);
             vec4 mv = modelViewMatrix * vec4(p, 1.);
             gl_Position = projectionMatrix * mv;
             gl_PointSize = uSize * uPixel * (.55 + aSeed * .9) * (10. / -mv.z);
-            vCol = aCol; vA = smoothstep(0., .06, uS);
+            vCol = mix(aCol, vec3(1., .96, .82), uHeat * (1. - aSeed * .5)); vA = smoothstep(0., .06, uS);
+            gl_PointSize *= 1. + uHeat * 1.6;
           }`,
         fragmentShader: `
           varying vec3 vCol; varying float vA;
@@ -417,6 +445,19 @@
       const dustFixed = dustParam !== null && /^(0|1|0?\.\d+)$/.test(dustParam) ? Number(dustParam) : null;
       const outCubic = v => 1 - Math.pow(1 - v, 3);
       const centerV = new THREE.Vector3();
+
+      // Supernova pieces: a white-hot flash and an expanding shockwave ring at the impact point.
+      const glowCanvas = document.createElement('canvas'); glowCanvas.width = glowCanvas.height = 256;
+      const gc = glowCanvas.getContext('2d'), gr = gc.createRadialGradient(128, 128, 0, 128, 128, 128);
+      gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.12, 'rgba(255,236,150,1)'); gr.addColorStop(.32, 'rgba(255,140,40,.9)'); gr.addColorStop(.6, 'rgba(255,55,95,.45)'); gr.addColorStop(1, 'rgba(191,90,242,0)');
+      gc.fillStyle = gr; gc.fillRect(0, 0, 256, 256);
+      const flash = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), transparent: true, depthWrite: false, toneMapped: false }));
+      flash.visible = false; scene.add(flash);
+      const ring = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 96), new THREE.MeshBasicMaterial({ color: '#ff9f0a', transparent: true, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }));
+      ring.visible = false; scene.add(ring);
+      const ring2 = ring.clone(); ring2.material = ring.material.clone(); ring2.material.color.set('#bf5af2'); scene.add(ring2);
+      const CORE = new THREE.Vector3(2.3, 0.1, -0.4);   // impact point, in the deck's own space
+      const clamp01 = v => Math.min(1, Math.max(0, v));
 
       // Four poses, one per chapter. Values: [x, y, z, rotX, rotY, rotZ, scale]
       const n = cards.length, mid = (n - 1) / 2;
@@ -464,8 +505,30 @@
         hovered = hit ? hit.object.userData.card : null;
         document.body.style.cursor = hovered ? 'pointer' : '';
 
+        // Supernova timeline between chapters 3 and 4 (sn = 0..1): collide, blast, rebuild.
+        const sn = (!reduced && t > 2 && t < 3) ? t - 2 : -1;
+        const collide = sn >= 0 ? Math.pow(clamp01(sn / 0.4), 2) : 0;
+        const blasted = sn >= 0.42;
+
         cards.forEach((c, i) => {
-          const A = poses[a](i), B = poses[b](i), P = A.map((v, j) => v + (B[j] - v) * f);
+          let P;
+          if (blasted) {
+            // Hidden inside the dust: wait on the shelf so the dust rebuilds them right there.
+            P = poses[3](i);
+            c.position.set(P[0], P[1], P[2]); c.rotation.set(P[3], P[4], P[5]); c.scale.setScalar(P[6]);
+            return;
+          }
+          const A = poses[a](i), B = poses[b](i); P = A.map((v, j) => v + (B[j] - v) * f);
+          if (collide > 0) {
+            // Asteroids: every book tumbles faster and faster into the same point.
+            const jx = Math.sin(i * 2.3) * 0.5, jy = Math.cos(i * 1.7) * 0.4;
+            P[0] += (CORE.x + jx * (1 - collide) - P[0]) * collide;
+            P[1] += (CORE.y + jy * (1 - collide) - P[1]) * collide;
+            P[2] += (CORE.z - P[2]) * collide;
+            const spin = collide * (1.5 + clock * 2.2);   // keeps tumbling even while you pause scrolling
+            P[3] += spin * (i % 2 ? 1 : -0.7); P[4] += spin * (i % 3 ? 0.8 : -1); P[5] += spin * (i % 2 ? -0.6 : 0.9);
+            P[6] *= 1 - collide * 0.55;
+          }
           const bob = reduced ? 0 : Math.sin(clock * 0.8 + i) * 0.04;
           c.userData.hover += ((c === hovered ? 1 : 0) - c.userData.hover) * k;
           c.position.x += (P[0] - c.position.x) * k;
@@ -476,7 +539,7 @@
           c.rotation.x += (P[3] - c.rotation.x) * k; c.rotation.y += (P[4] - c.rotation.y) * k; c.rotation.z += (P[5] + swing - c.rotation.z) * k;
           const sc = P[6] * (1 + c.userData.hover * 0.05); c.scale.setScalar(c.scale.x + (sc - c.scale.x) * k);
         });
-        const show = Math.max(0, t - 2);
+        const show = reduced ? 1 : sn >= 0 ? clamp01((sn - 0.68) / 0.32) : (t >= 3 ? 1 : 0);
         boards.forEach((bd, r) => { const p = boardPose(r); bd.position.set(p[0], p[1], p[2]); bd.scale.set(Math.max(0.001, ease(show)), 1, 1); bd.visible = show > 0.01; });
 
         deck.rotation.y += ((reduced ? 0 : px * 0.18 + Math.sin(clock * 0.25) * 0.04) - deck.rotation.y) * k;
@@ -484,19 +547,37 @@
 
         // Dust: gathers into the books when the page opens, and the books break into dust and
         // rebuild themselves on the shelf between chapters 3 and 4.
-        let S = 0;
+        let S = 0, mode = 0, burst = 0, heat = 0, flashK = 0, ringK = -1;
         if (!reduced) {
-          const intro = previewPose !== null ? 0 : 1 - outCubic(Math.min(1, Math.max(0, (clock - .25) / 2.4)));
-          const toShelf = Math.sin(Math.PI * Math.min(1, Math.max(0, t - 2)));
-          S = dustFixed ?? Math.max(intro, toShelf);
+          const intro = previewPose !== null ? 0 : 1 - outCubic(clamp01((clock - .25) / 2.4));
+          S = intro;
+          if (sn >= 0.4) {
+            mode = 1;
+            S = sn < 0.75 ? clamp01((sn - 0.4) / 0.04) : 1 - ease(clamp01((sn - 0.75) / 0.25));
+            burst = sn < 0.75 ? outCubic(clamp01((sn - 0.4) / 0.35)) : 1;
+            heat = Math.exp(-Math.pow((sn - 0.44) / 0.08, 2));
+            flashK = Math.exp(-Math.pow((sn - 0.43) / 0.045, 2));
+            ringK = clamp01((sn - 0.41) / 0.34);
+          }
+          if (dustFixed !== null) { S = dustFixed; mode = 0; }
         }
         scene.updateMatrixWorld();
-        cards.forEach((c, i) => { dustMat.uniforms.uCards.value[i].copy(c.matrixWorld); c.visible = S < 0.1; });
-        centerV.set(deck.position.x + (narrow ? 2.1 : 2.3), deck.position.y + .1, -.4);
+        cards.forEach((c, i) => { dustMat.uniforms.uCards.value[i].copy(c.matrixWorld); c.visible = S < 0.1 && !(sn >= 0.42 && sn < 0.97); });
+        centerV.copy(CORE).applyMatrix4(deck.matrixWorld);
+        Object.assign(dustMat.uniforms.uMode, { value: mode }); dustMat.uniforms.uBurst.value = burst; dustMat.uniforms.uHeat.value = heat;
         dustMat.uniforms.uCenter.value.copy(centerV);
         dustMat.uniforms.uS.value = S;
         dustMat.uniforms.uTime.value = clock;
         dust.visible = S > 0.005;
+        // Flash and shockwaves
+        flash.visible = flashK > 0.01; flash.position.copy(centerV); flash.scale.setScalar(0.5 + flashK * 6.5); flash.material.opacity = Math.min(1, flashK * 1.3);
+        [ring, ring2].forEach((r, j) => {
+          const g = clamp01(ringK - j * 0.12);
+          r.visible = ringK >= 0 && g > 0 && g < 1;
+          r.position.copy(centerV); r.lookAt(camera.position); r.rotateX(j ? 0.5 : -0.3);
+          r.scale.setScalar(0.2 + outCubic(g) * (j ? 4.5 : 6));
+          r.material.opacity = (1 - g) * 0.9;
+        });
         renderer.render(scene, camera);
         requestAnimationFrame(frame);
       }
