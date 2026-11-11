@@ -13,9 +13,9 @@ window.SKILL_DATA = {
     { id: 'workflow', label: 'AI tools', short: 'AI tools', icon: '🧠' }
   ],
   levels: {
-    easy: { label: 'Easy', hint: 'Anyone also can use. Just ask like normal.' },
-    medium: { label: 'Medium', hint: 'Easy to ask, but best when you got a real project.' },
-    technical: { label: 'Technical', hint: 'For those who build websites or code lah.' }
+    easy: { label: 'Easy', hint: 'Anyone can use it. Just ask like you normally would.' },
+    medium: { label: 'Medium', hint: 'Easy to ask for, but best with a real project.' },
+    technical: { label: 'Technical', hint: 'For people who build websites or write code.' }
   },
   // repo/branch/dir let the shelf write install steps directly on each skill (checked 2026-11-10):
   // a skill folder lives at <repo>/<dir>/<skill id>. root:true means the whole repo is one skill.

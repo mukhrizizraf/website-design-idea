@@ -138,7 +138,7 @@
         <button class="pick-name" type="button" data-skill="${s.id}"><strong>${esc(s.title)}</strong><span>${esc(cats[s.cat].label)}</span></button>
         <span class="stepper"><button class="step" type="button" data-step="-1" aria-label="Previous pick">${chevron(-1)}</button>${state.pick + 1} of ${picks.length}<button class="step" type="button" data-step="1" aria-label="Next pick">${chevron(1)}</button></span>
       </figcaption>
-      <div class="pick-actions"><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy the words</button><button class="btn" type="button" data-skill="${s.id}">How to install ah?</button></div>`;
+      <div class="pick-actions"><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy the words</button><button class="btn" type="button" data-skill="${s.id}">How do I install it?</button></div>`;
   }
   // Tilt toward the pointer, like a pane of glass you could pick up.
   const tilt = $('#tilt');
@@ -162,9 +162,9 @@
   }
   function renderShelf() {
     const found = items.filter(matches);
-    $('#result').textContent = state.q || state.easy || state.cat !== 'all' ? `${found.length} out of ${items.length} skills` : `${items.length} skills, all sorted nicely for you`;
+    $('#result').textContent = state.q || state.easy || state.cat !== 'all' ? `${found.length} of ${items.length} skills` : `${items.length} skills, sorted by what they help with`;
     if (!found.length) {
-      $('#groups').innerHTML = `<div class="empty"><strong>Alamak, nothing found</strong>Try a shorter word, or just show everything.<br><button class="btn" type="button" id="clear">Show all lah</button></div>`;
+      $('#groups').innerHTML = `<div class="empty"><strong>Hmm, nothing found</strong>Try a shorter word, or just show everything.<br><button class="btn" type="button" id="clear">Show me everything</button></div>`;
       return;
     }
     $('#groups').innerHTML = D.categories.map(c => {
@@ -248,24 +248,24 @@
   function installHtml(s) {
     const i = install(s);
     if (i.none) {
-      const text = i.none === 'claudeapp' ? 'This one already inside the Claude app. Nothing to install, just ask only.'
+      const text = i.none === 'claudeapp' ? 'This one already comes with the Claude app. Nothing to install, just ask.'
         : i.none === 'plugin' ? 'This one comes in a Claude Code plugin. In Claude Code, type <code>/plugin</code>, find it in the list, install from there.'
-        : 'No public download link yet for this one. Just WhatsApp me, I send you the folder.';
+        : "No public download link for this one yet. Just message me and I'll send you the folder.";
       return `<h3>How to install</h3><p class="note" style="margin-top:0">${text}</p>`;
     }
     const block = (code, label) => `<pre class="code">${esc(code)}</pre><div class="code-row"><button class="btn small" type="button" data-copy="${esc(code)}" data-done="${esc(label)}">Copy</button></div>`;
     const ways = i.plugin
-      ? [['ask', 'In Claude Code', `<p>Type these two lines into Claude Code, one by one.</p>${block(i.plugin.join('\n'), 'Dah copy! Paste into Claude Code ya.')}`],
-         ['term', 'Terminal', `<p>Or run this in a terminal. It will ask you a few questions.</p>${block('npx claude-mem install', 'Dah copy! Paste into a terminal ya.')}`]]
-      : [['ask', 'Ask Claude Code', `<p>The easiest way. Paste into Claude Code, it will copy the files for you. Siap.</p>${block(i.ask, 'Dah copy! Paste into Claude Code ya.')}`],
-         ['win', 'Windows', `<p>Paste into PowerShell. Need Git ya. No Git? Just use Ask Claude Code lah.</p>${block(i.win, 'Dah copy! Paste into PowerShell ya.')}`],
-         ['mac', 'Mac or Linux', `<p>Paste into Terminal. Need Git ya.</p>${block(i.mac, 'Dah copy! Paste into Terminal ya.')}`],
-         ['app', 'Claude app', s.builtIn ? '<p>Already inside the Claude app. Nothing to install.</p>'
+      ? [['ask', 'In Claude Code', `<p>Type these two lines into Claude Code, one at a time.</p>${block(i.plugin.join('\n'), 'Copied! Now paste it into Claude Code.')}`],
+         ['term', 'Terminal', `<p>Or run this in a terminal. It'll ask you a few questions.</p>${block('npx claude-mem install', 'Copied! Now paste it into a terminal.')}`]]
+      : [['ask', 'Ask Claude Code', `<p>The easiest way. Paste it into Claude Code and it copies the files for you. Done.</p>${block(i.ask, 'Copied! Now paste it into Claude Code.')}`],
+         ['win', 'Windows', `<p>Paste into PowerShell. You'll need Git. No Git? Just use Ask Claude Code instead.</p>${block(i.win, 'Copied! Now paste it into PowerShell.')}`],
+         ['mac', 'Mac or Linux', `<p>Paste into Terminal. You'll need Git.</p>${block(i.mac, 'Copied! Now paste it into Terminal.')}`],
+         ['app', 'Claude app', s.builtIn ? '<p>Already in the Claude app. Nothing to install.</p>'
            : `<p>Download the ZIP, unzip it, and open <code>${esc(i.unzipped)}</code>. Zip ${s.members ? 'each skill folder you want' : 'that one folder'}, then upload it in the Claude app under Settings, Capabilities, Skills.</p><a class="btn" href="${esc(i.zip)}" download>Download the ZIP</a>`]];
     return `<h3>How to install</h3>
       <div class="ways" role="tablist" aria-label="Ways to install">${ways.map(([id, label], n) => `<button class="way" type="button" role="tab" data-way="${id}" aria-selected="${n === 0}">${label}</button>`).join('')}</div>
       ${ways.map(([id, , body], n) => `<div class="way-panel" role="tabpanel" data-panel="${id}" ${n ? 'hidden' : ''}>${body}</div>`).join('')}
-      <p class="repo">GitHub: <code>${esc(i.folderUrl || i.url)}</code><button class="btn small" type="button" data-copy="${esc(i.folderUrl || i.url)}" data-done="GitHub link dah copy!">Copy link</button></p>`;
+      <p class="repo">GitHub: <code>${esc(i.folderUrl || i.url)}</code><button class="btn small" type="button" data-copy="${esc(i.folderUrl || i.url)}" data-done="GitHub link copied!">Copy link</button></p>`;
   }
 
   // ---------- detail sheets: a 3D pop-up ----------
@@ -296,27 +296,27 @@
   function clip(l) {
     if (!l.video) return '';
     return `<div class="clip"><video preload="none" controls playsinline loop muted ${l.poster ? `poster="${esc(l.poster)}"` : ''} src="${esc(l.video)}" aria-label="${esc(l.title)} clip"></video>
-      <p class="clip-blocked" hidden>Aiyo, this clip cannot load. Maybe your network or antivirus blocking prompt-motion.com. No worries, the prompt below still can use.</p></div>`;
+      <p class="clip-blocked" hidden>Oops, this clip won't load. Your network or antivirus might be blocking prompt-motion.com. No worries, the prompt below still works.</p></div>`;
   }
   function openCollection(c, push) {
     const li = list => list.map(x => `<li>${esc(x)}</li>`).join('');
     const credit = l => {
       const who = String(l.source || '').replace(/^Prompt Motion\s*·\s*/, '');
       const name = l.creatorUrl ? `<a href="${esc(l.creatorUrl)}" target="_blank" rel="noopener noreferrer">${esc(who)}</a>` : esc(who);
-      return `By ${name}, via Prompt Motion. Video and prompt are theirs ya, credit to them.`;
+      return `By ${name}, via Prompt Motion. The video and prompt are theirs, all credit to them.`;
     };
     $('#detail-body').innerHTML = `<div class="sheet">
-      <div class="sheet-top">${cube(c.cat)}<div><h2 id="d-title">${esc(c.title.charAt(0) + c.title.slice(1).toLowerCase())}</h2><p class="sheet-sub">${c.lessons.length} ideas, each one got the clip and the exact prompt or install command</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
+      <div class="sheet-top">${cube(c.cat)}<div><h2 id="d-title">${esc(c.title.charAt(0) + c.title.slice(1).toLowerCase())}</h2><p class="sheet-sub">${c.lessons.length} ideas, each with its clip and the exact prompt or install command</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(c.what)}</p>
       <div class="ideas">${c.lessons.map((l, i) => `<article class="idea">
         <div class="idea-head"><span class="idea-n">${i + 1}</span><div><h3>${esc(l.title)}</h3><p class="idea-credit">${credit(l)}</p></div></div>
         ${clip(l)}
         <p class="idea-sum">${esc(l.summary)}</p>
-        ${l.prompt ? `<div class="prompt-box"><div class="prompt-top"><strong>The prompt</strong><button class="btn small primary" type="button" data-copy="${esc(l.prompt)}" data-done="Prompt dah copy! Paste into Claude ya.">Copy prompt</button></div><pre class="prompt-text">${esc(l.prompt)}</pre></div>` : ''}
+        ${l.prompt ? `<div class="prompt-box"><div class="prompt-top"><strong>The prompt</strong><button class="btn small primary" type="button" data-copy="${esc(l.prompt)}" data-done="Prompt copied! Now paste it into Claude.">Copy prompt</button></div><pre class="prompt-text">${esc(l.prompt)}</pre></div>` : ''}
         ${l.install ? `<div class="prompt-box"><div class="prompt-top"><strong>Install this skill</strong><button class="btn small primary" type="button" data-copy="${esc(l.install)}" data-done="Copied. Paste it into ${l.install.startsWith('/') ? 'Claude Code' : 'a terminal'}.">Copy</button></div><pre class="code">${esc(l.install)}</pre><p class="note">${l.install.startsWith('/') ? 'Type these into Claude Code, one line at a time.' : 'Paste into a terminal. It needs Node.js.'}</p></div>` : ''}
         <details class="lesson"><summary><strong>What to learn and try</strong></summary><h4>What to learn</h4><ul>${li(l.takeaways)}</ul><h4>Try it</h4><ol>${li(l.actions)}</ol></details>
       </article>`).join('')}</div>
-      <div class="sheet-foot"><button class="btn" type="button" data-share="${esc(c.id)}">Copy link, share with kawan</button></div></div>`;
+      <div class="sheet-foot"><button class="btn" type="button" data-share="${esc(c.id)}">Copy the link, share with friends</button></div></div>`;
     openSheet(c.id, push);
     // Show the "blocked" note if a clip fails to load.
     $('#detail-body').querySelectorAll('.clip video').forEach(v => {
@@ -337,10 +337,10 @@
       <p class="lead">${esc(s.what)}</p>
       <h3>Best for</h3><ul class="uses">${s.useFor.map(u => `<li>${esc(u)}</li>`).join('')}</ul>
       <h3>Just say this to Claude</h3><div class="say"><p>“${esc(s.say)}”</p><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy</button></div>
-      <p class="note">${esc(D.levels[s.level].hint)} In Claude Code, can also type <code>/${esc(s.members ? s.members[0][0] : s.id)}</code> to start terus.</p>
+      <p class="note">${esc(D.levels[s.level].hint)} In Claude Code you can also type <code>/${esc(s.members ? s.members[0][0] : s.id)}</code> to start it right away.</p>
       ${installHtml(s)}
       ${s.members ? `<h3>What's inside this pack</h3><ul class="members">${s.members.map(([n, t]) => `<li><code>/${esc(n)}</code><br>${esc(t)}</li>`).join('')}</ul>` : ''}
-      <div class="sheet-foot"><button class="btn" type="button" data-share="${esc(s.id)}">Copy link, share with kawan</button></div></div>`;
+      <div class="sheet-foot"><button class="btn" type="button" data-share="${esc(s.id)}">Copy the link, share with friends</button></div></div>`;
     openSheet(s.id, push);
   }
   $('#detail').addEventListener('close', () => {
@@ -356,8 +356,8 @@
     if (t.dataset.skill) { lastClick = t; openSkill(t.dataset.skill); }
     else if (t.dataset.cat) { state.cat = t.dataset.cat; render(); if (matchMedia('(max-width: 760px)').matches) $('#shelf').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); }
     else if (t.dataset.step) { state.pick = (state.pick + Number(t.dataset.step) + picks.length) % picks.length; renderPick(); }
-    else if (t.dataset.copy !== undefined) copy(t.dataset.copy, t.dataset.done || 'Dah copy! Paste into Claude ya.');
-    else if (t.dataset.share) copy(pageUrl() + '#skill=' + t.dataset.share, 'Link dah copy! Send to your kawan.');
+    else if (t.dataset.copy !== undefined) copy(t.dataset.copy, t.dataset.done || 'Copied! Now paste it into Claude.');
+    else if (t.dataset.share) copy(pageUrl() + '#skill=' + t.dataset.share, 'Link copied! Send it to a friend.');
     else if (t.dataset.way) {
       const sheet = t.closest('.sheet');
       sheet.querySelectorAll('.way').forEach(b => b.setAttribute('aria-selected', String(b === t)));
@@ -366,7 +366,7 @@
     else if (t.hasAttribute('data-close')) closeSheet(t.closest('dialog'));
     else if (t.id === 'clear') { state.cat = 'all'; state.q = ''; state.easy = false; $('#q').value = ''; $('#easy').checked = false; render(); }
     else if (t.id === 'open-guide') $('#guide').showModal();
-    else if (t.id === 'share-page') copy(pageUrl(), 'Link dah copy!');
+    else if (t.id === 'share-page') copy(pageUrl(), 'Link copied!');
   });
   $('#q').addEventListener('input', e => { state.q = e.target.value.trim(); renderShelf(); });
   $('#easy').addEventListener('change', e => { state.easy = e.target.checked; renderShelf(); });

@@ -195,3 +195,33 @@ h1,h2{font-size:clamp(2.9rem,6.4vw,5.8rem);line-height:.9;letter-spacing:-.045em
 .js-reveal .doors.in .door{opacity:1;transform:none}
 .js-reveal .doors.in .door:hover{transform:translateY(-6px) scale(1.02);transition-delay:0s}
 @media (prefers-reduced-motion:reduce){.js-reveal .copy,.js-reveal .door{opacity:1!important;transform:none!important;filter:none!important}}
+.chapters a{white-space:nowrap}
+
+/* ==========================================================================
+   Top bar, "Glassy Navigation Tabs" style: icon over label; the active chapter's icon
+   lifts out of the bar into a glowing circle in that chapter's colour, sitting in a
+   glass bump, with a soft beam of light falling onto its label. It springs between tabs.
+   ========================================================================== */
+.nav{overflow:visible;padding:6px 6px 6px 14px}
+.chapters{position:relative;background:none;padding:0 4px;gap:4px;margin:0 8px}
+.chapters a{flex-direction:column;align-items:center;gap:3px;min-width:68px;padding:6px 10px 4px;border-radius:14px;font-size:.75rem;font-weight:700;color:var(--ink-2);background:none!important}
+.chapters a::after{display:none}
+.ch-ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform .55s var(--spring-fb),color .3s}
+.chapters a:hover .ch-ic{transform:translateY(-2px) scale(1.08)}
+.chapters a[aria-current]{color:var(--ink)}
+.chapters a[aria-current] .ch-ic{color:#fff;transform:translateY(-22px) scale(1.05)}
+.chapters a[aria-current] span{color:var(--pill,var(--ink))}
+/* The moving piece: a glass bump with a coloured circle on top and a beam below */
+.ch-pill{top:0;left:0;width:0!important;height:0;background:none;box-shadow:none;border-radius:0}
+.ch-pill::before{content:"";position:absolute;left:-36px;top:-26px;width:72px;height:40px;border-radius:36px 36px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.7));box-shadow:0 -8px 18px rgba(60,40,120,.12),inset 0 1px 0 #fff}
+.ch-pill::after{content:"";position:absolute;left:-22px;top:-28px;width:44px;height:44px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--pill,#ff375f) 60%,#fff),var(--pill,#ff375f) 70%);
+  box-shadow:0 0 0 4px rgba(255,255,255,.9),0 8px 22px color-mix(in srgb,var(--pill,#ff375f) 55%,transparent),inset 0 1px 0 rgba(255,255,255,.6);
+  transition:background .4s,box-shadow .4s}
+.ch-beam{position:absolute;left:-30px;top:14px;width:60px;height:34px;pointer-events:none;
+  background:radial-gradient(60% 100% at 50% 0%,color-mix(in srgb,var(--pill,#ff375f) 40%,transparent),transparent 75%);
+  clip-path:polygon(32% 0,68% 0,100% 100%,0 100%);transition:background .4s}
+.nav{top:30px}
+@media (max-width:820px){.nav{top:14px}}
