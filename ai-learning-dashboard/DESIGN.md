@@ -33,3 +33,13 @@ Files: homepage `public/index.html` + `home.css`; shelf `public/shelf.html` + `s
 ## Background ("vibing on Claude")
 
 `public/vibe.js` adds a playful layer behind both pages: two tilted ribbons scrolling real prompts from `skills.js` (one black, one rainbow), iMessage-style chat bubbles that bob and type, and a spinning "Made with Claude, ask anything" sticker. The shelf adds a giant outlined "just ask."; the homepage paints "just ask." and "Claude can do that." into the 3D wallpaper so the glass books bend them. Book covers have their own art (big skill symbol, pattern, glow, sparkles, category tag), and the books break into a galaxy of dust between chapters 3 and 4 (`?dust=0..1` freezes it for review). No Anthropic logo is used.
+
+## Playful shelf update — 11 November 2026
+
+Preserve the homepage WebGL stacking books, covers, collision flash and shelf poses. Leave more space above the first chapter for the raised navigation icon. Category objects rock within a readable angle instead of turning edge-on.
+
+The shelf opens in Cards view: colourful book jackets, thick outlines, depth shadows and hover/tap feedback. List view remains available for quick scanning. Pick one for me opens a random skill from the current category, search and difficulty results, avoiding the previous choice when possible. Skill sheets use the animated category objects and a coloured prompt panel. Keyboard buttons, touch press feedback and reduced-motion alternatives remain available.
+
+### Glass category dock and phone behaviour
+
+Categories stay within reach through a labelled glass rail on desktop and a bottom dock below 1100px. Both use the existing animated cartoon objects. Phone styles include safe-area padding, stable hero height, dynamic-height bottom sheets, 44px controls, 16px search text and hover effects limited to precise hovering pointers. The dock hides while search has focus to leave keyboard space. Text remains selectable outside controls; zoom stays enabled. Actual phone touch, keyboard and notch behaviour still require hardware verification.

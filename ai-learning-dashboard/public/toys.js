@@ -53,4 +53,11 @@
     return `<span class="toy toy-${cat} ${cls}" aria-hidden="true"><span class="toy-spin">${back}<svg class="toy-face" viewBox="0 0 100 100">${art}</svg></span></span>`;
   }
   window.ShelfToys = { toy };
+  // Keep categories within reach without altering the WebGL book scene.
+  if (document.getElementById('stage') && window.SKILL_DATA) {
+    const dock = document.createElement('nav');
+    dock.className = 'category-dock'; dock.setAttribute('aria-label', 'Skill categories');
+    dock.innerHTML = window.SKILL_DATA.categories.map(c => '<a class="dock-item" href="./shelf.html?cat=' + c.id + '" aria-label="' + c.label.replace(/&/g, '&amp;') + '">' + toy(c.id, 'dock-toy') + '<span>' + (c.short || c.label) + '</span></a>').join('');
+    document.body.appendChild(dock);
+  }
 })();

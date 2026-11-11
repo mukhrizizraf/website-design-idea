@@ -13,7 +13,7 @@
   const skills = [...D.skills].sort((a, b) => (isNew(b) ? 1 : 0) - (isNew(a) ? 1 : 0));
   const items = [...collections, ...skills];
   const picks = D.featured.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
-  const state = { cat: 'all', q: '', easy: false, pick: 0 };
+  const state = { cat: 'all', q: '', easy: false, pick: 0, view: 'cards' };
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Small line icons, only for the phone tab bar where labels are short.
@@ -117,13 +117,13 @@
     const list = [{ id: 'all', label: 'All', short: 'All' }, ...D.categories];
     if (!tabsBuilt) {
       $('#tabs').innerHTML = '<span class="tab-pill" aria-hidden="true"></span>' + list.map(c => `<button class="tab" type="button" data-cat="${c.id}" aria-current="false">${appIc(c.id)}${esc(c.short || c.label)}</button>`).join('');
-      $('#tabbar').innerHTML = '<span class="tb-pill" aria-hidden="true"></span>' + list.map(c => `<button class="tb" type="button" data-cat="${c.id}" aria-current="false" aria-label="${esc(c.label)}"><b data-cat="${c.id}">${svg(P[c.id] || P.all)}</b><span>${esc(c.short || c.label)}</span></button>`).join('');
+      $('#tabbar').innerHTML = '<span class="tb-pill" aria-hidden="true"></span>' + list.map(c => `<button class="tb" type="button" data-cat="${c.id}" aria-current="false" aria-label="${esc(c.label)}"><b data-cat="${c.id}">${window.ShelfToys ? ShelfToys.toy(c.id, 'dock-toy') : svg(P[c.id] || P.all)}</b><span>${esc(c.short || c.label)}</span></button>`).join('');
       tabsBuilt = true;
     }
     document.querySelectorAll('.tab, .tb').forEach(b => b.setAttribute('aria-current', String(b.dataset.cat === state.cat)));
     requestAnimationFrame(() => {
       placePill($('#tabs'), '.tab-pill', '.tab[aria-current="true"]');
-      placePill($('#tabbar'), '.tb-pill', '.tb[aria-current="true"]');
+      // Dock selection is drawn on each button, so it works vertically and horizontally.
     });
   }
   addEventListener('resize', () => { if (tabsBuilt) renderTabs(); });
@@ -154,14 +154,16 @@
 
   // ---------- the shelf: grouped rows ----------
   function row(s, i) {
-    return `<li style="--i:${i}"><button class="row" type="button" data-skill="${esc(s.id)}">
+    return `<li style="--i:${i}"><button class="row" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)}: ${esc(s.what)}">
       ${appIc(s.cat, glyphFor(s))}
       <span class="row-name">${esc(s.title)}${isNew(s) ? '<span class="new">New</span>' : ''}</span>
       <span class="row-what">${esc(s.what)}</span>
-      <span class="row-meta lv-${s.lessons ? 'ideas' : s.members ? 'pack' : s.level}">${esc(levelLabel(s))}</span></button></li>`;
+      <span class="row-meta lv-${s.lessons ? 'ideas' : s.members ? 'pack' : s.level}">${esc(levelLabel(s))}</span><span class="card-invite" aria-hidden="true">${s.lessons ? 'Explore the ideas' : 'Show me how'} <b>↗</b></span></button></li>`;
   }
   function renderShelf() {
     const found = items.filter(matches);
+    $('#surprise').disabled = !found.some(s => !s.lessons);
+    $('#surprise').title = $('#surprise').disabled ? 'No matching skills. Change your filters to try again.' : 'Choose a skill from your current results';
     $('#result').textContent = state.q || state.easy || state.cat !== 'all' ? `${found.length} of ${items.length} skills` : `${items.length} skills, sorted by what they help with`;
     if (!found.length) {
       $('#groups').innerHTML = `<div class="empty"><strong>Hmm, nothing found</strong>Try a shorter word, or just show everything.<br><button class="btn" type="button" id="clear">Show me everything</button></div>`;
@@ -299,6 +301,7 @@
       <p class="clip-blocked" hidden>Oops, this clip won't load. Your network or antivirus might be blocking prompt-motion.com. No worries, the prompt below still works.</p></div>`;
   }
   function openCollection(c, push) {
+    $('#detail').dataset.cat = c.cat;
     const li = list => list.map(x => `<li>${esc(x)}</li>`).join('');
     const credit = l => {
       const who = String(l.source || '').replace(/^Prompt Motion\s*·\s*/, '');
@@ -332,8 +335,9 @@
     if (!s) return;
     if (s.lessons) { openCollection(s, push); return; }
     const src = D.sources[s.src] || { name: 'Unknown' };
+    $('#detail').dataset.cat = s.cat;
     $('#detail-body').innerHTML = `<div class="sheet">
-      <div class="sheet-top">${cube(s.cat)}<div><h2 id="d-title">${esc(s.title)}</h2><p class="sheet-sub">${esc(cats[s.cat].label)}, ${esc(D.levels[s.level].label.toLowerCase())}, from ${esc(src.name)}${isNew(s) ? ', new this month' : ''}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
+      <div class="sheet-top">${window.ShelfToys ? ShelfToys.toy(s.cat, 'detail-toy') : cube(s.cat)}<div><h2 id="d-title">${esc(s.title)}</h2><p class="sheet-sub">${esc(cats[s.cat].label)}, ${esc(D.levels[s.level].label.toLowerCase())}, from ${esc(src.name)}${isNew(s) ? ', new this month' : ''}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(s.what)}</p>
       <h3>Best for</h3><ul class="uses">${s.useFor.map(u => `<li>${esc(u)}</li>`).join('')}</ul>
       <h3>Just say this to Claude</h3><div class="say"><p>“${esc(s.say)}”</p><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy</button></div>
@@ -350,10 +354,24 @@
   document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) closeSheet(d); }));
 
   // ---------- events ----------
+  let lastSurprise = null;
   function render() { renderTabs(); renderShelf(); }
   document.addEventListener('click', e => {
     const t = e.target.closest('button, a'); if (!t) return;
-    if (t.dataset.skill) { lastClick = t; openSkill(t.dataset.skill); }
+    if (t.dataset.view) {
+      state.view = t.dataset.view; $('#shelf').dataset.view = state.view;
+      document.querySelectorAll('[data-view][aria-pressed]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === state.view)));
+      watchRows();
+    }
+    else if (t.id === 'surprise') {
+      const options = items.filter(s => !s.lessons && matches(s));
+      const fresh = options.filter(s => s.id !== lastSurprise);
+      const pool = fresh.length ? fresh : options;
+      if (!pool.length) return;
+      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      lastSurprise = chosen.id; lastClick = t; openSkill(chosen.id);
+    }
+    else if (t.dataset.skill) { lastClick = t; openSkill(t.dataset.skill); }
     else if (t.dataset.cat) { state.cat = t.dataset.cat; document.documentElement.classList.add('swapping'); setTimeout(() => document.documentElement.classList.remove('swapping'), 900); render(); if (matchMedia('(max-width: 760px)').matches) $('#shelf').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); }
     else if (t.dataset.step) {
       // The pick card flips over in 3D; the new words appear on its far side.
