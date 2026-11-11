@@ -17,18 +17,18 @@
   const ribbon = (cls, list) => `<div class="ribbon ${cls}"><div class="ribbon-track">${[...list, ...list].map(t => `<span>“${esc(t)}”</span><b>✦</b>`).join('')}</div></div>`;
 
   const bubbles = [
-    ['me', 'Make me a poster ✨'], ['ai', 'typing'], ['me', 'Humanize this, please'],
-    ['ai', 'On it. Here are 3 ideas →'], ['me', 'Build me a 3D website'], ['ai', 'typing']
+    ['me', 'Eh Claude, make me a poster ✨'], ['ai', 'typing'], ['me', 'Can make this sound less robot ah?'],
+    ['ai', 'Boleh! Here got 3 ideas →'], ['me', 'Build me a 3D website, can?'], ['ai', 'typing']
   ].map(([who, text], i) => `<div class="bubble b${i + 1} ${who}">${text === 'typing' ? '<i></i><i></i><i></i>' : esc(text)}</div>`).join('');
 
   const sticker = `<svg class="sticker" viewBox="0 0 200 200"><defs><path id="vibe-ring" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0"/></defs>
     <circle cx="100" cy="100" r="96" fill="#1d1d1f"/>
-    <text><textPath href="#vibe-ring" startOffset="0">MADE WITH CLAUDE ✦ ASK ANYTHING ✦ MADE WITH CLAUDE ✦</textPath></text>
+    <text><textPath href="#vibe-ring" startOffset="0">MADE WITH CLAUDE ✦ JUST ASK LAH ✦ MADE WITH CLAUDE ✦</textPath></text>
     <path class="spark" d="M100 64c4 22 14 32 36 36-22 4-32 14-36 36-4-22-14-32-36-36 22-4 32-14 36-36Z"/></svg>`;
 
   const layer = document.createElement('div');
   layer.className = 'vibe' + (home ? ' vibe-home' : ' vibe-shelf');
   layer.setAttribute('aria-hidden', 'true');
-  layer.innerHTML = (home ? '' : '<div class="big-word">just ask.</div>') + ribbon('r1', a) + ribbon('r2', b) + bubbles + sticker;
+  layer.innerHTML = (home ? '' : '<div class="big-word">just ask lah.</div>') + ribbon('r1', a) + ribbon('r2', b) + bubbles + sticker;
   document.body.prepend(layer);
 })();

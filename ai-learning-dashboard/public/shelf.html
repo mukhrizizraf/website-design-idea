@@ -37,15 +37,15 @@
       <nav class="tabs" id="tabs" aria-label="Skill categories"></nav>
       <label class="search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 16l5 5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"/></svg>
-        <input id="q" type="search" placeholder="Search" aria-label="Search skills" autocomplete="off">
+        <input id="q" type="search" placeholder="Cari skill…" aria-label="Search skills" autocomplete="off">
       </label>
     </header>
 
     <section class="hero">
       <div class="hero-text">
-        <h1><span class="heavy">The shelf.</span> <span class="soft">Pick a job, copy the words.</span></h1>
-        <p>Each skill teaches Claude one job. Find the job you need, install the skill once, then copy the words and paste them into Claude.</p>
-        <button class="link" type="button" id="open-guide">What is a skill?</button>
+        <h1><span class="heavy">The shelf.</span> <span class="soft">Pick one, copy, settle.</span></h1>
+        <p>Each skill teaches Claude one job. Find the one you need, install once only, then copy the words and paste into Claude. Easy peasy.</p>
+        <button class="link" type="button" id="open-guide">Eh, what is a skill ah?</button>
       </div>
       <div class="tilt" id="tilt">
         <figure class="pick" id="pick" aria-live="polite"></figure>
@@ -55,14 +55,14 @@
     <main class="shelf" id="shelf" tabindex="-1">
       <div class="shelf-bar">
         <p class="result" id="result" aria-live="polite"></p>
-        <label class="easy"><input type="checkbox" id="easy"><span class="switch" aria-hidden="true"></span>Easy ones only</label>
+        <label class="easy"><input type="checkbox" id="easy"><span class="switch" aria-hidden="true"></span>Senang-senang only</label>
       </div>
       <div id="groups"></div>
     </main>
 
     <footer class="foot">
-      <button class="link" type="button" id="share-page">Copy the link to this page</button>
-      <a class="link" href="./index.html">Back to Home</a>
+      <button class="link" type="button" id="share-page">Copy link, share with kawan</button>
+      <a class="link" href="./index.html">Balik Home</a>
     </footer>
   </div>
   <div class="handle" aria-hidden="true"></div>
@@ -71,13 +71,13 @@
   <dialog id="detail" class="pop" aria-labelledby="d-title"><div id="detail-body"></div></dialog>
   <dialog id="guide" aria-labelledby="g-title">
     <div class="sheet">
-      <div class="sheet-top"><h2 id="g-title">What is a skill?</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
-      <p class="lead">A skill is a small folder of instructions, usually one file called <code>SKILL.md</code>. When your request matches a skill, Claude reads it and follows it. Think of it as a recipe card for one job.</p>
+      <div class="sheet-top"><h2 id="g-title">Skill tu apa?</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+      <p class="lead">A skill is a small folder of instructions, usually just one file called <code>SKILL.md</code>. When you ask something that matches, Claude will read it and follow. Like a recipe card for one job lah.</p>
       <div class="how">
-        <div><h3>In Claude Code</h3><p>Skills live in the folder <code>~/.claude/skills/</code>. Each skill on this shelf has an install sentence you can paste straight into Claude Code, so it copies the folder for you.</p></div>
-        <div><h3>In the Claude app</h3><p>Word, PowerPoint, Excel and PDF skills are already built in. For other skills, download the ZIP from the skill's page here, then upload the skill folder under Settings, Capabilities, Skills.</p></div>
+        <div><h3>In Claude Code</h3><p>Skills stay in the folder <code>~/.claude/skills/</code>. Every skill here got one install sentence, just paste into Claude Code and it will copy the folder for you. Steady.</p></div>
+        <div><h3>In the Claude app</h3><p>Word, PowerPoint, Excel and PDF skills already inside. For the others, download the ZIP from the skill's page here, then upload the folder under Settings, Capabilities, Skills. Done.</p></div>
       </div>
-      <p class="note">Not using Claude? The example words on each skill still help in other chatbots. The skill itself works best in Claude.</p>
+      <p class="note">Not using Claude? No problem, the example words still can use in other chatbots. But the skill itself best in Claude lah.</p>
     </div>
   </dialog>
   <div id="toast" role="status" aria-live="polite"></div>

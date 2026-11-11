@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f5f7">
-  <meta name="description" content="AI Skill Shelf: every AI skill I find, kept in one place, with the words to use it and how to install it. Shared so others can learn too.">
+  <meta name="description" content="AI Skill Shelf: all my AI tricks in one place, with the words to say and how to install. Jom try.">
   <title>AI Skill Shelf</title>
   <link rel="canonical" href="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/index.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="AI Skill Shelf">
-  <meta property="og:description" content="Every AI skill I find, kept in one place, with the words to use it and how to install it. Shared so others can learn too.">
+  <meta property="og:description" content="All my AI tricks in one place, with the words to say and how to install. Jom try.">
   <meta property="og:url" content="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/index.html">
   <meta property="og:image" content="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/og.png">
   <meta property="og:image:width" content="1200">
@@ -54,35 +54,35 @@
   <main>
     <section class="chapter" id="ch-saved">
       <div class="copy">
-        <p class="kicker">01  Saved, not lost</p>
-        <h1><span class="heavy">Every AI trick I find,</span> <span class="soft">kept in one place.</span></h1>
-        <p class="body">I save the best AI skills from TikTok, GitHub and friends. No more digging through old WhatsApp chats to find them again.</p>
-        <p class="cue"><span aria-hidden="true"></span>Scroll to see how it works</p>
+        <p class="kicker">01  Simpan sini, tak hilang</p>
+        <h1><span class="heavy">All my AI tricks,</span> <span class="soft">one place only lah.</span></h1>
+        <p class="body">The best AI skills I found on TikTok, GitHub and from my kawan-kawan, all kept here. No need to scroll WhatsApp until your thumb pain anymore.</p>
+        <p class="cue"><span aria-hidden="true"></span>Scroll down, I show you</p>
       </div>
     </section>
 
     <section class="chapter" id="ch-skill">
       <div class="copy">
-        <p class="kicker">02  What a skill is</p>
-        <h2><span class="heavy">One skill,</span> <span class="soft">one job done well.</span></h2>
-        <p class="body">A skill is a small set of instructions for Claude. Install it once, and Claude knows how to do that job: write like a person, design a poster, or read a TikTok link.</p>
+        <p class="kicker">02  Skill tu apa?</p>
+        <h2><span class="heavy">One skill,</span> <span class="soft">one job, settle.</span></h2>
+        <p class="body">A skill is like a recipe card for Claude. Install once only, then Claude confirm know how to do that job: write like a real person, design a poster, read a TikTok link. Senang je.</p>
       </div>
     </section>
 
     <section class="chapter" id="ch-use">
       <div class="copy">
-        <p class="kicker">03  How to use one</p>
-        <h2><span class="heavy">Copy the words.</span> <span class="soft">Paste into Claude.</span></h2>
-        <p class="body">Every skill on the shelf comes with the exact words to say and the steps to install it, written right there. You never have to dig through GitHub.</p>
+        <p class="kicker">03  Macam mana nak guna?</p>
+        <h2><span class="heavy">Copy the words.</span> <span class="soft">Paste. Siap.</span></h2>
+        <p class="body">Every skill got the exact words to say and the install steps, all written there already. Don't need to go pening-pening dig through GitHub.</p>
       </div>
     </section>
 
     <section class="chapter last" id="ch-share">
       <div class="copy">
-        <p class="kicker">04  Made to share</p>
-        <h2><span class="heavy">What I learn,</span> <span class="soft">shared with you.</span></h2>
-        <p class="body">I put my skills here so anyone can learn from them. Pick a job below, or open the whole shelf and try one today.</p>
-        <a class="cta" href="./shelf.html">Open the shelf</a>
+        <p class="kicker">04  Sharing is caring</p>
+        <h2><span class="heavy">What I learn,</span> <span class="soft">you also can use.</span></h2>
+        <p class="body">I put everything here so you all can try also. Pick one below, or open the whole shelf. Jom, try one today!</p>
+        <a class="cta" href="./shelf.html">Jom, open the shelf</a>
       </div>
       <div class="doors" id="doors" aria-label="Skill categories"></div>
     </section>
@@ -185,7 +185,7 @@
         <div class="pop-top">${cube(s.cat)}<div><p class="pop-cat">${esc(label[s.cat])}</p><h2 id="pop-title">${esc(s.title)}</h2></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
         <p class="pop-what">${esc(s.what)}</p>
         <div class="pop-say"><p>“${esc(s.say)}”</p><button class="copy-btn" type="button" data-copy="${esc(s.say)}">Copy</button></div>
-        <div class="pop-actions"><a class="pill" href="./shelf.html#skill=${encodeURIComponent(s.id)}">How to install it</a></div></div>`;
+        <div class="pop-actions"><a class="pill" href="./shelf.html#skill=${encodeURIComponent(s.id)}">How to install ah?</a></div></div>`;
       popEl.dataset.skill = s.id;
       popEl.classList.remove('closing');
       if (popEl.open) popEl.close();
@@ -200,7 +200,7 @@
       if (e.target === popEl) return closePop();
       const t = e.target.closest('button'); if (!t) return;
       if (t.hasAttribute('data-close')) closePop();
-      else if (t.dataset.copy !== undefined) { try { await navigator.clipboard.writeText(t.dataset.copy); } catch {} toast('Copied. Paste it into Claude.'); }
+      else if (t.dataset.copy !== undefined) { try { await navigator.clipboard.writeText(t.dataset.copy); } catch {} toast('Dah copy! Paste into Claude ya.'); }
     });
 
     // ---------- The 3D scene: a deck of glass skill cards ----------
@@ -241,8 +241,8 @@
       // Vibing on Claude: a giant outlined 'just ask.' painted into the wallpaper, so the glass books bend it.
       g.save(); g.translate(wall.width * 0.58, wall.height * 0.56); g.rotate(-0.1);
       g.font = '800 150px "Bricolage Grotesque"'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.lineWidth = 4; g.strokeStyle = 'rgba(29,29,31,.16)'; g.strokeText('just ask.', 0, 0);
-      g.font = 'italic 400 62px "Instrument Serif"'; g.fillStyle = 'rgba(255,55,95,.42)'; g.fillText('Claude can do that.', 30, 115);
+      g.lineWidth = 4; g.strokeStyle = 'rgba(29,29,31,.16)'; g.strokeText('just ask lah.', 0, 0);
+      g.font = 'italic 400 62px "Instrument Serif"'; g.fillStyle = 'rgba(255,55,95,.42)'; g.fillText('Confirm Claude can one.', 30, 115);
       g.restore(); wallTex.needsUpdate = true;
       const ids = ['tiktok-reader', 'awwwards', 'canvas-design', 'motion-design', 'humanizer', 'pptx', 'gsap', 'frontend-design', 'deep-research'];
       const picks = ids.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
