@@ -32,6 +32,7 @@
     } }
   </script>
   <script defer src="./skills.js"></script>
+  <script defer src="./vibe.js"></script>
 </head>
 <body>
   <a class="skip" href="#ch-share">Skip to the shelf link</a>
@@ -237,6 +238,12 @@
 
       // Card faces drawn with the page fonts.
       await Promise.all(['800 64px "Bricolage Grotesque"', '400 40px "Instrument Serif"', 'italic 400 40px "Instrument Serif"', '500 20px "JetBrains Mono"'].map(f => document.fonts.load(f).catch(() => {})));
+      // Vibing on Claude: a giant outlined 'just ask.' painted into the wallpaper, so the glass books bend it.
+      g.save(); g.translate(wall.width * 0.58, wall.height * 0.56); g.rotate(-0.1);
+      g.font = '800 150px "Bricolage Grotesque"'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.lineWidth = 4; g.strokeStyle = 'rgba(29,29,31,.16)'; g.strokeText('just ask.', 0, 0);
+      g.font = 'italic 400 62px "Instrument Serif"'; g.fillStyle = 'rgba(255,55,95,.42)'; g.fillText('Claude can do that.', 30, 115);
+      g.restore(); wallTex.needsUpdate = true;
       const ids = ['tiktok-reader', 'awwwards', 'canvas-design', 'motion-design', 'humanizer', 'pptx', 'gsap', 'frontend-design', 'deep-research'];
       const picks = ids.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
       const hero = Math.max(0, picks.findIndex(s => s.id === 'humanizer'));
