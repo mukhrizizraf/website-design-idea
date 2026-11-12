@@ -86,17 +86,21 @@
   document.fonts?.ready?.then(() => { if (tabsBuilt) renderTabs(); });
 
   // ---------- the shelf: grouped rows ----------
-  // A turning 3D cube with the skill's own symbol on every face (spans: it sits inside a button).
-  const skillCube = s => `<span class="cube-wrap sk-cube" aria-hidden="true"><span class="cube">${Array.from({ length: 6 }, () => `<i>${svg(glyphFor(s), 24)}</i>`).join('')}</span></span>`;
+  // Every skill is a book: a cartoon cover with the skill symbol on a white badge and its name on a white label.
+  // Covers take ten clearly different colours in grid order, so neighbouring books never look alike.
+  const COVERS = ['#ff3b30', '#2f6bff', '#ffd60a', '#a259ff', '#ff8a00', '#4cc9ff', '#ff5fa2', '#1d1d1f', '#fff1c9', '#3a2fd6'];
+  const DARK = new Set(['#2f6bff', '#a259ff', '#1d1d1f', '#3a2fd6']);
+  const coverOf = new Map();
+  let coverN = 0;
   function row(s, i) {
-    const c = ShelfToys.color(s.id);
-    return `<li style="--i:${i};--a:${c.a};--b:${c.b}"><button class="row" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)}: ${esc(s.what)}">
-      ${skillCube(s)}
-      <span class="row-name">${esc(s.title)}${isNew(s) ? '<span class="new">New</span>' : ''}</span>
-      <span class="row-what">${esc(s.what)}</span>
-      <span class="row-meta lv-${s.lessons ? 'ideas' : s.members ? 'pack' : s.level}">${esc(levelLabel(s))}</span></button><button class="save-skill" type="button" data-save="${esc(s.id)}" aria-pressed="${saved.has(s.id)}" aria-label="${saved.has(s.id) ? 'Unsave' : 'Save'} ${esc(s.title)}">${svg('M6 3h12v18l-6-4-6 4Z')}</button></li>`;
+    const c = COVERS[coverN++ % COVERS.length]; coverOf.set(s.id, c);
+    return `<li style="--i:${i};--c:${c}"><button class="row book${DARK.has(c) ? ' dark' : ''}" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)}: ${esc(s.what)}">
+      <span class="badge" aria-hidden="true">${svg(glyphFor(s), 24)}</span>
+      <span class="lbl"><span class="row-name">${esc(s.title)}</span><span class="row-meta">${isNew(s) ? '<b class="new">New</b> · ' : ''}${esc(levelLabel(s))}</span></span></button></li>`;
   }
+  const miniBook = s => `<span class="mini-book" style="--c:${coverOf.get(s.id) || COVERS[0]}" aria-hidden="true"><span>${svg(glyphFor(s), 19)}</span></span>`;
   function renderShelf() {
+    coverN = 0;
     const found = items.filter(matches);
     $('#surprise').disabled = !found.some(s => !s.lessons);
     $('#surprise').title = $('#surprise').disabled ? 'No matching skills. Change your filters to try again.' : 'Choose a skill from your current results';
@@ -225,7 +229,7 @@
       return `By ${name}, via Prompt Motion. The video and prompt are theirs, all credit to them.`;
     };
     $('#detail-body').innerHTML = `<div class="sheet">
-      <div class="sheet-top">${cube(c.cat)}<div><h2 id="d-title">${esc(c.title.charAt(0) + c.title.slice(1).toLowerCase())}</h2><p class="sheet-sub">${c.lessons.length} ideas, each with its clip and the exact prompt or install command</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
+      <div class="sheet-top">${miniBook(c)}<div><h2 id="d-title">${esc(c.title.charAt(0) + c.title.slice(1).toLowerCase())}</h2><p class="sheet-sub">${c.lessons.length} ideas, each with its clip and the exact prompt or install command</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(c.what)}</p>
       <div class="ideas">${c.lessons.map((l, i) => `<article class="idea">
         <div class="idea-head"><span class="idea-n">${i + 1}</span><div><h3>${esc(l.title)}</h3><p class="idea-credit">${credit(l)}</p></div></div>
@@ -254,7 +258,7 @@
     $('#detail').dataset.cat = s.cat;
     { const c = ShelfToys.color(s.id); $('#detail').style.setProperty('--a', c.a); $('#detail').style.setProperty('--b', c.b); }
     $('#detail-body').innerHTML = `<div class="sheet">
-      <div class="sheet-top">${window.ShelfToys ? ShelfToys.toy(s.cat, 'detail-toy') : cube(s.cat)}<div><h2 id="d-title">${esc(s.title)}</h2><p class="sheet-sub">${esc(cats[s.cat].label)}, ${esc(D.levels[s.level].label.toLowerCase())}, from ${esc(src.name)}${isNew(s) ? ', new this month' : ''}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
+      <div class="sheet-top">${miniBook(s)}<div><h2 id="d-title">${esc(s.title)}</h2><p class="sheet-sub">${esc(cats[s.cat].label)}, ${esc(D.levels[s.level].label.toLowerCase())}, from ${esc(src.name)}${isNew(s) ? ', new this month' : ''}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(s.what)}</p>
       <h3>Best for</h3><ul class="uses">${s.useFor.map(u => `<li>${esc(u)}</li>`).join('')}</ul>
       <h3>Just say this to Claude</h3><div class="say"><p>“${esc(s.say)}”</p><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy</button></div>

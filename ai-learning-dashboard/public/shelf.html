@@ -26,67 +26,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&display=swap">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
-  <link rel="stylesheet" href="./shelf.css?v=20261112-still">
+  <link rel="stylesheet" href="./shelf.css?v=20261112-books">
   <script defer src="./skills.js?v=202611111429"></script>
-  <script defer src="./toys.js?v=20261112-cards"></script>
-  <script defer src="./shelf.js?v=20261112-cards"></script>
-  <script defer src="./app.js?v=20261112-still"></script>
-  <script defer src="./motion.js?v=20261112-cards"></script>
+  <script defer src="./toys.js?v=20261112-books"></script>
+  <script defer src="./shelf.js?v=20261112-books"></script>
+  <script defer src="./app.js?v=20261112-books"></script>
+  <script defer src="./motion.js?v=20261112-books"></script>
 </head>
 <body>
   <a class="skip" href="#shelf">Skip to the skills</a>
-  <div class="room" aria-hidden="true"></div>
-  <div class="floaters" id="floaters" aria-hidden="true"></div>
-  <aside class="sidebar" aria-label="Library navigation">
-    <a class="brand sidebar-brand" href="./shelf.html"><img src="./favicon.svg" width="38" height="38" alt=""><span>AI Skill Shelf<small>Your AI toolkit</small></span></a>
-    <nav class="primary-nav" aria-label="Your library">
-      <button type="button" data-section="library" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z"/></svg>All skills<span id="library-count"></span></button>
-      <button type="button" data-section="saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4Z"/></svg>Saved skills<span data-saved-count>0</span></button>
-    </nav>
-    <p class="nav-label">Categories</p>
-    <a class="rail-home" href="./index.html"><img src="./favicon.svg" width="34" height="34" alt=""><span>Home</span></a>
-    <nav class="tabs" id="tabs" aria-label="Skill categories"></nav>
-    <div class="sidebar-bottom">
-      <button class="sidebar-link" type="button" id="open-guide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg>How to use skills</button>
-      <a class="sidebar-link" href="./index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5Z M3 8v9l9 5 9-5V8 M12 13v9"/></svg>3D preview</a>
-      <div class="owner"><span class="avatar" aria-hidden="true">MI</span><span>Collected by<strong>Mukhriz Izraf</strong></span></div>
-    </div>
-  </aside>
-  <div class="window">
-    <header class="toolbar">
-      <a class="brand mobile-brand" href="./shelf.html"><img src="./favicon.svg" width="28" height="28" alt="">AI Skill Shelf</a>
-      <a class="brand toolbar-brand" href="./index.html">AI Skill Shelf</a><span class="toolbar-location"><strong id="location-label">Library</strong></span>
-      <nav class="appnav" aria-label="App"><a href="./index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg><span>Home</span></a></nav>
+  <div class="app">
+    <aside class="rail" aria-label="Shelves">
+      <a class="rail-home" href="./index.html"><img src="./favicon.svg" width="36" height="36" alt=""><span>Home</span></a>
+      <nav class="tabs" id="tabs" aria-label="Skill categories"></nav>
+      <button class="rail-guide" type="button" data-guide><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg><span>Guide</span></button>
+    </aside>
+    <header class="bar">
+      <a class="bar-home" href="./index.html" aria-label="Home"><img src="./favicon.svg" width="28" height="28" alt=""></a>
+      <div class="bar-title"><h1 id="library-title">All skills</h1><p class="result" id="result" aria-live="polite"></p></div>
       <label class="search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 16l5 5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"/></svg>
-        <input id="q" type="search" enterkeyhint="search" autocapitalize="none" placeholder="Search skills…" aria-label="Search skills" autocomplete="off">
+        <input id="q" type="search" enterkeyhint="search" autocapitalize="none" placeholder="Search skills" aria-label="Search skills" autocomplete="off">
         <kbd aria-hidden="true">/</kbd>
       </label>
+      <label class="easy"><input type="checkbox" id="easy">Easy</label>
+      <button class="icon-btn" type="button" id="surprise" aria-label="Surprise me" title="Surprise me"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h.01 M16 8h.01 M12 12h.01 M8 16h.01 M16 16h.01" stroke-width="3"/></svg></button>
       <button class="btn install-button" id="install-app" type="button" hidden>Install app</button>
     </header>
     <main class="shelf" id="shelf" tabindex="-1" data-view="cards">
-      <div class="library-heading">
-        <div><h1 id="library-title">All skills</h1><p id="library-description">Your collection. Ready when you are.</p></div>
-        <button class="btn primary surprise" type="button" id="surprise" aria-label="Surprise me"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h.01 M16 8h.01 M12 12h.01 M8 16h.01 M16 16h.01" stroke-width="3"/></svg><span>Surprise me</span></button>
-      </div>
-      <div class="shelf-bar">
-        <p class="result" id="result" aria-live="polite"></p>
-        <button class="link reset-filters" id="reset-filters" type="button" hidden>Clear filters</button>
-        <label class="easy"><input type="checkbox" id="easy"><span class="switch" aria-hidden="true"></span>Easy ones only</label>
-        <div class="view-switch" role="group" aria-label="Shelf layout"><button type="button" data-view="cards" aria-pressed="true" aria-label="Cards view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z"/></svg></button><button type="button" data-view="list" aria-pressed="false" aria-label="List view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13 M8 12h13 M8 18h13 M3 6h.01 M3 12h.01 M3 18h.01"/></svg></button></div>
-      </div>
+      <button class="link reset-filters" id="reset-filters" type="button" hidden>Clear filters</button>
       <div id="groups"></div>
     </main>
-
-    <footer class="foot">
-      <span id="storage-note">Saved skills stay on this device.</span>
-      <button class="link" type="button" id="share-page">Share library</button>
-    </footer>
   </div>
+  <!-- Elements the library script still updates; not shown in this design. -->
+  <div hidden><p id="library-description"></p><span id="library-count"></span><span id="location-label"></span><span id="storage-note"></span><button id="share-page" type="button">Share</button></div>
   <nav class="tabbar" id="tabbar" aria-label="App navigation">
-    <a href="./index.html" data-home><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg><span>Home</span></a>
+    <a href="./index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg><span>Home</span></a>
     <button type="button" data-section="library" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z"/></svg><span>Library</span></button>
-    <button type="button" data-section="saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4Z"/></svg><span>Saved</span></button>
     <button type="button" data-guide><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg><span>Guide</span></button>
   </nav>
   <dialog id="detail" class="pop" aria-labelledby="d-title"><div id="detail-body"></div></dialog>

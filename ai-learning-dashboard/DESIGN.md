@@ -11,9 +11,7 @@ Keep the original bright, playful world: candy colours, frosted glass, cartoon 3
 
 ## Visual system
 
-Light base `#f5f5f7`; warm orange, pink, purple and sky colour fields behind white glass. Primary ink `#1d1d1f`. Category colours are set in `pop.css`; the library uses blue for Coding to avoid a dominant green accent.
-
-Use Bricolage Grotesque for headings and controls, Instrument Serif italic for quoted prompts, and a system monospace for code. Book jackets have a dark outline, a colour-matched depth edge and a tilted category icon. Ordinary controls stay compact; the yellow dice is the discovery action. Category and app navigation use labelled icons with clear selection and focus states.
+Approved direction, 12 November 2026: every skill is a book. Library cards and the 3D home books share one cartoon cover: cover colour, thick ink outline, ink drop shadow, white badge with the skill symbol, white name label. Ten clearly different cover colours (tomato, cobalt, sun, violet, tangerine, sky, bubblegum, ink, cream, indigo) in a fixed order, so neighbours never look alike. Colour lives only on the covers; bars, buttons and text are ink (#1d1d1f), white and light grey (#f5f5f7). Bricolage Grotesque for everything; Instrument Serif italic only for the words to say. Menus and tabs at least 48px tall with 13px labels on phones.
 
 ## Motion and layout
 

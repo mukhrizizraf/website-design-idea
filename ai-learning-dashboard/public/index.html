@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./home.css?v=20261112-bigdock">
+  <link rel="stylesheet" href="./home.css?v=20261112-books">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
   <script type="importmap">
     { "imports": {
@@ -179,7 +179,7 @@
       if (!D) { root.classList.add('no-webgl'); return; }
       // Frame rate first: the glass refraction is the heaviest step, so it renders at half
       // resolution (it is blurry glass, the difference is not visible) and phones draw fewer pixels.
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
+      renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 820 ? 1 : 1.25));
       renderer.transmissionResolutionScale = 0.5;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.NeutralToneMapping;      // keeps the vivid colours vivid
@@ -206,7 +206,7 @@
       let field = null;
       try {
         const { createField } = await import('./wallpaper.js?v=20261112-fast');
-        field = createField({ count: innerWidth < 820 ? 6 : 9, bubbles: 2, lite: true, area: [19, 11], depth: [-7.8, -2.4], seed: 11 });
+        field = createField({ count: innerWidth < 820 ? 0 : 7, bubbles: 2, lite: true, area: [19, 11], depth: [-7.8, -2.4], seed: 11 });
         scene.add(field.group);
         const keyLight = new THREE.DirectionalLight('#ffffff', 0.9); keyLight.position.set(4, 6, 6); scene.add(keyLight);
         scene.add(new THREE.HemisphereLight('#ffe6f2', '#cfe4ff', 0.45));
@@ -329,12 +329,9 @@
       // Candy glass: every card gets its own colour from Apple's system palette, in rainbow order
       // so neighbours never match (TikTok Reader pink, Awwwards orange, Canvas yellow, and so on).
       const RAINBOW = ['#ff3b30', '#2f6bff', '#ffd60a', '#a259ff', '#ff8a00', '#4cc9ff', '#ff5fa2', '#1d1d1f', '#fff1c9'];
-      const glassFor = i => {
-        const m = glass.clone(), col = new THREE.Color(RAINBOW[i % RAINBOW.length]);
-        if (phone) Object.assign(m, { color: col, opacity: 0.96 });
-        else Object.assign(m, { color: col.clone().lerp(new THREE.Color('#ffffff'), 0.15), attenuationColor: col, attenuationDistance: 0.7 });
-        return m;
-      };
+      // Speed: a plain, solid material for the book edges. The see-through physical glass was shaded several times per pixel
+      // and made phones and laptops lag; the cover art carries the look.
+      const glassFor = i => new THREE.MeshStandardMaterial({ color: RAINBOW[i % RAINBOW.length], roughness: 0.35, metalness: 0, envMapIntensity: 0.9 });
       const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 3, 0.1);
       const faceGeo = new THREE.PlaneGeometry(1.58, 2.1);
       const deck = new THREE.Group(); scene.add(deck);
