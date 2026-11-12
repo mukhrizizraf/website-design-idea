@@ -1,5 +1,5 @@
-const CACHE = 'ai-skill-shelf-cards-v1';
-const ASSETS = ['shelf.html', 'shelf.css?v=20261112-cards', 'pop.css?v=20261112-cards', 'skills.js?v=202611111429', 'wallpaper.js?v=20261112-3d', 'motion.js?v=20261112-cards', 'vibe.js?v=20261112-noword', 'toys.js?v=20261112-cards', 'shelf.js?v=20261112-cards', 'app.js?v=20261112-playful', 'favicon.svg', 'manifest.webmanifest', 'app-icon-192.png', 'app-icon-512.png'];
+const CACHE = 'ai-skill-shelf-home-v1';
+const ASSETS = ['shelf.html', 'shelf.css?v=20261112-home', 'pop.css?v=20261112-cards', 'skills.js?v=202611111429', 'wallpaper.js?v=20261112-3d', 'motion.js?v=20261112-cards', 'vibe.js?v=20261112-noword', 'toys.js?v=20261112-cards', 'shelf.js?v=20261112-cards', 'app.js?v=20261112-playful', 'favicon.svg', 'manifest.webmanifest', 'app-icon-192.png', 'app-icon-512.png'];
 const assetUrls = ASSETS.map(path => new URL(path, self.registration.scope).href);
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(assetUrls)));
