@@ -310,3 +310,5 @@ main{min-height:0}
 
 /* Performance: no live blur over the moving 3D scene (it is recomputed every frame). */
 .category-dock,.nav{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:linear-gradient(135deg,#fffffff7,#ffffffe8)!important}
+/* Phones: a bigger bottom menu, easy to hit (owner: the menu was too small). */
+@media(max-width:820px){.category-dock{padding:8px 6px}.category-dock .dock-item{min-height:78px;padding:8px 2px;font-size:12.5px;gap:5px}.category-dock .dock-toy{--toy:44px}.launch{bottom:calc(118px + env(safe-area-inset-bottom,0px))}}

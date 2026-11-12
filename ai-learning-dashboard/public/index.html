@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./home.css?v=20261112-fast">
+  <link rel="stylesheet" href="./home.css?v=20261112-bigdock">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
   <script type="importmap">
     { "imports": {
@@ -254,7 +254,8 @@
       }
       // Cartoon covers that match the cartoon icons: flat bright colour, chunky black outlines,
       // comic halftone dots, the skill's symbol in a white sticker badge, and a comic title label.
-      const CARTOON = ['#ff375f', '#ff9f0a', '#ffd60a', '#30d158', '#00c7be', '#0a84ff', '#5e5ce6', '#bf5af2', '#ff2d55'];
+      // Covers in a fixed order so neighbouring books never look alike (the loop wraps cream back to tomato).
+      const CARTOON = ['#ff3b30', '#2f6bff', '#ffd60a', '#a259ff', '#ff8a00', '#4cc9ff', '#ff5fa2', '#1d1d1f', '#fff1c9'];
       function face(s, isHero, i) {
         const c = document.createElement('canvas'); c.width = 600; c.height = 800; const x = c.getContext('2d');
         const ink = '#1d1d1f', col = CARTOON[i % CARTOON.length];
@@ -327,7 +328,7 @@
       }
       // Candy glass: every card gets its own colour from Apple's system palette, in rainbow order
       // so neighbours never match (TikTok Reader pink, Awwwards orange, Canvas yellow, and so on).
-      const RAINBOW = ['#ff375f', '#ff8a00', '#e0a400', '#28b44f', '#00a8a0', '#0a84ff', '#5e5ce6', '#a94fe0', '#e8344e'];
+      const RAINBOW = ['#ff3b30', '#2f6bff', '#ffd60a', '#a259ff', '#ff8a00', '#4cc9ff', '#ff5fa2', '#1d1d1f', '#fff1c9'];
       const glassFor = i => {
         const m = glass.clone(), col = new THREE.Color(RAINBOW[i % RAINBOW.length]);
         if (phone) Object.assign(m, { color: col, opacity: 0.96 });
