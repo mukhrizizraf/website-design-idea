@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-wall="manual">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./home.css?v=20261112-app">
+  <link rel="stylesheet" href="./home.css?v=20261112-fast">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
   <script type="importmap">
     { "imports": {
@@ -47,15 +47,9 @@
 
   <main>
     <h1 class="sr-only">AI Skill Shelf: pick a skill</h1>
-    <section class="chapter" id="ch-saved" aria-label="Book"></section>
-    <section class="chapter" id="ch-skill" aria-label="Skill cube"></section>
-    <section class="chapter" id="ch-use" aria-label="Burst"></section>
-    <section class="chapter last" id="ch-share" aria-label="Shelf"></section>
     <div id="doors" style="display:none"></div>
   </main>
-  <nav class="steps" aria-label="Story"><a href="#ch-saved" aria-label="Book"></a><a href="#ch-skill" aria-label="Skill cube"></a><a href="#ch-use" aria-label="Burst"></a><a href="#ch-share" aria-label="Shelf"></a></nav>
   <a class="cta launch" href="./shelf.html">Browse skills</a>
-  <span class="scroll-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
 
 
   <!-- A skill card picked from the 3D deck pops up here and speaks. -->
@@ -185,7 +179,7 @@
       if (!D) { root.classList.add('no-webgl'); return; }
       // Frame rate first: the glass refraction is the heaviest step, so it renders at half
       // resolution (it is blurry glass, the difference is not visible) and phones draw fewer pixels.
-      renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 820 ? 1.25 : 1.5));
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
       renderer.transmissionResolutionScale = 0.5;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.NeutralToneMapping;      // keeps the vivid colours vivid
@@ -203,11 +197,20 @@
       const g = wall.getContext('2d');
       g.fillStyle = '#f5f5f7'; g.fillRect(0, 0, wall.width, wall.height);
       const blob = (x, y, r, c) => { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(245,245,247,0)'); g.fillStyle = gr; g.fillRect(0, 0, wall.width, wall.height); };
-      blob(180, 160, 560, 'rgba(255,159,10,.75)'); blob(1450, 140, 600, 'rgba(94,92,230,.6)'); blob(1360, 940, 620, 'rgba(100,210,255,.75)');
-      blob(260, 960, 560, 'rgba(255,55,95,.6)'); blob(820, 520, 460, 'rgba(191,90,242,.45)'); blob(1050, 260, 320, 'rgba(255,214,10,.4)');
+      blob(180, 160, 620, 'rgba(255,159,10,.92)'); blob(1450, 140, 660, 'rgba(94,92,230,.8)'); blob(1360, 940, 680, 'rgba(100,210,255,.92)');
+      blob(260, 960, 620, 'rgba(255,55,95,.82)'); blob(820, 520, 520, 'rgba(191,90,242,.6)'); blob(1050, 260, 380, 'rgba(255,214,10,.6)'); blob(560, 300, 300, 'rgba(255,45,85,.45)'); blob(1180, 700, 320, 'rgba(94,92,230,.45)');
       const wallTex = new THREE.CanvasTexture(wall); wallTex.colorSpace = THREE.SRGBColorSpace;
       const back = new THREE.Mesh(new THREE.PlaneGeometry(31.5, 21), new THREE.MeshBasicMaterial({ map: wallTex, toneMapped: false }));
       back.position.set(0, 0.8, -9); scene.add(back);
+      // Glossy 3D candy shapes (wallpaper.js) float and tumble behind the books, so the glass books bend real moving 3D.
+      let field = null;
+      try {
+        const { createField } = await import('./wallpaper.js?v=20261112-fast');
+        field = createField({ count: innerWidth < 820 ? 6 : 9, bubbles: 2, lite: true, area: [19, 11], depth: [-7.8, -2.4], seed: 11 });
+        scene.add(field.group);
+        const keyLight = new THREE.DirectionalLight('#ffffff', 0.9); keyLight.position.set(4, 6, 6); scene.add(keyLight);
+        scene.add(new THREE.HemisphereLight('#ffe6f2', '#cfe4ff', 0.45));
+      } catch {}
 
       // Card faces drawn with the page fonts.
       await Promise.all(['800 64px "Bricolage Grotesque"', '400 40px "Instrument Serif"', 'italic 400 40px "Instrument Serif"', '500 20px "JetBrains Mono"'].map(f => document.fonts.load(f).catch(() => {})));
@@ -316,7 +319,8 @@
       // Phones: real refraction needs a second render of the whole scene every frame, which is
       // what held mid-range phones near 20 to 40 fps. A see-through frosted glass with the same
       // reflections and iridescence looks nearly the same at this size and skips that pass.
-      const phone = innerWidth < 820;
+      // Frosted glass on every screen: real refraction renders the whole scene twice per frame, which made phones and laptops lag.
+      const phone = true;
       if (phone) {
         Object.assign(glass, { transmission: 0, transparent: true, opacity: 0.6, color: new THREE.Color('#ffffff'), roughness: 0.25, iridescence: 0.3, envMapIntensity: 1.0, depthWrite: true });
         glass.needsUpdate = true;
@@ -397,13 +401,51 @@
       // Pointer: gentle parallax, and pick a card to open it.
       const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(9, 9); let px = 0, py = 0, hovered = null;
       addEventListener('pointermove', e => { px = e.clientX / innerWidth - 0.5; py = e.clientY / innerHeight - 0.5; ptr.set(px * 2, -py * 2); });
+      // ---------- The book loop: wheel, trackpad, swipe or drag turns the books round endlessly ----------
+      const wrapO = o => ((o % n) + n * 1.5) % n - n / 2;           // offset from the front, in (-n/2, n/2]
+      let loopPos = 0, loopTarget = 0, loopVel = 0, lastInput = 0, lastWheel = -9, drag = null, dragMoved = 0;
+      addEventListener('wheel', e => {
+        if (popEl.open) return;
+        loopTarget += (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * (e.deltaMode ? 0.33 : 0.006);
+        lastInput = lastWheel = clock;
+      }, { passive: true });
+      addEventListener('pointerdown', e => { if (e.target.closest('a,button,dialog,input')) return; drag = e.clientX; dragMoved = 0; loopVel = 0; });
+      addEventListener('pointermove', e => {
+        if (drag === null) return;
+        const step = (e.clientX - drag) / (narrow ? 85 : 150); drag = e.clientX;
+        dragMoved += Math.abs(step); loopTarget -= step; loopVel = -step; lastInput = clock;
+      });
+      const endDrag = () => { if (drag === null) return; drag = null; loopTarget = Math.round(loopTarget + loopVel * 5); };
+      addEventListener('pointerup', endDrag); addEventListener('pointercancel', endDrag);
+      addEventListener('keydown', e => {
+        if (popEl.open || e.target.closest('input,textarea')) return;
+        if (e.key === 'ArrowRight') { loopTarget = Math.round(loopTarget) + 1; lastInput = clock; }
+        else if (e.key === 'ArrowLeft') { loopTarget = Math.round(loopTarget) - 1; lastInput = clock; }
+        else if (e.key === 'Enter' && document.activeElement === document.body) openPop(cards[((Math.round(loopPos) % n) + n) % n].userData.s);
+      });
       addEventListener('click', e => {
         if (e.target.closest('a,button,dialog')) return;
+        if (dragMoved > 0.08) return;
         // A tap has no hover before it, so the book is found at the tap position itself.
         ptr.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera);
         const hit = ray.intersectObjects(cards.map(c => c.userData.slab))[0];
-        if (hit) openPop(hit.object.userData.card.userData.s, e.clientX, e.clientY);
+        if (!hit) return;
+        const c = hit.object.userData.card, o = wrapO(cards.indexOf(c) - loopPos);
+        if (Math.abs(o) < 0.5) openPop(c.userData.s, e.clientX, e.clientY);
+        else { loopTarget = Math.round(loopPos + o); lastInput = clock; }
       });
+      // Fan layout: the front book big and forward, the rest overlapping behind it, fading out at the far ends.
+      // Intro: every visit the books land on new random spots, then crawl (inch along, one hop per step) into the fan.
+      const scatter = cards.map(() => ({ x: (Math.random() - .5) * 2, y: (Math.random() - .5) * 2, z: Math.random() * 1.4 - 1, ry: (Math.random() - .5) * 1.2, rz: (Math.random() - .5) * 1.8, delay: Math.random() * .55, crawl: Math.random() * .7 }));
+      function loopPose(i) {
+        const o = wrapO(i - loopPos), a = Math.abs(o), sg = Math.sign(o);
+        const sp = narrow ? 0.62 : 1;
+        const x = -deck.position.x + sg * (Math.min(a, 1) * 1.6 + Math.max(0, a - 1) * 0.95) * sp;
+        const z = Math.max(0, 1 - a) * 1.1 - a * 0.42;
+        const fade = Math.min(1, Math.max(0, (4.35 - a) / 0.9));
+        const sc = (0.98 + 0.42 * Math.exp(-o * o * 1.3)) * (narrow ? 0.8 : 1) * Math.min(1, innerHeight / 780) * Math.max(0.001, fade);
+        return [x, (narrow ? 0.35 : 0.05) - a * 0.05, z, 0.04, Math.max(-0.42, Math.min(0.42, -o * 0.11)), o * 0.05, sc];
+      }
 
       const ease = t => t * t * (3 - 2 * t);
       let last = performance.now(), running = true, clock = 0;
@@ -411,12 +453,16 @@
       function frame(now) {
         if (!running) return;
         const dt = Math.min(0.05, (now - last) / 1000); last = now; clock += dt; if (clockFixed !== null) clock = clockFixed;
-        const t = reduced ? 3 : (previewPose ?? progress()); markChapter(t);
+        const t = previewPose ?? 0;
+        if (!reduced && drag === null && clock - lastInput > 4) { loopTarget = Math.round(loopTarget) + 1; lastInput = clock; }
+        if (drag === null && clock - lastWheel > 0.22) loopTarget += (Math.round(loopTarget) - loopTarget) * (1 - Math.exp(-dt * 6));
+        loopPos += (loopTarget - loopPos) * (1 - Math.exp(-dt * 7));
         const a = Math.floor(t), b = Math.min(3, a + 1), f = ease(t - a), k = 1 - Math.exp(-dt * 5.5);
 
         ray.setFromCamera(ptr, camera);
         const hit = ray.intersectObjects(cards.map(c => c.userData.slab))[0];
         hovered = hit ? hit.object.userData.card : null;
+        if (field) { field.update(reduced ? 12 : clock, reduced ? 0 : dt); if (!hovered) field.hover(ray); }
         document.body.style.cursor = hovered ? 'pointer' : '';
 
         // Between chapters 3 and 4 (sn = 0..1): collide, flash, then rise out of the shelf.
@@ -437,7 +483,7 @@
             c.position.set(P[0], P[1], P[2]); c.rotation.set(P[3], P[4], P[5]); c.scale.setScalar(P[6]);
             return;
           }
-          const A = poses[a](i), B = poses[b](i); P = A.map((v, j) => v + (B[j] - v) * f);
+          P = previewPose !== null ? (() => { const A = poses[a](i), B = poses[b](i); return A.map((v, j) => v + (B[j] - v) * f); })() : loopPose(i);
           if (collide > 0) {
             // Asteroids: every book tumbles faster and faster into the same point.
             const jx = Math.sin(i * 2.3) * 0.5, jy = Math.cos(i * 1.7) * 0.4;
@@ -450,9 +496,19 @@
           }
           // Page opens: the books tumble down from the sky one by one and land in a stack.
           let kk = k;
-          if (introOn) {
-            const e = clamp01((clock - 0.25 - (n - 1 - i) * 0.14) / 0.85);
-            if (e < 1) { const d = 1 - bounce(e); P[1] += d * 8; P[3] += d * 5 * (i % 2 ? 1 : -1); P[5] += d * 3 * (i % 3 ? -1 : 1); kk = 1; }
+          if (introOn && clock < 4.3) {
+            const sc0 = scatter[i], spanX = narrow ? 1.5 : 3.9, spanY = narrow ? 2.6 : 1.55;
+            const eA = clamp01((clock - 0.2 - sc0.delay) / 0.75), eB = clamp01((clock - 1.55 - sc0.crawl) / 1.9);
+            const m = eB * eB * (3 - 2 * eB), env = Math.sin(Math.PI * eB), stepW = Math.sin(eB * Math.PI * 7);
+            const sx = -deck.position.x + sc0.x * spanX, sy = sc0.y * spanY, sz = sc0.z;
+            P[0] = sx + (P[0] - sx) * m;
+            P[1] = sy + (1 - bounce(eA)) * 7 + (P[1] - sy) * m + Math.abs(stepW) * 0.14 * env;
+            P[2] = sz + (P[2] - sz) * m;
+            P[3] += (1 - eA) * 4 * (i % 2 ? 1 : -1);
+            P[4] = sc0.ry * (1 - m) + P[4] * m;
+            P[5] = (sc0.rz + (1 - eA) * 3) * (1 - m) + P[5] * m + stepW * 0.13 * env;
+            P[6] *= 0.82 + 0.18 * m;
+            kk = 1;
           }
           const bob = reduced ? 0 : Math.sin(clock * 0.8 + i) * 0.04;
           c.userData.hover += ((c === hovered ? 1 : 0) - c.userData.hover) * k;

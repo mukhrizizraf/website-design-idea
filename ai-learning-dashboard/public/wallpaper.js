@@ -57,12 +57,18 @@ function bubble() {
 }
 
 // A field of floating shapes. area = [width, height] it fills; depth = [far z, near z].
-export function createField({ count = 14, bubbles = 3, area = [16, 10], depth = [-12, 1], seed = 7, wrapY = 0 } = {}) {
+// lite: standard materials instead of physical ones (no clearcoat, sheen or iridescence): far cheaper per pixel.
+export function createField({ count = 14, bubbles = 3, area = [16, 10], depth = [-12, 1], seed = 7, wrapY = 0, lite = false } = {}) {
   const geo = shapes(), r = rng(seed), group = new THREE.Group(), items = [];
   for (let i = 0; i < count; i++) {
     const isBubble = i < bubbles;
     const kind = isBubble ? 'ball' : ORDER[i % ORDER.length];
-    const mesh = new THREE.Mesh(geo[kind], isBubble ? bubble() : candy(PALETTE[(i * 3) % PALETTE.length], kind === 'gem'));
+    const color = PALETTE[(i * 3) % PALETTE.length];
+    const material = lite
+      ? (isBubble ? new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: .05, metalness: .1, transparent: true, opacity: .35, depthWrite: false, envMapIntensity: 1.6 })
+                  : new THREE.MeshStandardMaterial({ color, roughness: .22, metalness: 0, envMapIntensity: 1.1, flatShading: kind === 'gem' }))
+      : (isBubble ? bubble() : candy(color, kind === 'gem'));
+    const mesh = new THREE.Mesh(geo[kind], material);
     const z = depth[0] + (depth[1] - depth[0]) * r();
     const it = {
       mesh, base: new THREE.Vector3((r() - .5) * area[0], (r() - .5) * area[1], z),
@@ -122,7 +128,7 @@ function start() {
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
-  let ratio = Math.min(devicePixelRatio, phone ? 1.25 : 1.5);
+  let ratio = Math.min(devicePixelRatio, phone ? 1 : 1.25);
   renderer.setPixelRatio(ratio);
 
   const scene = new THREE.Scene();
@@ -136,7 +142,7 @@ function start() {
 
   const visH = 2 * 10 * Math.tan(17.5 * Math.PI / 180);
   const loop = visH * 2.4;
-  const field = createField({ count: phone ? 10 : 16, bubbles: phone ? 2 : 3, area: [visH * Math.max(1, innerWidth / innerHeight) * 1.35, loop], depth: [-13, 2.5], wrapY: loop });
+  const field = createField({ count: phone ? 7 : 11, bubbles: 2, lite: true, area: [visH * Math.max(1, innerWidth / innerHeight) * 1.35, loop], depth: [-13, 2.5], wrapY: loop });
   scene.add(field.group);
 
   const room = document.querySelector('.room');

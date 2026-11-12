@@ -12,6 +12,16 @@
     const guideIcon = document.querySelector('#tabbar [data-guide] svg');
     if (guideIcon) guideIcon.outerHTML = ShelfToys.toy('workflow','nav-toy');
   }
+  // Laptop and desktop: one app title bar (title, search, dice). Phones keep the search in their top bar.
+  const wide = matchMedia('(min-width: 761px)');
+  const search = document.querySelector('.search'), toolbar = document.querySelector('.toolbar'), heading = document.querySelector('.library-heading');
+  const installBtn = document.getElementById('install-app'), dice = document.getElementById('surprise');
+  const placeBar = () => {
+    if (!search || !toolbar || !heading) return;
+    if (wide.matches) { heading.insertBefore(search, dice); heading.insertBefore(installBtn, dice); }
+    else { toolbar.appendChild(search); toolbar.appendChild(installBtn); }
+  };
+  wide.addEventListener('change', placeBar); placeBar();
   const button = document.getElementById('install-app');
   let installPrompt;
   addEventListener('beforeinstallprompt', event => {

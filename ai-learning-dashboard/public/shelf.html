@@ -26,14 +26,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&display=swap">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
-  <link rel="stylesheet" href="./shelf.css?v=20261112-home">
+  <link rel="stylesheet" href="./shelf.css?v=20261112-appbar">
   <script defer src="./skills.js?v=202611111429"></script>
   <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
-  <script type="module" src="./wallpaper.js?v=20261112-3d"></script>
+  <script type="module" src="./wallpaper.js?v=20261112-fast"></script>
   <script defer src="./vibe.js?v=20261112-noword"></script>
   <script defer src="./toys.js?v=20261112-cards"></script>
   <script defer src="./shelf.js?v=20261112-cards"></script>
-  <script defer src="./app.js?v=20261112-playful"></script>
+  <script defer src="./app.js?v=20261112-appbar"></script>
   <script defer src="./motion.js?v=20261112-cards"></script>
 </head>
 <body>
@@ -47,6 +47,7 @@
       <button type="button" data-section="saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4Z"/></svg>Saved skills<span data-saved-count>0</span></button>
     </nav>
     <p class="nav-label">Categories</p>
+    <a class="rail-home" href="./index.html"><img src="./favicon.svg" width="34" height="34" alt=""><span>Home</span></a>
     <nav class="tabs" id="tabs" aria-label="Skill categories"></nav>
     <div class="sidebar-bottom">
       <button class="sidebar-link" type="button" id="open-guide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg>How to use skills</button>

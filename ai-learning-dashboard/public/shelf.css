@@ -135,3 +135,30 @@ html,body{overscroll-behavior:none}
 [data-view="list"] .row{grid-template-columns:52px minmax(140px,1fr) minmax(0,1.8fr) 74px}
 [data-view="list"] .sk-cube{width:48px;height:48px;margin:0}[data-view="list"] .sk-cube .cube{--s:32px;--h:16px;margin:8px}
 [data-view="list"] .sk-cube .cube i svg{width:16px;height:16px}
+
+/* Performance: frosted blur over the moving 3D background is recomputed every frame. With the live wallpaper
+   on, panels use near-solid white instead of backdrop blur. */
+.wall-on .window{-webkit-backdrop-filter:none;backdrop-filter:none;background:linear-gradient(145deg,#fffffff7,#ffffffe0)}
+.wall-on .toolbar{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fffffff2}
+.wall-on .sidebar,.wall-on .tabbar{-webkit-backdrop-filter:none;backdrop-filter:none;background:linear-gradient(135deg,#fffffff7,#ffffffe8)}
+
+/* ==========================================================================
+   App layout on laptops and desktops: Home sits at the top of the icon rail; the website-style header is gone.
+   The title, search and dice form one app title bar that stays at the top while you scroll.
+   ========================================================================== */
+.rail-home{display:none}
+@media(min-width:761px){
+ .toolbar{display:none}
+ .rail-home{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:70px;margin-bottom:6px;padding:8px 2px 10px;border-radius:20px;border-bottom:1px solid #ece6f3;color:#35323c;font:700 .6875rem/1.2 'Bricolage Grotesque',system-ui,sans-serif;text-decoration:none;transition:background .2s,scale .1s}
+ .rail-home img{width:34px;height:34px}
+ .rail-home:active{scale:.92}
+ .library-heading{position:sticky;top:16px;z-index:20;margin:-28px -34px 6px;padding:16px 26px 16px 34px;gap:14px;border-radius:30px 30px 0 0;background:#fffffff5;border-bottom:1px solid #eee8f4}
+ .library-heading h1{font-size:1.6rem;white-space:nowrap}
+ .library-heading>div:first-child{flex:none}
+ .library-heading .search{flex:1 1 auto;max-width:460px;margin-left:auto}
+ .library-heading .install-button{flex:none}
+ .shelf-bar{min-height:50px;padding-bottom:8px}
+}
+@media(min-width:761px) and (hover:hover) and (pointer:fine){.rail-home:hover{background:#ffffffb8}}
+@media(max-width:1100px) and (min-width:761px){.library-heading{margin:-24px -24px 6px;padding:14px 20px}}
+@media(min-width:761px){.library-heading{transform:translateZ(0);isolation:isolate}}
