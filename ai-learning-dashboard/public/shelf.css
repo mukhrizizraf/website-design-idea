@@ -162,3 +162,10 @@ html,body{overscroll-behavior:none}
 @media(min-width:761px) and (hover:hover) and (pointer:fine){.rail-home:hover{background:#ffffffb8}}
 @media(max-width:1100px) and (min-width:761px){.library-heading{margin:-24px -24px 6px;padding:14px 20px}}
 @media(min-width:761px){.library-heading{transform:translateZ(0);isolation:isolate}}
+
+/* Still background (owner: no moving background on the skills page): a sticker wall of the category toys. */
+.floaters{translate:none!important;scale:none!important;opacity:1!important}
+.floater.sticker{animation:none!important;opacity:1;filter:drop-shadow(0 8px 14px rgba(60,40,120,.2))}
+.floater.sticker *{animation:none!important}
+/* Saving is removed from the interface (owner request): no bookmarks, no Saved tab, no Save button. */
+.save-skill,[data-section="saved"],.sheet-foot [data-save],#storage-note{display:none!important}
