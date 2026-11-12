@@ -42,7 +42,7 @@
         const id = li.querySelector('[data-skill]')?.dataset.skill;
         if (!all && prev.has(id)) return;
         const below = li.getBoundingClientRect().top > innerHeight;
-        li.style.setProperty('--fxd', (below ? (n % 3) * 70 : Math.min(n, 12) * 55) + 'ms');
+        li.style.setProperty('--fxd', (below ? (n % 3) * 70 : Math.min(n, 8) * 40) + 'ms');
         li.classList.add('fx-in');
         if (below) { li.classList.add('fx-wait'); seen.observe(li); }
         n++;

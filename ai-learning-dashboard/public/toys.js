@@ -120,7 +120,10 @@
     let h2 = (h + 28) % 360; if (h2 > 80 && h2 < 170) h2 = (h + 332) % 360;
     return { a: 'hsl(' + h.toFixed(0) + ' 86% 57%)', b: 'hsl(' + h2.toFixed(0) + ' 95% 63%)' };
   };
-  window.ShelfToys = { toy, glyph, color, G, SKILL_GLYPH };
+  // One cover colour per skill on both pages: the nine homepage books keep the colours they have in the 3D loop
+  // (same order as CARTOON in index.html); the library fills in the rest so neighbours never match.
+  const HOME_COVERS = { 'tiktok-reader': '#ff3b30', awwwards: '#2f6bff', 'canvas-design': '#ffd60a', 'motion-design': '#a259ff', humanizer: '#ff8a00', pptx: '#4cc9ff', gsap: '#ff5fa2', 'frontend-design': '#1d1d1f', 'deep-research': '#fff1c9' };
+  window.ShelfToys = { toy, glyph, color, G, SKILL_GLYPH, HOME_COVERS };
   // Keep categories within reach without altering the WebGL book scene.
   if (document.body.dataset.page === 'home' && window.SKILL_DATA) {
     const dock = document.createElement('nav');

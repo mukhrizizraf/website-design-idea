@@ -91,16 +91,20 @@
   const COVERS = ['#ff3b30', '#2f6bff', '#ffd60a', '#a259ff', '#ff8a00', '#4cc9ff', '#ff5fa2', '#1d1d1f', '#fff1c9', '#3a2fd6'];
   const DARK = new Set(['#2f6bff', '#a259ff', '#1d1d1f', '#3a2fd6']);
   const coverOf = new Map();
-  let coverN = 0;
-  function row(s, i) {
-    const c = COVERS[coverN++ % COVERS.length]; coverOf.set(s.id, c);
-    return `<li style="--i:${i};--c:${c}"><button class="row book${DARK.has(c) ? ' dark' : ''}" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)}: ${esc(s.what)}">
+  let coverN = 0, prevC = '', prevC2 = '';
+  function row(s, i, next) {
+    // Homepage books keep their colour; every other book takes the next colour that differs from its two neighbours.
+    let c = (window.ShelfToys && ShelfToys.HOME_COVERS && ShelfToys.HOME_COVERS[s.id]) || '';
+    const nextFixed = next && window.ShelfToys && ShelfToys.HOME_COVERS ? ShelfToys.HOME_COVERS[next.id] : '';
+    if (!c) { do { c = COVERS[coverN++ % COVERS.length]; } while (c === prevC || c === prevC2 || c === nextFixed); }
+    prevC2 = prevC; prevC = c; coverOf.set(s.id, c);
+    return `<li style="--i:${i};--c:${c}"><button class="row book${DARK.has(c) ? ' dark' : ''}" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)} ${isNew(s) ? 'New · ' : ''}${esc(levelLabel(s))}. ${esc(s.what)}">
       <span class="badge" aria-hidden="true">${svg(glyphFor(s), 24)}</span>
       <span class="lbl"><span class="row-name">${esc(s.title)}</span><span class="row-meta">${isNew(s) ? '<b class="new">New</b> · ' : ''}${esc(levelLabel(s))}</span></span></button></li>`;
   }
   const miniBook = s => `<span class="mini-book" style="--c:${coverOf.get(s.id) || COVERS[0]}" aria-hidden="true"><span>${svg(glyphFor(s), 19)}</span></span>`;
   function renderShelf() {
-    coverN = 0;
+    coverN = 0; prevC = ''; prevC2 = '';
     const found = items.filter(matches);
     $('#surprise').disabled = !found.some(s => !s.lessons);
     $('#surprise').title = $('#surprise').disabled ? 'No matching skills. Change your filters to try again.' : 'Choose a skill from your current results';
@@ -114,7 +118,7 @@
     $('#groups').innerHTML = D.categories.map(c => {
       const list = found.filter(s => s.cat === c.id);
       if (!list.length) return '';
-      return `<section class="group" data-cat="${c.id}" aria-labelledby="g-${c.id}"><div class="group-head">${headCube(c.id)}<h2 id="g-${c.id}">${esc(c.label)}</h2><span>${list.length}</span></div><ul class="rows">${list.map((s, i) => row(s, i)).join('')}</ul></section>`;
+      return `<section class="group" data-cat="${c.id}" aria-labelledby="g-${c.id}"><div class="group-head">${headCube(c.id)}<h2 id="g-${c.id}">${esc(c.label)}</h2><span>${list.length}</span></div><ul class="rows">${list.map((s, i) => row(s, i, list[i + 1])).join('')}</ul></section>`;
     }).join('');
     watchRows();
   }
@@ -127,7 +131,7 @@
     const head = document.querySelector(`.group[data-cat="${cat}"] .group-head`);
     if (!head) return;
     head.style.viewTransitionName = 'cat-card';
-    e.viewTransition.finished.finally(() => { head.style.viewTransitionName = ''; });
+    e.viewTransition.finished.catch(() => {}).finally(() => { head.style.viewTransitionName = ''; });
   });
 
   // ---------- install steps, written out so nobody has to open GitHub ----------

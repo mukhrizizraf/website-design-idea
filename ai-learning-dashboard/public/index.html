@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./home.css?v=20261112-books">
+  <link rel="stylesheet" href="./home.css?v=20261113-jury">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
   <script type="importmap">
     { "imports": {
@@ -34,7 +34,7 @@
     } }
   </script>
   <script defer src="./skills.js?v=202611111429"></script>
-  <script defer src="./toys.js?v=20261112-cards"></script>
+  <script defer src="./toys.js?v=20261113-jury"></script>
 </head>
 <body data-page="home">
   <a class="skip" href="#ch-share">Skip to the shelf link</a>
@@ -50,6 +50,7 @@
     <div id="doors" style="display:none"></div>
   </main>
   <a class="cta launch" href="./shelf.html">Browse skills</a>
+  <a class="front-link" id="front-link" href="./shelf.html">Open the front book</a>
 
 
   <!-- A skill card picked from the 3D deck pops up here and speaks. -->
@@ -62,6 +63,11 @@
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
     const D = window.SKILL_DATA;
+    // Coming back from the library: skip the falling intro and show the scene at once.
+    let returning = false;
+    try { returning = sessionStorage.getItem('skill-shelf:home') === '1'; sessionStorage.setItem('skill-shelf:home', '1'); } catch {}
+    if (returning) document.documentElement.classList.add('returning');
+    const frontLink = document.getElementById('front-link'); let frontIndex = -1;
     const root = document.documentElement;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     // ?pose=0..3 holds the 3D deck in one chapter's pose (used for design review screenshots).
@@ -455,6 +461,9 @@
         if (!reduced && drag === null && clock - lastInput > 4) { loopTarget = Math.round(loopTarget) + 1; lastInput = clock; }
         if (drag === null && clock - lastWheel > 0.22) loopTarget += (Math.round(loopTarget) - loopTarget) * (1 - Math.exp(-dt * 6));
         loopPos += (loopTarget - loopPos) * (1 - Math.exp(-dt * 7));
+        // Keyboard and screen readers: a real link always points at the front book (arrow keys turn the loop).
+        const fi = ((Math.round(loopPos) % n) + n) % n;
+        if (fi !== frontIndex) { frontIndex = fi; const fs0 = cards[fi].userData.s; frontLink.href = './shelf.html#skill=' + encodeURIComponent(fs0.id); frontLink.textContent = 'Open ' + fs0.title; }
         const a = Math.floor(t), b = Math.min(3, a + 1), f = ease(t - a), k = 1 - Math.exp(-dt * 5.5);
 
         ray.setFromCamera(ptr, camera);
@@ -467,7 +476,7 @@
         const sn = (!reduced && t > 2 && t < 3) ? t - 2 : -1;
         const collide = sn >= 0 ? Math.pow(clamp01(sn / 0.4), 2) : 0;
         const blasted = sn >= 0.42;
-        const introOn = !reduced && t < 1 && (previewPose === null || clockFixed !== null);
+        const introOn = !reduced && !returning && t < 1 && (previewPose === null || clockFixed !== null);
 
         cards.forEach((c, i) => {
           let P;
@@ -493,7 +502,7 @@
             P[6] *= 1 - collide * 0.55;
           }
           // Page opens: the books tumble down from the sky one by one and land in a stack.
-          let kk = k;
+          let kk = reduced ? 1 : k;
           if (introOn && clock < 4.3) {
             const sc0 = scatter[i], spanX = narrow ? 1.5 : 3.9, spanY = narrow ? 2.6 : 1.55;
             const eA = clamp01((clock - 0.2 - sc0.delay) / 0.75), eB = clamp01((clock - 1.55 - sc0.crawl) / 1.9);
@@ -518,7 +527,7 @@
           c.rotation.x += (P[3] - c.rotation.x) * kk; c.rotation.y += (P[4] - c.rotation.y) * kk; c.rotation.z += (P[5] + swing - c.rotation.z) * kk;
           const sc = P[6] * (1 + c.userData.hover * 0.05); c.scale.setScalar(c.scale.x + (sc - c.scale.x) * kk);
         });
-        const show = reduced ? 1 : sn >= 0 ? clamp01((sn - 0.43) / 0.08) : (t >= 3 ? 1 : 0);
+        const show = sn >= 0 ? clamp01((sn - 0.43) / 0.08) : (t >= 3 ? 1 : 0);
         boards.forEach((bd, r) => { const p = boardPose(r); bd.position.set(p[0], p[1], p[2]); bd.scale.set(Math.max(0.001, ease(show)), 1, 1); bd.visible = show > 0.01; });
 
         deck.rotation.y += ((reduced ? 0 : px * 0.18 + Math.sin(clock * 0.25) * 0.04) - deck.rotation.y) * k;
