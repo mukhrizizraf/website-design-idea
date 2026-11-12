@@ -1,45 +1,30 @@
-# AI Skill Shelf design system
+# AI Skill Shelf
 
-Bright and playful for every age, with Apple's discipline. A light base, white frosted glass over soft colour fields, and Apple's system colours used as a fixed set, one per category, like app icons. The memorable element is the 3D deck of candy-glass skill cards on the homepage.
+Keep the original bright, playful world: candy colours, frosted glass, cartoon 3D objects, illustrated book covers and spring feedback. The owner explicitly rejected the restrained workspace/sidebar redesign on 12 November 2026. App-like means compact navigation, fewer words and more icons and animation.
 
-Files: homepage `public/index.html` + `home.css`; shelf `public/shelf.html` + `shelf.css` + `shelf.js`; shared pop-ups, cubes, page transitions and category colours in `public/pop.css`; data in `public/skills.js`. `showcase.*`, `room.jpg` and `skill-shelf-icons.png` are left over from earlier versions and no page loads them.
+## Surfaces
 
-## Tokens
+- `index.html` opens the library in `public/shelf.html`.
+- `public/index.html` is the optional 3D preview. Nine books occupy separate viewport positions around a small launcher. Phones use a three-column layout above the launcher and category dock. The three explanatory chapters are removed.
+- The library keeps the original glass window, colourful book-jacket cards, animated category rail and playful backdrop. Phones use an animated category strip and a glass Library/Saved/Guide dock. The large hero, rotating prompt panel and promotional paragraphs are removed.
+- Skill sheets retain the exact prompts, setup instructions, creator credits and shared links. Bookmarks, search, difficulty and cards/list view are real controls.
 
-- Background `#f5f5f7` with radial colour fields (orange, indigo, sky, pink, purple). Glass: white 78% → 52%, 28px backdrop blur, saturate 180%, white top edge.
-- Text `#1d1d1f`; secondary at 74%; faint at 50%.
-- Category colours (gradient pairs): Web & design `#ff375f → #ff9f0a`, Motion & 3D `#bf5af2 → #5e5ce6`, Writing `#ff9f0a → #ffd60a`, Docs `#0a84ff → #64d2ff`, Coding `#30d158 → #00b5a8`, AI tools `#ff2d55 → #bf5af2`.
-- 3D deck cards use a rainbow order so neighbours never match: `#ff375f #ff8a00 #e0a400 #28b44f #00a8a0 #0a84ff #5e5ce6 #a94fe0 #e8344e`.
-- Level chips: Easy green, Medium orange, Technical pink, each with a text label. "New": pink text for 30 days after `added`.
-- Type: Bricolage Grotesque (800, tight tracking) for headings and UI; Instrument Serif italic for the coloured second line and quoted prompts; JetBrains Mono for small tags and code.
-- Radii: windows 34 to 38px, cards 24 to 30px, app icons about 30% of their size.
+## Visual system
 
-## Motion
+Light base `#f5f5f7`; warm orange, pink, purple and sky colour fields behind white glass. Primary ink `#1d1d1f`. Category colours are set in `pop.css`; the library uses blue for Coding to avoid a dominant green accent.
 
-- Springs: `cubic-bezier(.34,1.56,.64,1)` fallback, with a `linear()` spring curve where supported. Press: scale to about .92 in 80ms, spring back on release.
-- Tabs and chapters: one pill slides to the active item and changes colour per chapter.
-- Pop-ups spring out from the tapped element (`--fx`, `--fy`, `--fr`), close with a short sink.
-- Homepage: chapter windows tilt up into place on scroll; category cards pop in one by one. Shelf: rows cascade in on scroll; six floating 3D cubes drift behind the window. Reveals are checked by position on load and scroll, so nothing can stay hidden.
-- Page changes: cross-document view transitions (old page sinks and blurs, new page rises; the brand stays; category card morphs into its shelf heading).
-- 3D deck: four poses, one per chapter (fan, card forward, the words, shelf). `?pose=0..3` holds a pose for review. Phones use a lighter glass without refraction for frame rate.
-- No sound.
-- `prefers-reduced-motion` turns animations off; `prefers-reduced-transparency` and no backdrop-filter make glass solid.
+Use Bricolage Grotesque for headings and controls, Instrument Serif italic for quoted prompts, and a system monospace for code. Book jackets have a dark outline, a colour-matched depth edge and a tilted category icon. Ordinary controls stay compact; the yellow dice is the discovery action. Category and app navigation use labelled icons with clear selection and focus states.
 
-## Responsive
+## Motion and layout
 
-- Below 820 to 860px: chapter nav hides, the deck floats behind the text, and the shelf uses a floating glass tab bar with app icons at the bottom.
-- Category cards go from 3 to 2 per row; shelf rows put the level chip beside the name.
+- Preserve the original animated category toys and background ribbons. Each toy has its own motion and remains recognisable without rotating edge-on.
+- Books float and tilt independently, rather than overlapping in a central stack. Desktop positions surround the launcher; phone positions reserve the top bar, launcher and bottom dock.
+- Cards lift and their icons rock on hover. Press feedback is short. Saved state gives a small bookmark response.
+- Below 760px the toolbar stays at the viewport top, category toys remain reachable, and the bottom app dock reserves safe-area space. Below 380px skill cards use one column.
+- Reduced motion disables decorative animation and book drift. Reduced transparency uses solid surfaces. Search remains 16px on phones and zoom stays enabled.
 
-## Background ("vibing on Claude")
+## Local app state
 
-`public/vibe.js` adds a playful layer behind both pages: two tilted ribbons scrolling real prompts from `skills.js` (one black, one rainbow), iMessage-style chat bubbles that bob and type, and a spinning "Made with Claude, ask anything" sticker. The shelf adds a giant outlined "just ask."; the homepage paints "just ask." and "Claude can do that." into the 3D wallpaper so the glass books bend them. Book covers have their own art (big skill symbol, pattern, glow, sparkles, category tag), and the books break into a galaxy of dust between chapters 3 and 4 (`?dust=0..1` freezes it for review). No Anthropic logo is used.
+Saved skills, category and layout preferences use namespaced local storage. Blocked storage leaves session-only saving usable with a visible note. Closing a skill sheet restores focus and browser Back closes sheets.
 
-## Playful shelf update — 11 November 2026
-
-Preserve the homepage WebGL stacking books, covers, collision flash and shelf poses. Leave more space above the first chapter for the raised navigation icon. Category objects rock within a readable angle instead of turning edge-on.
-
-The shelf opens in Cards view: colourful book jackets, thick outlines, depth shadows and hover/tap feedback. List view remains available for quick scanning. Pick one for me opens a random skill from the current category, search and difficulty results, avoiding the previous choice when possible. Skill sheets use the animated category objects and a coloured prompt panel. Keyboard buttons, touch press feedback and reduced-motion alternatives remain available.
-
-### Glass category dock and phone behaviour
-
-Categories stay within reach through a labelled glass rail on desktop and a bottom dock below 1100px. Both use the existing animated cartoon objects. Phone styles include safe-area padding, stable hero height, dynamic-height bottom sheets, 44px controls, 16px search text and hover effects limited to precise hovering pointers. The dock hides while search has focus to leave keyboard space. Text remains selectable outside controls; zoom stays enabled. Actual phone touch, keyboard and notch behaviour still require hardware verification.
+The manifest and service worker provide an installable web app with a cached local library. Setup commands and shared links work offline; external videos, GitHub downloads, hosted fonts and the Three.js preview still need their remote resources. App Store packaging and submission remain separate work.

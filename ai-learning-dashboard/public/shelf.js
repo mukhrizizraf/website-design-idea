@@ -12,8 +12,19 @@
   const isNew = s => s.added && (Date.now() - new Date(s.added + 'T00:00:00').getTime()) < 30 * 864e5;
   const skills = [...D.skills].sort((a, b) => (isNew(b) ? 1 : 0) - (isNew(a) ? 1 : 0));
   const items = [...collections, ...skills];
-  const picks = D.featured.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
-  const state = { cat: 'all', q: '', easy: false, pick: 0, view: 'cards' };
+  let storageAvailable = true;
+  function readPreference(key, fallback) {
+    try { return JSON.parse(localStorage.getItem('skill-shelf:' + key)) ?? fallback; }
+    catch { return fallback; }
+  }
+  function savePreference(key, value) {
+    try { localStorage.setItem('skill-shelf:' + key, JSON.stringify(value)); }
+    catch { storageAvailable = false; $('#storage-note').textContent = 'Saving is available for this session only.'; }
+  }
+  const storedSaved = readPreference('saved', []);
+  const saved = new Set(Array.isArray(storedSaved) ? storedSaved.filter(id => items.some(s => s.id === id)) : []);
+  const preferredCat = readPreference('category', 'all');
+  const state = { cat: cats[preferredCat] ? preferredCat : 'all', q: '', easy: false, savedOnly: false, view: readPreference('view', 'cards') === 'list' ? 'list' : 'cards' };
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Small line icons, only for the phone tab bar where labels are short.
@@ -22,18 +33,18 @@
     docs: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z M14 2v6h6', coding: 'M16 18l6-6-6-6 M8 6l-6 6 6 6',
     workflow: 'M6 6h12v12H6z M9 9h6v6H9z M9 2v4 M15 2v4 M9 18v4 M15 18v4 M2 9h4 M2 15h4 M18 9h4 M18 15h4' };
   const svg = (d, w = 16) => `<svg viewBox="0 0 24 24" width="${w}" height="${w}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
-  const chevron = dir => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${dir < 0 ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6'}"/></svg>`;
 
   // ---------- small helpers ----------
   function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2400); }
   async function copy(text, done) {
     try { await navigator.clipboard.writeText(text); }
-    catch { const a = document.createElement('textarea'); a.value = text; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); } catch {} a.remove(); }
+    catch { const a = document.createElement('textarea'); a.value = text; document.body.appendChild(a); a.select(); let ok = false; try { ok = document.execCommand('copy'); } catch {} a.remove(); if (!ok) { toast('Copy unavailable. Select the text and copy it manually.'); return; } }
     toast(done);
   }
   const pageUrl = () => location.href.split('#')[0];
   const levelLabel = s => s.lessons ? `${s.lessons.length} ideas` : s.members ? `${s.members.length} skills` : D.levels[s.level].label;
   function matches(s) {
+    if (state.savedOnly && !saved.has(s.id)) return false;
     if (state.cat !== 'all' && s.cat !== state.cat) return false;
     if (state.easy && s.level !== 'easy') return false;
     if (!state.q) return true;
@@ -107,50 +118,27 @@
   // Category headings: a small 3D cube that turns non-stop.
   const headCube = cat => window.ShelfToys ? ShelfToys.toy(cat, 'head-toy') : '';
   let tabsBuilt = false;
-  function placePill(container, pillSel, current) {
-    const pill = container.querySelector(pillSel), el = container.querySelector(current);
-    if (!pill || !el || !el.offsetWidth) return;
-    pill.style.width = el.offsetWidth + 'px';
-    pill.style.transform = `translateX(${el.offsetLeft}px)`;
-  }
   function renderTabs() {
-    const list = [{ id: 'all', label: 'All', short: 'All' }, ...D.categories];
+    const list = [{ id: 'all', label: 'All categories', short: 'All' }, ...D.categories];
     if (!tabsBuilt) {
-      $('#tabs').innerHTML = '<span class="tab-pill" aria-hidden="true"></span>' + list.map(c => `<button class="tab" type="button" data-cat="${c.id}" aria-current="false">${appIc(c.id)}${esc(c.short || c.label)}</button>`).join('');
-      $('#tabbar').innerHTML = '<span class="tb-pill" aria-hidden="true"></span>' + list.map(c => `<button class="tb" type="button" data-cat="${c.id}" aria-current="false" aria-label="${esc(c.label)}"><b data-cat="${c.id}">${window.ShelfToys ? ShelfToys.toy(c.id, 'dock-toy') : svg(P[c.id] || P.all)}</b><span>${esc(c.short || c.label)}</span></button>`).join('');
+      $('#tabs').innerHTML = list.map(c => `<button class="tab" type="button" data-cat="${c.id}" aria-label="${esc(c.label)}" aria-current="false">${window.ShelfToys ? ShelfToys.toy(c.id, 'dock-toy') : appIc(c.id)}<span class="tab-label">${esc(c.short || c.label)}</span><span class="tab-count">${c.id === 'all' ? items.length : items.filter(s => s.cat === c.id).length}</span></button>`).join('');
       tabsBuilt = true;
     }
-    document.querySelectorAll('.tab, .tb').forEach(b => b.setAttribute('aria-current', String(b.dataset.cat === state.cat)));
-    requestAnimationFrame(() => {
-      placePill($('#tabs'), '.tab-pill', '.tab[aria-current="true"]');
-      // Dock selection is drawn on each button, so it works vertically and horizontally.
+    document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-current', String(b.dataset.cat === state.cat)));
+    document.querySelectorAll('[data-section]').forEach(b => {
+      if (b.dataset.section === (state.savedOnly ? 'saved' : 'library')) b.setAttribute('aria-current', 'page');
+      else b.removeAttribute('aria-current');
     });
+    document.querySelectorAll('[data-saved-count]').forEach(el => { el.textContent = saved.size; });
+    $('#library-count').textContent = items.length;
+    $('#library-title').textContent = state.savedOnly ? 'Saved skills' : state.cat === 'all' ? 'All skills' : cats[state.cat].label;
+    $('#shelf').dataset.category = state.cat;
+    $('#location-label').textContent = state.savedOnly ? 'Saved' : 'Library';
+    $('#library-description').textContent = '';
+    document.title = $('#library-title').textContent + ' · AI Skill Shelf';
   }
   addEventListener('resize', () => { if (tabsBuilt) renderTabs(); });
   document.fonts?.ready?.then(() => { if (tabsBuilt) renderTabs(); });
-
-  // ---------- the pick card: the exact words to say ----------
-  function renderPick() {
-    const s = picks[state.pick];
-    if (!s) { $('#tilt').hidden = true; return; }
-    $('#pick').innerHTML = `<blockquote>“${esc(s.say)}”</blockquote>
-      <figcaption>
-        <button class="pick-name" type="button" data-skill="${s.id}"><strong>${esc(s.title)}</strong><span>${esc(cats[s.cat].label)}</span></button>
-        <span class="stepper"><button class="step" type="button" data-step="-1" aria-label="Previous pick">${chevron(-1)}</button>${state.pick + 1} of ${picks.length}<button class="step" type="button" data-step="1" aria-label="Next pick">${chevron(1)}</button></span>
-      </figcaption>
-      <div class="pick-actions"><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy the words</button><button class="btn" type="button" data-skill="${s.id}">How do I install it?</button></div>`;
-  }
-  // Tilt toward the pointer, like a pane of glass you could pick up.
-  const tilt = $('#tilt');
-  if (!reduced && matchMedia('(pointer: fine)').matches) {
-    tilt.addEventListener('pointermove', e => {
-      const r = tilt.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height, card = $('#pick');
-      card.classList.add('moving');
-      card.style.setProperty('--ry', `${(x - .5) * 10}deg`); card.style.setProperty('--rx', `${(.5 - y) * 8}deg`);
-      card.style.setProperty('--mx', `${x * 100}%`); card.style.setProperty('--my', `${y * 100}%`);
-    });
-    tilt.addEventListener('pointerleave', () => { const card = $('#pick'); card.classList.remove('moving'); card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg'); });
-  }
 
   // ---------- the shelf: grouped rows ----------
   function row(s, i) {
@@ -158,15 +146,17 @@
       ${appIc(s.cat, glyphFor(s))}
       <span class="row-name">${esc(s.title)}${isNew(s) ? '<span class="new">New</span>' : ''}</span>
       <span class="row-what">${esc(s.what)}</span>
-      <span class="row-meta lv-${s.lessons ? 'ideas' : s.members ? 'pack' : s.level}">${esc(levelLabel(s))}</span><span class="card-invite" aria-hidden="true">${s.lessons ? 'Explore the ideas' : 'Show me how'} <b>↗</b></span></button></li>`;
+      <span class="row-meta lv-${s.lessons ? 'ideas' : s.members ? 'pack' : s.level}">${esc(levelLabel(s))}</span></button><button class="save-skill" type="button" data-save="${esc(s.id)}" aria-pressed="${saved.has(s.id)}" aria-label="${saved.has(s.id) ? 'Unsave' : 'Save'} ${esc(s.title)}">${svg('M6 3h12v18l-6-4-6 4Z')}</button></li>`;
   }
   function renderShelf() {
     const found = items.filter(matches);
     $('#surprise').disabled = !found.some(s => !s.lessons);
     $('#surprise').title = $('#surprise').disabled ? 'No matching skills. Change your filters to try again.' : 'Choose a skill from your current results';
-    $('#result').textContent = state.q || state.easy || state.cat !== 'all' ? `${found.length} of ${items.length} skills` : `${items.length} skills, sorted by what they help with`;
+    $('#result').textContent = `${found.length} ${found.length === 1 ? 'skill' : 'skills'}${state.q ? ' found' : ''}`;
+    $('#reset-filters').hidden = !state.q && !state.easy && state.cat === 'all';
     if (!found.length) {
-      $('#groups').innerHTML = `<div class="empty"><strong>Hmm, nothing found</strong>Try a shorter word, or just show everything.<br><button class="btn" type="button" id="clear">Show me everything</button></div>`;
+      const noSaved = state.savedOnly && !saved.size;
+      $('#groups').innerHTML = `<div class="empty">${svg(noSaved ? 'M6 3h12v18l-6-4-6 4Z' : G.search)}<strong>${noSaved ? 'Keep your favourites here' : 'No matching skills'}</strong>${noSaved ? 'Tap the bookmark on any skill to save it.' : 'Try another search or clear your filters.'}<br><button class="btn" type="button" id="clear">${noSaved ? 'Browse skills' : 'Clear filters'}</button></div>`;
       return;
     }
     $('#groups').innerHTML = D.categories.map(c => {
@@ -176,29 +166,7 @@
     }).join('');
     watchRows();
   }
-  // Rows cascade in as they scroll into view. Positions are checked directly (on render and on
-  // scroll), so a row can never stay hidden; reduced motion skips the effect entirely.
-  if (!reduced) document.documentElement.classList.add('js-reveal');
-  function watchRows() {
-    if (reduced) return;
-    const limit = innerHeight * 0.96;
-    document.querySelectorAll('.rows li:not(.seen)').forEach(li => { if (li.getBoundingClientRect().top < limit) li.classList.add('seen'); });
-  }
-  let rowTick = 0;
-  addEventListener('scroll', () => { if (!rowTick) rowTick = requestAnimationFrame(() => { rowTick = 0; watchRows(); }); }, { passive: true });
-  addEventListener('resize', watchRows);
-  setTimeout(() => document.querySelectorAll('.rows li').forEach(li => { if (li.getBoundingClientRect().top < innerHeight) li.classList.add('seen'); }), 1500);
-
-  // Floating 3D glass cubes behind the frosted window, one per category colour, drifting slowly.
-  (() => {
-    const box = $('#floaters'); if (!box) return;
-    const spots = [[6, 14, 92], [86, 10, 70], [92, 58, 104], [3, 70, 78], [48, 88, 64], [70, 30, 56]];
-    box.innerHTML = D.categories.map((c, i) => {
-      const [x, y, size] = spots[i % spots.length];
-      return `<div class="floater" data-cat="${c.id}" style="left:${x}%;top:${y}%;--size:${size}px;--d:${16 + i * 3}s;--delay:-${i * 2.5}s;--spin:${12 + i * 2}s;--dx:${i % 2 ? -50 : 60}px;--dy:${i % 3 ? -70 : 50}px">
-        ${window.ShelfToys ? ShelfToys.toy(c.id, 'float-toy') : ''}</div>`;
-    }).join('');
-  })();
+  function watchRows() {}
 
   // Arriving from a homepage category card: that card morphs into this category's heading.
   window.addEventListener('pagereveal', e => {
@@ -275,6 +243,7 @@
   let lastClick = null;                      // where the visitor clicked, so the window flies out from there
   function openSheet(id, push) {
     const d = $('#detail');
+    d.dataset.skill = id;
     const r = lastClick?.getBoundingClientRect?.();
     if (r) {
       d.style.setProperty('--fx', `${Math.round(r.left + r.width / 2 - innerWidth / 2)}px`);
@@ -282,10 +251,9 @@
       d.style.setProperty('--fr', `${r.left + r.width / 2 < innerWidth / 2 ? 14 : -14}deg`);
     }
     d.classList.remove('closing');
-    if (d.open) { d.close(); }
-    d.showModal();
+    if (!d.open) d.showModal();
     d.scrollTop = 0;
-    if (push) history.replaceState(null, '', '#skill=' + id);
+    if (push && location.hash !== '#skill=' + id) history.pushState({ skillShelfSheet: true }, '', '#skill=' + id);
   }
   function closeSheet(d) {
     if (!d.open) return;
@@ -344,24 +312,59 @@
       <p class="note">${esc(D.levels[s.level].hint)} In Claude Code you can also type <code>/${esc(s.members ? s.members[0][0] : s.id)}</code> to start it right away.</p>
       ${installHtml(s)}
       ${s.members ? `<h3>What's inside this pack</h3><ul class="members">${s.members.map(([n, t]) => `<li><code>/${esc(n)}</code><br>${esc(t)}</li>`).join('')}</ul>` : ''}
-      <div class="sheet-foot"><button class="btn" type="button" data-share="${esc(s.id)}">Copy the link, share with friends</button></div></div>`;
+      <div class="sheet-foot"><button class="btn" type="button" data-save="${esc(s.id)}" aria-pressed="${saved.has(s.id)}">${saved.has(s.id) ? 'Saved' : 'Save skill'}</button><button class="btn" type="button" data-share="${esc(s.id)}">Share skill</button></div></div>`;
     openSheet(s.id, push);
   }
   $('#detail').addEventListener('close', () => {
     $('#detail').querySelectorAll('video').forEach(v => v.pause());
-    if (location.hash.startsWith('#skill=')) history.replaceState(null, '', location.pathname + location.search);
+    const opener = [...document.querySelectorAll('.row')].find(b => b.dataset.skill === $('#detail').dataset.skill);
+    (opener || $('#shelf')).focus({ preventScroll: true });
+    if (location.hash.startsWith('#skill=')) {
+      if (history.state?.skillShelfSheet) history.back();
+      else history.replaceState(null, '', location.pathname + location.search);
+    }
   });
   document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) closeSheet(d); }));
 
   // ---------- events ----------
   let lastSurprise = null;
   function render() { renderTabs(); renderShelf(); }
+  function clearFilters() {
+    state.cat = 'all'; state.q = ''; state.easy = false;
+    $('#q').value = ''; $('#easy').checked = false;
+    savePreference('category', 'all'); updateCategoryUrl(); render();
+  }
+  function updateCategoryUrl() {
+    const url = new URL(location.href);
+    if (state.cat === 'all') url.searchParams.delete('cat');
+    else url.searchParams.set('cat', state.cat);
+    history.replaceState(history.state, '', url);
+  }
   document.addEventListener('click', e => {
     const t = e.target.closest('button, a'); if (!t) return;
     if (t.dataset.view) {
       state.view = t.dataset.view; $('#shelf').dataset.view = state.view;
+      savePreference('view', state.view);
       document.querySelectorAll('[data-view][aria-pressed]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === state.view)));
       watchRows();
+    }
+    else if (t.dataset.save) {
+      const id = t.dataset.save;
+      if (saved.has(id)) saved.delete(id); else saved.add(id);
+      savePreference('saved', [...saved]);
+      const inSheet = !!t.closest('dialog');
+      render();
+      if (inSheet) { t.textContent = saved.has(id) ? 'Saved' : 'Save skill'; t.setAttribute('aria-pressed', String(saved.has(id))); }
+      else {
+        const replacement = [...document.querySelectorAll('.save-skill')].find(b => b.dataset.save === id);
+        if (replacement) replacement.focus({ preventScroll: true });
+        else $('#shelf').focus({ preventScroll: true });
+      }
+      toast(storageAvailable ? (saved.has(id) ? 'Skill saved' : 'Skill removed from saved') : 'Saved for this session. Device storage is unavailable.');
+    }
+    else if (t.dataset.section) {
+      state.savedOnly = t.dataset.section === 'saved'; clearFilters();
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
     else if (t.id === 'surprise') {
       const options = items.filter(s => !s.lessons && matches(s));
@@ -372,15 +375,7 @@
       lastSurprise = chosen.id; lastClick = t; openSkill(chosen.id);
     }
     else if (t.dataset.skill) { lastClick = t; openSkill(t.dataset.skill); }
-    else if (t.dataset.cat) { state.cat = t.dataset.cat; document.documentElement.classList.add('swapping'); setTimeout(() => document.documentElement.classList.remove('swapping'), 900); render(); if (matchMedia('(max-width: 760px)').matches) $('#shelf').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); }
-    else if (t.dataset.step) {
-      // The pick card flips over in 3D; the new words appear on its far side.
-      const dir = Number(t.dataset.step), card = $('#pick');
-      state.pick = (state.pick + dir + picks.length) % picks.length;
-      if (reduced) { renderPick(); return; }
-      card.classList.remove('flip-in', 'flip-in-r'); card.classList.add(dir > 0 ? 'flip-out' : 'flip-out-r');
-      setTimeout(() => { renderPick(); card.classList.remove('flip-out', 'flip-out-r'); void card.offsetWidth; card.classList.add(dir > 0 ? 'flip-in' : 'flip-in-r'); }, 230);
-    }
+    else if (t.dataset.cat) { state.cat = t.dataset.cat; savePreference('category', state.cat); updateCategoryUrl(); render(); window.scrollTo({ top: 0, behavior: 'instant' }); }
     else if (t.dataset.copy !== undefined) copy(t.dataset.copy, t.dataset.done || 'Copied! Now paste it into Claude.');
     else if (t.dataset.share) copy(pageUrl() + '#skill=' + t.dataset.share, 'Link copied! Send it to a friend.');
     else if (t.dataset.way) {
@@ -389,18 +384,29 @@
       sheet.querySelectorAll('.way-panel').forEach(p => { p.hidden = p.dataset.panel !== t.dataset.way; });
     }
     else if (t.hasAttribute('data-close')) closeSheet(t.closest('dialog'));
-    else if (t.id === 'clear') { state.cat = 'all'; state.q = ''; state.easy = false; $('#q').value = ''; $('#easy').checked = false; render(); }
-    else if (t.id === 'open-guide') $('#guide').showModal();
+    else if (t.id === 'clear' || t.id === 'reset-filters') { if (state.savedOnly && !saved.size) state.savedOnly = false; clearFilters(); }
+    else if (t.id === 'open-guide' || t.hasAttribute('data-guide')) $('#guide').showModal();
     else if (t.id === 'share-page') copy(pageUrl(), 'Link copied!');
   });
   $('#q').addEventListener('input', e => { state.q = e.target.value.trim(); renderShelf(); });
   $('#easy').addEventListener('change', e => { state.easy = e.target.checked; renderShelf(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input, textarea, [contenteditable="true"]') && !document.querySelector('dialog[open]')) { e.preventDefault(); $('#q').focus(); }
+    if (e.key === 'Escape' && e.target === $('#q') && state.q) { e.preventDefault(); $('#q').value = ''; state.q = ''; renderShelf(); }
+    if (e.target.matches('.way') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault(); const ways = [...e.target.parentElement.querySelectorAll('.way')];
+      const n = e.key === 'Home' ? 0 : e.key === 'End' ? ways.length - 1 : (ways.indexOf(e.target) + (e.key === 'ArrowRight' ? 1 : -1) + ways.length) % ways.length;
+      ways[n].focus(); ways[n].click();
+    }
+  });
   window.addEventListener('hashchange', () => { const m = /^#skill=([\w-]+)/.exec(location.hash); if (m) openSkill(m[1], false); else if ($('#detail').open) $('#detail').close(); });
 
   // ---------- start ----------
   const askedCat = new URLSearchParams(location.search).get('cat');   // from the homepage category cards
   if (cats[askedCat]) state.cat = askedCat;
-  renderPick();
+  $('#shelf').dataset.view = state.view;
+  document.querySelectorAll('[data-view][aria-pressed]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === state.view)));
+  savePreference('view', state.view);
   render();
   const start = /^#skill=([\w-]+)/.exec(location.hash);
   if (start) openSkill(start[1], false);

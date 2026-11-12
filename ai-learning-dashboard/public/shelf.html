@@ -7,7 +7,11 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f5f5f7">
   <meta name="color-scheme" content="light">
   <meta name="description" content="The AI skills I use with Claude: what each one does, the words to use it, and how to install it.">
-  <title>The shelf, AI Skill Shelf</title>
+  <title>Library · AI Skill Shelf</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./app-icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="canonical" href="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/shelf.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="The shelf, AI Skill Shelf">
@@ -20,59 +24,68 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./shelf.css?v=20261111-dock">
-  <link rel="stylesheet" href="./pop.css?v=20261111-dock">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&display=swap">
+  <link rel="stylesheet" href="./pop.css?v=20261111-app">
+  <link rel="stylesheet" href="./shelf.css?v=20261112-playful">
   <script defer src="./skills.js?v=202611111429"></script>
   <script defer src="./vibe.js?v=202611111429"></script>
-  <script defer src="./toys.js?v=20261111-dock"></script>
-  <script defer src="./shelf.js?v=20261111-dock"></script>
+  <script defer src="./toys.js?v=20261111-app"></script>
+  <script defer src="./shelf.js?v=20261112-playful"></script>
+  <script defer src="./app.js?v=20261112-playful"></script>
 </head>
 <body>
   <a class="skip" href="#shelf">Skip to the skills</a>
   <div class="room" aria-hidden="true"></div>
   <div class="floaters" id="floaters" aria-hidden="true"></div>
-
+  <aside class="sidebar" aria-label="Library navigation">
+    <a class="brand sidebar-brand" href="./shelf.html"><img src="./favicon.svg" width="38" height="38" alt=""><span>AI Skill Shelf<small>Your AI toolkit</small></span></a>
+    <nav class="primary-nav" aria-label="Your library">
+      <button type="button" data-section="library" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z"/></svg>All skills<span id="library-count"></span></button>
+      <button type="button" data-section="saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4Z"/></svg>Saved skills<span data-saved-count>0</span></button>
+    </nav>
+    <p class="nav-label">Categories</p>
+    <nav class="tabs" id="tabs" aria-label="Skill categories"></nav>
+    <div class="sidebar-bottom">
+      <button class="sidebar-link" type="button" id="open-guide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg>How to use skills</button>
+      <a class="sidebar-link" href="./index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5Z M3 8v9l9 5 9-5V8 M12 13v9"/></svg>3D preview</a>
+      <div class="owner"><span class="avatar" aria-hidden="true">MI</span><span>Collected by<strong>Mukhriz Izraf</strong></span></div>
+    </div>
+  </aside>
   <div class="window">
     <header class="toolbar">
-      <a class="home-btn" href="./index.html" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5 M5.5 8.6V21h13V8.6 M10 21v-6h4v6"/></svg><span>Home</span></a>
-      <a class="brand" href="./index.html">AI Skill Shelf</a>
-      <nav class="tabs" id="tabs" aria-label="Skill categories"></nav>
+      <a class="brand mobile-brand" href="./shelf.html"><img src="./favicon.svg" width="28" height="28" alt="">AI Skill Shelf</a>
+      <a class="brand toolbar-brand" href="./index.html">AI Skill Shelf</a><span class="toolbar-location"><strong id="location-label">Library</strong></span>
       <label class="search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 16l5 5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"/></svg>
-        <input id="q" type="search" enterkeyhint="search" autocapitalize="none" placeholder="Find a skill…" aria-label="Search skills" autocomplete="off">
+        <input id="q" type="search" enterkeyhint="search" autocapitalize="none" placeholder="Search skills…" aria-label="Search skills" autocomplete="off">
+        <kbd aria-hidden="true">/</kbd>
       </label>
+      <button class="btn install-button" id="install-app" type="button" hidden>Install app</button>
     </header>
-
-    <section class="hero">
-      <div class="hero-text">
-        <h1><span class="heavy">The shelf.</span> <span class="soft">Find your next superpower.</span></h1>
-        <p>Make a poster. Build a game. Turn your notes into slides. Pick a skill, check the setup, then borrow the words and give it a go.</p>
-        <div class="discovery"><button class="btn surprise" type="button" id="surprise"><span class="dice" aria-hidden="true">⚄</span> Pick one for me</button><span class="discovery-note">A little nudge. A new thing to try.</span></div>
-        <button class="link" type="button" id="open-guide">Wait, what's a skill?</button>
-      </div>
-      <div class="tilt" id="tilt">
-        <figure class="pick" id="pick" aria-live="polite"></figure>
-      </div>
-    </section>
-
     <main class="shelf" id="shelf" tabindex="-1" data-view="cards">
+      <div class="library-heading">
+        <div><h1 id="library-title">All skills</h1><p id="library-description">Your collection. Ready when you are.</p></div>
+        <button class="btn primary surprise" type="button" id="surprise" aria-label="Surprise me"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h.01 M16 8h.01 M12 12h.01 M8 16h.01 M16 16h.01" stroke-width="3"/></svg><span>Surprise me</span></button>
+      </div>
       <div class="shelf-bar">
         <p class="result" id="result" aria-live="polite"></p>
-        <div class="view-switch" role="group" aria-label="Shelf layout"><button type="button" data-view="cards" aria-pressed="true">Cards</button><button type="button" data-view="list" aria-pressed="false">List</button></div>
+        <button class="link reset-filters" id="reset-filters" type="button" hidden>Clear filters</button>
         <label class="easy"><input type="checkbox" id="easy"><span class="switch" aria-hidden="true"></span>Easy ones only</label>
+        <div class="view-switch" role="group" aria-label="Shelf layout"><button type="button" data-view="cards" aria-pressed="true" aria-label="Cards view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z"/></svg></button><button type="button" data-view="list" aria-pressed="false" aria-label="List view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13 M8 12h13 M8 18h13 M3 6h.01 M3 12h.01 M3 18h.01"/></svg></button></div>
       </div>
       <div id="groups"></div>
     </main>
 
     <footer class="foot">
-      <button class="link" type="button" id="share-page">Copy the link, share with friends</button>
-      <a class="link" href="./index.html">Back to Home</a>
+      <span id="storage-note">Saved skills stay on this device.</span>
+      <button class="link" type="button" id="share-page">Share library</button>
     </footer>
   </div>
-  <div class="handle" aria-hidden="true"></div>
-
-  <nav class="tabbar" id="tabbar" aria-label="Skill categories"></nav>
+  <nav class="tabbar" id="tabbar" aria-label="App navigation">
+    <button type="button" data-section="library" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z"/></svg><span>Library</span></button>
+    <button type="button" data-section="saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4Z"/></svg><span>Saved</span></button>
+    <button type="button" data-guide><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg><span>Guide</span></button>
+  </nav>
   <dialog id="detail" class="pop" aria-labelledby="d-title"><div id="detail-body"></div></dialog>
   <dialog id="guide" aria-labelledby="g-title">
     <div class="sheet">

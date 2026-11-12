@@ -247,24 +247,7 @@ h1,h2{font-size:clamp(2.9rem,6.4vw,5.8rem);line-height:.9;letter-spacing:-.045em
 .hero-secondary{display:inline-flex;align-items:center;min-height:48px;padding:10px 16px;font-weight:700;text-underline-offset:5px}
 .hero-note{margin-top:16px;color:var(--ink-2);font-size:.875rem}
 .chapter{scroll-margin-top:96px}
-.quick-start{width:100%;max-width:1240px;padding:24px;border-radius:28px;background:rgba(255,255,255,.96);box-shadow:0 12px 36px rgba(60,40,120,.08)}
-.quick-heading{margin-bottom:18px}
-.quick-heading h2{font:800 clamp(1.4rem,2.4vw,1.9rem)/1.2 var(--display);letter-spacing:-.035em}
-.quick-heading p{margin-top:6px;color:var(--ink-2)}
-.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.quick-card{display:flex;flex-direction:column;gap:12px;min-width:0;padding:22px;border:1px solid rgba(29,29,31,.12);border-top:3px solid var(--blue);border-radius:20px;text-decoration:none;background:#fff;transition:transform .2s,box-shadow .2s}
-.quick-card:nth-child(2){border-top-color:var(--pink)}
-.quick-card:nth-child(3){border-top-color:var(--purple)}
-@media (hover:hover) and (pointer:fine){
-.quick-card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(60,40,120,.1)}}
-.quick-label{font:600 .65rem/1.5 var(--mono);letter-spacing:.025em;color:#55545d}
-.quick-card h3{margin:0;font-size:1.25rem;line-height:1.15;letter-spacing:-.025em}
-.quick-card p{font-size:.92rem;line-height:1.5;color:var(--ink-2)}
-.quick-card blockquote{margin:0 0 6px;padding:12px;border-radius:10px;background:#f5f5f7;font-size:.9rem;line-height:1.5}
-.quick-link{display:flex;justify-content:space-between;gap:8px;margin-top:auto;font-size:.9rem;font-weight:700}
-@media(max-width:820px){#ch-saved{padding-top:100px;gap:20px}#ch-saved .copy{padding:28px 24px}.quick-grid{grid-template-columns:1fr}.quick-start{padding:20px}.quick-card{padding:20px}}
-@media(prefers-reduced-motion:reduce){
-@media (hover:hover) and (pointer:fine){.quick-card:hover{transform:none}}}
+@media(max-width:820px){#ch-saved{padding-top:100px;gap:20px}#ch-saved .copy{padding:28px 24px}}
 
 /* Leave room for the raised chapter icon; retain the original WebGL book scene. */
 html{scroll-padding-top:128px}
@@ -281,3 +264,36 @@ html{scroll-padding-top:128px}
 @media(min-width:1100px){main{padding-left:104px}.chapter{padding-left:32px}.chapter .copy{max-width:min(620px,48vw)}}
 @media(max-width:1099px){body{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}.foot{padding-bottom:24px}.nav{max-width:calc(100% - 28px)}}
 @media(max-width:820px){.nav{top:calc(14px + env(safe-area-inset-top,0px))}#ch-saved{padding-top:calc(100px + env(safe-area-inset-top,0px))}}
+
+/* Phone launch screen: expose the books, then offer compact actions. */
+@media(max-width:600px){
+ #ch-saved{justify-content:flex-start;padding:88px 14px 24px;gap:22px;min-height:100svh}
+ #ch-saved .copy{margin-top:220px;padding:20px 22px 22px;width:100%;border-radius:26px}
+ #ch-saved .kicker,#ch-saved .hero-note{display:none}
+ #ch-saved h1{font-size:2.25rem;line-height:1}
+ #ch-saved .body{margin-top:12px;font-size:.95rem;line-height:1.45}
+ .hero-actions{margin-top:18px;gap:8px}.hero-actions .cta{padding:12px 20px}.hero-secondary{font-size:.9rem;padding:10px}
+ #ch-skill,#ch-use,#ch-share{min-height:0;padding:20px 14px}
+ #ch-skill h2,#ch-use h2,#ch-share h2{font-size:2.25rem}
+ #ch-skill .body,#ch-use .body,#ch-share .body{font-size:.95rem;margin-top:16px}
+ .foot{margin-top:20px;font-size:.75rem;padding:20px}
+}
+@media(max-width:600px) and (max-height:700px){#ch-saved .copy{margin-top:150px}}
+
+/* A single optional 3D preview. The library is the app's entry point. */
+body{padding-bottom:0}
+.nav{top:24px}
+main{padding-left:0}
+#ch-saved{padding-top:100px;min-height:calc(100svh - 80px)}
+.foot{margin-top:0}
+@media(max-width:600px){.nav{top:14px}#ch-saved{padding-top:88px}}
+
+/* Books occupy the canvas; the only copy is a small launcher. */
+#ch-saved{position:relative;display:flex;align-items:center;justify-content:center;padding:100px 24px 120px;min-height:100svh}
+#ch-saved .copy{position:relative;width:max-content;max-width:420px;margin:0;padding:22px 28px;background:linear-gradient(145deg,#fffffff2,#ffffffb0);text-align:center;border-radius:28px}
+#ch-saved h1{font-size:2.4rem;line-height:1.05}
+.hero-actions{justify-content:center;margin-top:16px}
+.hero-actions .cta{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:16px;min-height:46px}
+.foot{display:none}
+@media(max-width:820px){#ch-saved{align-items:center;justify-content:flex-end;min-height:100svh;padding:88px 16px 108px}#ch-saved .copy{margin:0;padding:18px 26px;max-width:320px}#ch-saved h1{font-size:2rem}.hero-actions{margin-top:12px}.hero-actions .cta{padding:10px 24px}}
+@media(max-width:600px) and (max-height:700px){#ch-saved{padding-bottom:102px}#ch-saved .copy{padding:14px 22px}#ch-saved h1{font-size:1.7rem}.hero-actions{margin-top:9px}}
