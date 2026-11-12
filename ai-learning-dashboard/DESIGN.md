@@ -21,7 +21,7 @@ Use Bricolage Grotesque for headings and controls, Instrument Serif italic for q
 - Books float and tilt independently, rather than overlapping in a central stack. Desktop positions surround the launcher; phone positions reserve the top bar, launcher and bottom dock.
 - Cards lift and their icons rock on hover. Press feedback is short. Saved state gives a small bookmark response.
 - Below 760px the toolbar stays at the viewport top, category toys remain reachable, and the bottom app dock reserves safe-area space. Below 380px skill cards use one column.
-- Homepage: the four-chapter scroll story is back. Instead of glass books, candy-coloured particles morph book → skill cube → supernova → books on a shelf as you scroll (inspired by the owner's particle reference video, kept bright). Library cards: compact cube cards, four per row on laptops, each with a turning 3D cube and its own colour.
+- Homepage: an app screen, not a web page. The 3D book stack fills the screen and scrolling plays the story through to the shelf. Only the app bar, story dots, one button and the category dock sit on top. No explanations: the app is for skills. Library cards: compact cube cards, four per row on laptops, each with a turning 3D cube and its own colour.
 - Behind every page, glossy 3D candy shapes float at different depths, follow the pointer and scroll, spin on hover and pop on click. The window stays near-solid white so text never sits on moving colour.
 - No "just ask." or "Claude can do that" lettering anywhere: the site is not sponsored by Claude.
 - Laptop and desktop navigation is a segmented control in the toolbar; the floating bottom dock is for phones only.

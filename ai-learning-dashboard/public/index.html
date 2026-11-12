@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./home.css?v=20261112-story">
+  <link rel="stylesheet" href="./home.css?v=20261112-app">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
   <script type="importmap">
     { "imports": {
@@ -36,71 +36,37 @@
   <script defer src="./skills.js?v=202611111429"></script>
   <script defer src="./toys.js?v=20261112-cards"></script>
 </head>
-<body>
+<body data-page="home">
   <a class="skip" href="#ch-share">Skip to the shelf link</a>
   <canvas id="stage" aria-hidden="true"></canvas>
   <div class="veil" aria-hidden="true"></div>
 
   <header class="nav">
     <a class="brand" href="./index.html"><span class="mark" aria-hidden="true"></span>AI Skill Shelf</a>
-    <nav class="chapters" aria-label="Chapters">
-      <span class="ch-pill" aria-hidden="true"><span class="ch-beam"></span></span>
-      <a href="#ch-saved" data-ch="0"><svg class="ch-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4Z"/></svg><span>Saved</span></a>
-      <a href="#ch-skill" data-ch="1"><svg class="ch-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/></svg><span>One job</span></a>
-      <a href="#ch-use" data-ch="2"><svg class="ch-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9z M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg><span>Use it</span></a>
-      <a href="#ch-share" data-ch="3"><svg class="ch-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M8.6 13.5l6.8 4 M15.4 6.5l-6.8 4"/></svg><span>Share</span></a>
-    </nav>
-    <a class="pill" href="./shelf.html">Open the shelf</a>
+    <nav class="appnav" aria-label="App"><a href="./index.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg><span>Home</span></a><a href="./shelf.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z"/></svg><span>Library</span></a><a href="./shelf.html#saved"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4Z"/></svg><span>Saved</span></a><a href="./shelf.html#guide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg><span>Guide</span></a></nav>
   </header>
 
   <main>
-    <section class="chapter" id="ch-saved">
-      <div class="copy">
-        <p class="kicker">01  Saved, not lost</p>
-        <h1><span class="heavy">Find an AI skill.</span> <span class="soft">Put it to work.</span></h1>
-        <p class="body">Useful skills for Claude, collected from TikTok, GitHub and friends. See what each one does, how to set it up, and exactly what to ask.</p>
-        <div class="hero-actions"><a class="cta" href="./shelf.html">Browse skills</a><a class="hero-secondary" href="#ch-skill">How it works</a></div>
-        <p class="hero-note">Plain-English examples. Setup steps included.</p>
-      </div>
-
-    </section>
-
-    <section class="chapter" id="ch-skill">
-      <div class="copy">
-        <p class="kicker">02  So what's a skill?</p>
-        <h2><span class="heavy">One skill,</span> <span class="soft">one job, done right.</span></h2>
-        <p class="body">A skill is like a recipe card for Claude. Install it once and Claude just knows how to do that job: write like a real person, design a poster, read a TikTok link. Easy.</p>
-      </div>
-    </section>
-
-    <section class="chapter" id="ch-use">
-      <div class="copy">
-        <p class="kicker">03  How do I use one?</p>
-        <h2><span class="heavy">Copy the words.</span> <span class="soft">Paste. Done.</span></h2>
-        <p class="body">Every skill comes with the exact words to say and the install steps, already written out. No digging through GitHub, no headache.</p>
-      </div>
-    </section>
-
-    <section class="chapter last" id="ch-share">
-      <div class="copy">
-        <p class="kicker">04  Sharing is caring</p>
-        <h2><span class="heavy">What I learn,</span> <span class="soft">now yours too.</span></h2>
-        <p class="body">I put it all here so you can try them too. Pick one below or open the whole shelf. Go on, try one today!</p>
-        <a class="cta" href="./shelf.html">Open the shelf</a>
-      </div>
-      <div class="doors" id="doors" aria-label="Skill categories"></div>
-    </section>
+    <h1 class="sr-only">AI Skill Shelf: pick a skill</h1>
+    <section class="chapter" id="ch-saved" aria-label="Book"></section>
+    <section class="chapter" id="ch-skill" aria-label="Skill cube"></section>
+    <section class="chapter" id="ch-use" aria-label="Burst"></section>
+    <section class="chapter last" id="ch-share" aria-label="Shelf"></section>
+    <div id="doors" style="display:none"></div>
   </main>
+  <nav class="steps" aria-label="Story"><a href="#ch-saved" aria-label="Book"></a><a href="#ch-skill" aria-label="Skill cube"></a><a href="#ch-use" aria-label="Burst"></a><a href="#ch-share" aria-label="Shelf"></a></nav>
+  <a class="cta launch" href="./shelf.html">Browse skills</a>
+  <span class="scroll-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
 
-  <footer class="foot">
-    <span>Designed and built by Mukhriz Izraf, working with Claude Code.</span>
-  </footer>
 
   <!-- A skill card picked from the 3D deck pops up here and speaks. -->
   <dialog id="pop" class="pop" aria-labelledby="pop-title"><div id="pop-body"></div></dialog>
   <div id="toast" role="status" aria-live="polite"></div>
 
   <script type="module">
+    import * as THREE from 'three';
+    import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
     const D = window.SKILL_DATA;
     const root = document.documentElement;
@@ -131,22 +97,9 @@
     if (!reduced) {
       root.classList.add('js-reveal');
       const targets = [...document.querySelectorAll('.copy, .doors')];
-      const GLYPHS = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#%&*+';
-      function scramble(el) {
-        if (!el || el.dataset.done) return;
-        el.dataset.done = 1;
-        const text = el.textContent, t0 = performance.now(), dur = 800;
-        el.setAttribute('aria-label', text);
-        const tick = now => {
-          const k = (now - t0) / dur;
-          el.textContent = [...text].map((ch, i) => /\s/.test(ch) || i / text.length < k * 1.25 - .25 ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]).join('');
-          if (k < 1) requestAnimationFrame(tick); else el.textContent = text;
-        };
-        requestAnimationFrame(tick);
-      }
       const reveal = () => {
         const limit = innerHeight * 0.88;
-        targets.forEach(el => { if (!el.classList.contains('in')) { const r = el.getBoundingClientRect(); if (r.top < limit && r.bottom > 0) { el.classList.add('in'); scramble(el.querySelector('.kicker')); } } });
+        targets.forEach(el => { if (!el.classList.contains('in')) { const r = el.getBoundingClientRect(); if (r.top < limit && r.bottom > 0) el.classList.add('in'); } });
       };
       let tick = 0;
       addEventListener('scroll', () => { if (!tick) tick = requestAnimationFrame(() => { tick = 0; reveal(); }); }, { passive: true });
@@ -158,7 +111,7 @@
 
     // ---------- Chapter progress in the nav ----------
     const sections = [...document.querySelectorAll('.chapter')];
-    const links = [...document.querySelectorAll('.chapters a')];
+    const links = [...document.querySelectorAll('.steps a')];
     // Use actual chapter positions: the first chapter also contains the starter cards.
     function progress() {
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -174,6 +127,7 @@
     const chPill = document.querySelector('.ch-pill');
     const CH_COLORS = ['#ff375f', '#bf5af2', '#0a84ff', '#ff9f0a'];
     let lastActive = -1;
+    addEventListener('scroll', () => document.documentElement.classList.toggle('scrolled', scrollY > 40), { passive: true });
     function markChapter(t) {
       const active = Math.min(links.length - 1, Math.round(t));
       if (active === lastActive) return;
@@ -223,16 +177,328 @@
       else if (t.dataset.copy !== undefined) { try { await navigator.clipboard.writeText(t.dataset.copy); } catch {} toast('Copied! Now paste it into Claude.'); }
     });
 
+    // ---------- The 3D scene: a deck of glass skill cards ----------
+    async function start() {
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('stage'), antialias: true, powerPreference: 'high-performance' });
+      } catch { root.classList.add('no-webgl'); return; }
+      if (!D) { root.classList.add('no-webgl'); return; }
+      // Frame rate first: the glass refraction is the heaviest step, so it renders at half
+      // resolution (it is blurry glass, the difference is not visible) and phones draw fewer pixels.
+      renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 820 ? 1.25 : 1.5));
+      renderer.transmissionResolutionScale = 0.5;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.NeutralToneMapping;      // keeps the vivid colours vivid
+      renderer.toneMappingExposure = 1.0;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color('#f5f5f7');
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+      const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+
+      // A bright wallpaper of soft colour fields (Apple's system colours) stands behind the glass,
+      // so the candy-coloured cards have colour to bend. Painted in code: no photo to load.
+      const wall = document.createElement('canvas'); wall.width = 1600; wall.height = 1067;
+      const g = wall.getContext('2d');
+      g.fillStyle = '#f5f5f7'; g.fillRect(0, 0, wall.width, wall.height);
+      const blob = (x, y, r, c) => { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(245,245,247,0)'); g.fillStyle = gr; g.fillRect(0, 0, wall.width, wall.height); };
+      blob(180, 160, 560, 'rgba(255,159,10,.75)'); blob(1450, 140, 600, 'rgba(94,92,230,.6)'); blob(1360, 940, 620, 'rgba(100,210,255,.75)');
+      blob(260, 960, 560, 'rgba(255,55,95,.6)'); blob(820, 520, 460, 'rgba(191,90,242,.45)'); blob(1050, 260, 320, 'rgba(255,214,10,.4)');
+      const wallTex = new THREE.CanvasTexture(wall); wallTex.colorSpace = THREE.SRGBColorSpace;
+      const back = new THREE.Mesh(new THREE.PlaneGeometry(31.5, 21), new THREE.MeshBasicMaterial({ map: wallTex, toneMapped: false }));
+      back.position.set(0, 0.8, -9); scene.add(back);
+
+      // Card faces drawn with the page fonts.
+      await Promise.all(['800 64px "Bricolage Grotesque"', '400 40px "Instrument Serif"', 'italic 400 40px "Instrument Serif"', '500 20px "JetBrains Mono"'].map(f => document.fonts.load(f).catch(() => {})));
+      wallTex.needsUpdate = true;
+      const ids = ['tiktok-reader', 'awwwards', 'canvas-design', 'motion-design', 'humanizer', 'pptx', 'gsap', 'frontend-design', 'deep-research'];
+      const picks = ids.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
+      const hero = Math.max(0, picks.findIndex(s => s.id === 'humanizer'));
+      const label = Object.fromEntries(D.categories.map(c => [c.id, c.label]));
+      function wrap(ctx, text, x, y, max, lh, lines) {
+        const words = String(text).split(' '); let line = '', n = 0;
+        for (const w of words) {
+          const test = line ? line + ' ' + w : w;
+          if (ctx.measureText(test).width > max && line) { ctx.fillText(n === lines - 1 ? line + '…' : line, x, y + n * lh); line = w; if (++n >= lines) return; }
+          else line = test;
+        }
+        ctx.fillText(line, x, y + n * lh);
+      }
+      // Each book gets its own cover art: a pattern, a glow, and a big drawing of its skill's symbol.
+      const COVER = {
+        'tiktok-reader': 'M9 18V5l12-2v13 M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M18 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+        awwwards: 'M8 21h8 M12 17v4 M7 4h10v5a5 5 0 0 1-10 0Z M7 6H4a3 3 0 0 0 3 4 M17 6h3a3 3 0 0 1-3 4',
+        'canvas-design': 'M18 3l3 3-9 9-3-3Z M9 12c-3 0-5 2-5 5 0 1-1 2-2 2 2 2 6 2 8-1 1-2 1-4-1-6',
+        'motion-design': 'M3 4h18v16H3z M7 4v16 M17 4v16 M3 9h4 M3 15h4 M17 9h4 M17 15h4',
+        humanizer: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z M9 10h.01 M15 10h.01 M9 13c1.5 1.5 4.5 1.5 6 0',
+        pptx: 'M2 3h20 M4 3v11h16V3 M12 14v4 M8 21l4-3 4 3 M8 10l3-3 2 2 3-3',
+        gsap: 'M3 6h12 M3 12h18 M3 18h8 M15 4v4 M21 10v4 M11 16v4',
+        'frontend-design': 'M3 3h18v18H3z M3 9h18 M9 9v12',
+        'deep-research': 'M6 18h8 M3 22h18 M14 22a7 7 0 0 0 0-14 M9 14h2 M8 6l2-4 3 1.5-2 4 M9 6.5l3 1.5-2 4-3-1.5Z'
+      };
+      function pattern(x, kind) {
+        x.save(); x.strokeStyle = 'rgba(255,255,255,.16)'; x.fillStyle = 'rgba(255,255,255,.14)'; x.lineWidth = 3;
+        if (kind === 0) for (let r = 60; r < 760; r += 46) { x.beginPath(); x.arc(560, 40, r, 0, Math.PI * 2); x.stroke(); }
+        else if (kind === 1) for (let yy = 30; yy < 800; yy += 34) for (let xx = 30; xx < 600; xx += 34) { x.beginPath(); x.arc(xx, yy, 3.2, 0, Math.PI * 2); x.fill(); }
+        else if (kind === 2) { x.lineWidth = 14; for (let d = -800; d < 1400; d += 52) { x.beginPath(); x.moveTo(d, 0); x.lineTo(d - 800, 800); x.stroke(); } }
+        else for (let yy = 20; yy < 820; yy += 40) { x.beginPath(); for (let xx = 0; xx <= 600; xx += 10) x.lineTo(xx, yy + Math.sin(xx / 46 + yy / 90) * 12); x.stroke(); }
+        x.restore();
+      }
+      function sparkle(x, cx, cy, r) {
+        x.beginPath(); x.moveTo(cx, cy - r); x.quadraticCurveTo(cx, cy, cx + r, cy); x.quadraticCurveTo(cx, cy, cx, cy + r);
+        x.quadraticCurveTo(cx, cy, cx - r, cy); x.quadraticCurveTo(cx, cy, cx, cy - r); x.fill();
+      }
+      // Cartoon covers that match the cartoon icons: flat bright colour, chunky black outlines,
+      // comic halftone dots, the skill's symbol in a white sticker badge, and a comic title label.
+      const CARTOON = ['#ff375f', '#ff9f0a', '#ffd60a', '#30d158', '#00c7be', '#0a84ff', '#5e5ce6', '#bf5af2', '#ff2d55'];
+      function face(s, isHero, i) {
+        const c = document.createElement('canvas'); c.width = 600; c.height = 800; const x = c.getContext('2d');
+        const ink = '#1d1d1f', col = CARTOON[i % CARTOON.length];
+        // Cover: flat colour inside a thick black border
+        x.fillStyle = col; x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.fill();
+        // Halftone dots, bigger towards the bottom-right corner
+        x.save(); x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.clip();
+        x.fillStyle = 'rgba(0,0,0,.13)';
+        for (let yy = 30; yy < 800; yy += 26) for (let xx = 30; xx < 600; xx += 26) {
+          const r = Math.max(0, ((xx + yy) / 1400) * 8 - 2.2); if (r > 0) { x.beginPath(); x.arc(xx + (yy / 26 % 2) * 13, yy, r, 0, Math.PI * 2); x.fill(); }
+        }
+        // Cartoon shine stripe
+        x.fillStyle = 'rgba(255,255,255,.28)'; x.beginPath(); x.moveTo(60, 14); x.lineTo(150, 14); x.lineTo(14, 260); x.lineTo(14, 120); x.fill();
+        x.restore();
+        x.lineWidth = 14; x.strokeStyle = ink; x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.stroke();
+        // Category tag: black pill with white text
+        x.font = '700 22px "JetBrains Mono"';
+        const tag = label[s.cat].toUpperCase(), tw = x.measureText(tag).width + 40;
+        x.fillStyle = ink; x.beginPath(); x.roundRect(48, 48, tw, 48, 24); x.fill();
+        x.fillStyle = '#fff'; x.fillText(tag, 68, 80);
+        // Sticker badge with the skill's symbol (white circle, black outline, hard shadow)
+        const bx = isHero ? 450 : 300, by = isHero ? 200 : 300, br = isHero ? 92 : 150;
+        x.fillStyle = ink; x.beginPath(); x.arc(bx + 10, by + 12, br, 0, Math.PI * 2); x.fill();
+        x.fillStyle = '#fff'; x.beginPath(); x.arc(bx, by, br, 0, Math.PI * 2); x.fill();
+        x.lineWidth = 10; x.strokeStyle = ink; x.stroke();
+        const path = COVER[s.id];
+        if (path) {
+          const scale = br * 1.25 / 24;
+          x.save(); x.translate(bx - 12 * scale, by - 12 * scale); x.scale(scale, scale);
+          x.lineCap = 'round'; x.lineJoin = 'round';
+          x.strokeStyle = ink; x.lineWidth = 3.4; x.stroke(new Path2D(path));
+          x.strokeStyle = col; x.lineWidth = 1.5; x.stroke(new Path2D(path));
+          x.restore();
+        }
+        // Sparkle stickers
+        const spark = (cx, cy, r) => { x.beginPath(); x.moveTo(cx, cy - r); x.quadraticCurveTo(cx, cy, cx + r, cy); x.quadraticCurveTo(cx, cy, cx, cy + r); x.quadraticCurveTo(cx, cy, cx - r, cy); x.quadraticCurveTo(cx, cy, cx, cy - r); x.closePath(); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 5; x.strokeStyle = ink; x.stroke(); };
+        spark(isHero ? 320 : 500, isHero ? 120 : 150, 26); spark(isHero ? 545 : 110, isHero ? 330 : 470, 18);
+        if (isHero) {
+          // Speech bubble with the words to say
+          x.fillStyle = ink; x.beginPath(); x.roundRect(48, 330, 512, 230, 34); x.fill();
+          x.fillStyle = "#fff"; x.beginPath(); x.roundRect(40, 320, 512, 230, 34); x.fill(); x.lineWidth = 8; x.strokeStyle = ink; x.stroke();
+          x.fillStyle = ink; x.font = 'italic 400 44px "Instrument Serif"';
+          wrap(x, '“' + s.say.replace(/\s*:\s*…$/, '…') + '”', 70, 384, 450, 50, 5);
+          x.font = '800 54px "Bricolage Grotesque"'; x.fillStyle = '#fff'; x.lineWidth = 12; x.strokeStyle = ink;
+          x.strokeText(s.title, 48, 720); x.fillText(s.title, 48, 720);
+        } else {
+          // Comic title label
+          x.fillStyle = ink; x.beginPath(); x.roundRect(50, 532, 512, 210, 28); x.fill();
+          x.fillStyle = '#fff'; x.beginPath(); x.roundRect(40, 520, 512, 210, 28); x.fill(); x.lineWidth = 8; x.strokeStyle = ink; x.stroke();
+          x.fillStyle = ink; x.font = '800 58px "Bricolage Grotesque"'; wrap(x, s.title, 68, 592, 460, 60, 2);
+          x.fillStyle = 'rgba(29,29,31,.72)'; x.font = '400 28px "Instrument Serif"'; wrap(x, s.what, 68, 696, 460, 30, 1);
+        }
+        const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+      }
+
+      const glass = new THREE.MeshPhysicalMaterial({
+        color: '#ffffff', roughness: 0.14, transmission: 1, thickness: 0.55, ior: 1.5,
+        iridescence: 0.45, iridescenceIOR: 1.3, iridescenceThicknessRange: [120, 420],
+        clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.25,
+        attenuationColor: new THREE.Color('#ffe7cc'), attenuationDistance: 2.6
+      });
+      // Phones: real refraction needs a second render of the whole scene every frame, which is
+      // what held mid-range phones near 20 to 40 fps. A see-through frosted glass with the same
+      // reflections and iridescence looks nearly the same at this size and skips that pass.
+      const phone = innerWidth < 820;
+      if (phone) {
+        Object.assign(glass, { transmission: 0, transparent: true, opacity: 0.6, color: new THREE.Color('#ffffff'), roughness: 0.25, iridescence: 0.3, envMapIntensity: 1.0, depthWrite: true });
+        glass.needsUpdate = true;
+      }
+      // Candy glass: every card gets its own colour from Apple's system palette, in rainbow order
+      // so neighbours never match (TikTok Reader pink, Awwwards orange, Canvas yellow, and so on).
+      const RAINBOW = ['#ff375f', '#ff8a00', '#e0a400', '#28b44f', '#00a8a0', '#0a84ff', '#5e5ce6', '#a94fe0', '#e8344e'];
+      const glassFor = i => {
+        const m = glass.clone(), col = new THREE.Color(RAINBOW[i % RAINBOW.length]);
+        if (phone) Object.assign(m, { color: col, opacity: 0.96 });
+        else Object.assign(m, { color: col.clone().lerp(new THREE.Color('#ffffff'), 0.15), attenuationColor: col, attenuationDistance: 0.7 });
+        return m;
+      };
+      const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 3, 0.1);
+      const faceGeo = new THREE.PlaneGeometry(1.58, 2.1);
+      const deck = new THREE.Group(); scene.add(deck);
+      const cards = picks.map((s, i) => {
+        const card = new THREE.Group();
+        const slab = new THREE.Mesh(slabGeo, glassFor(i)); slab.userData.card = card; card.add(slab);
+        const f = new THREE.Mesh(faceGeo, new THREE.MeshBasicMaterial({ map: face(s, i === hero, i), transparent: true, toneMapped: false, depthWrite: false }));
+        f.position.z = 0.046; card.add(f);
+        card.userData = { s, slab, hover: 0 };
+        deck.add(card); return card;
+      });
+      // Glass shelf boards, shown in the last chapter.
+      const boards = [0, 1].map(() => { const b = new THREE.Mesh(new RoundedBoxGeometry(4.2, 0.06, 0.55, 4, 0.03), glass); deck.add(b); return b; });
+
+      const outCubic = v => 1 - Math.pow(1 - v, 3);
+      const centerV = new THREE.Vector3();
+
+      // Supernova pieces: a white-hot flash and an expanding shockwave ring at the impact point.
+      const glowCanvas = document.createElement('canvas'); glowCanvas.width = glowCanvas.height = 256;
+      const gc = glowCanvas.getContext('2d'), gr = gc.createRadialGradient(128, 128, 0, 128, 128, 128);
+      gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.12, 'rgba(255,236,150,1)'); gr.addColorStop(.32, 'rgba(255,140,40,.9)'); gr.addColorStop(.6, 'rgba(255,55,95,.45)'); gr.addColorStop(1, 'rgba(191,90,242,0)');
+      gc.fillStyle = gr; gc.fillRect(0, 0, 256, 256);
+      const flash = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), transparent: true, depthWrite: false, toneMapped: false }));
+      flash.visible = false; scene.add(flash);
+      const ring = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 96), new THREE.MeshBasicMaterial({ color: '#ff9f0a', transparent: true, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }));
+      ring.visible = false; scene.add(ring);
+      const ring2 = ring.clone(); ring2.material = ring.material.clone(); ring2.material.color.set('#bf5af2'); scene.add(ring2);
+      const CORE = new THREE.Vector3(2.3, 0.1, -0.4);   // impact point, in the deck's own space
+      const clamp01 = v => Math.min(1, Math.max(0, v));
+      const bounce = v => { const n1 = 7.5625, d1 = 2.75; if (v < 1 / d1) return n1 * v * v; if (v < 2 / d1) return n1 * (v -= 1.5 / d1) * v + .75; if (v < 2.5 / d1) return n1 * (v -= 2.25 / d1) * v + .9375; return n1 * (v -= 2.625 / d1) * v + .984375; };
+      const outBack = v => 1 + 2.70158 * Math.pow(v - 1, 3) + 1.70158 * Math.pow(v - 1, 2);
+      const clockParam = new URLSearchParams(location.search).get('clock');   // ?clock=seconds freezes time for review
+      const clockFixed = clockParam !== null && /^\d+(\.\d+)?$/.test(clockParam) ? Number(clockParam) : null;
+      // One cutting plane per shelf row: books are hidden below their board while they rise.
+      const UP = new THREE.Vector3(0, 1, 0), graves = [new THREE.Plane(UP.clone(), 1000), new THREE.Plane(UP.clone(), 1000)];
+      renderer.localClippingEnabled = true;
+      cards.forEach((c, i) => c.children.forEach(m => { m.material.clippingPlanes = [graves[i < 5 ? 0 : 1]]; }));
+
+      // Four poses, one per chapter. Values: [x, y, z, rotX, rotY, rotZ, scale]
+      const n = cards.length, mid = (n - 1) / 2;
+      const poses = [
+        i => [2.25 + i * 0.035, -0.15 + i * 0.03, -i * 0.13, 0.08, -0.55 + i * 0.05, -0.2 + i * 0.045, 1],
+        i => { const k = i - mid; return [2.0 + k * 0.62, Math.sin(i * 1.7) * 0.22, -Math.abs(k) * 0.42 + (i === hero ? 0.7 : 0), 0.04, -k * 0.13, k * 0.035, i === hero ? 1.08 : 0.94]; },
+        i => i === hero ? [2.05, 0.05, 1.9, 0, -0.22, 0, 1.12] : (() => { const k = i - mid; return [2.5 + k * 0.68, Math.cos(i * 2.1) * 1.1, -3.2 - Math.abs(k) * 0.3, 0.1, -k * 0.1, k * 0.05, 0.9]; })(),
+        // A bookshelf: five cards on the top board, four on the bottom one, standing exactly on the glass.
+        i => { const row = i < 5 ? 0 : 1, col = row ? i - 5 : i, x = 0.85 + col * 0.78 + (row ? 0.39 : 0); return [x, row ? -0.89 : 0.66, 0, 0, -0.1, 0, 0.46]; }
+      ];
+      const boardPose = r => [2.41, r ? -1.41 : 0.14, 0];
+      cards.forEach((c, i) => { const p = poses[reduced ? 3 : previewPose !== null ? Math.round(previewPose) : 0](i); c.position.set(p[0], p[1], p[2]); c.rotation.set(p[3], p[4], p[5]); c.scale.setScalar(p[6]); });
+
+      // Layout for the screen size.
+      let narrow = false;
+      function resize() {
+        const w = innerWidth, h = innerHeight; narrow = w < 820;
+        renderer.setSize(w, h, false); camera.aspect = w / h;
+        // Phones: pull back far enough that the whole shelf (about 4.6 units wide) fits the screen width.
+        camera.position.set(0, 0, narrow ? Math.min(19, Math.max(13, 4.6 / (2 * Math.tan(16 * Math.PI / 180) * w / h))) : 9.5); camera.updateProjectionMatrix();
+        // No text windows any more: the book stack takes centre stage on every screen.
+        deck.position.x = narrow ? -2.35 : -2.25; deck.position.y = narrow ? .55 : .1;
+        // A phone only sees a narrow strip of the wallpaper; slide it so warm orange and pink sit behind the deck.
+        back.position.x = narrow ? 4 : 0;
+      }
+      addEventListener('resize', resize); resize();
+
+      // Pointer: gentle parallax, and pick a card to open it.
+      const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(9, 9); let px = 0, py = 0, hovered = null;
+      addEventListener('pointermove', e => { px = e.clientX / innerWidth - 0.5; py = e.clientY / innerHeight - 0.5; ptr.set(px * 2, -py * 2); });
+      addEventListener('click', e => {
+        if (e.target.closest('a,button,dialog')) return;
+        // A tap has no hover before it, so the book is found at the tap position itself.
+        ptr.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera);
+        const hit = ray.intersectObjects(cards.map(c => c.userData.slab))[0];
+        if (hit) openPop(hit.object.userData.card.userData.s, e.clientX, e.clientY);
+      });
+
+      const ease = t => t * t * (3 - 2 * t);
+      let last = performance.now(), running = true, clock = 0;
+      document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) { last = performance.now(); requestAnimationFrame(frame); } });
+      function frame(now) {
+        if (!running) return;
+        const dt = Math.min(0.05, (now - last) / 1000); last = now; clock += dt; if (clockFixed !== null) clock = clockFixed;
+        const t = reduced ? 3 : (previewPose ?? progress()); markChapter(t);
+        const a = Math.floor(t), b = Math.min(3, a + 1), f = ease(t - a), k = 1 - Math.exp(-dt * 5.5);
+
+        ray.setFromCamera(ptr, camera);
+        const hit = ray.intersectObjects(cards.map(c => c.userData.slab))[0];
+        hovered = hit ? hit.object.userData.card : null;
+        document.body.style.cursor = hovered ? 'pointer' : '';
+
+        // Between chapters 3 and 4 (sn = 0..1): collide, flash, then rise out of the shelf.
+        const sn = (!reduced && t > 2 && t < 3) ? t - 2 : -1;
+        const collide = sn >= 0 ? Math.pow(clamp01(sn / 0.4), 2) : 0;
+        const blasted = sn >= 0.42;
+        const introOn = !reduced && t < 1 && (previewPose === null || clockFixed !== null);
+
+        cards.forEach((c, i) => {
+          let P;
+          if (blasted) {
+            // After the blast: each book climbs up out of its shelf board, shaking, like rising from a grave.
+            P = poses[3](i).slice();
+            const e = clamp01((sn - 0.52 - i * 0.035) / 0.18), up = outBack(e);
+            P[1] -= (1 - up) * 1.05;
+            P[3] += 0.35 * (1 - e);
+            P[5] += Math.sin(clock * 16 + i * 2) * 0.14 * (e > 0 ? 1 - e : 0);
+            c.position.set(P[0], P[1], P[2]); c.rotation.set(P[3], P[4], P[5]); c.scale.setScalar(P[6]);
+            return;
+          }
+          const A = poses[a](i), B = poses[b](i); P = A.map((v, j) => v + (B[j] - v) * f);
+          if (collide > 0) {
+            // Asteroids: every book tumbles faster and faster into the same point.
+            const jx = Math.sin(i * 2.3) * 0.5, jy = Math.cos(i * 1.7) * 0.4;
+            P[0] += (CORE.x + jx * (1 - collide) - P[0]) * collide;
+            P[1] += (CORE.y + jy * (1 - collide) - P[1]) * collide;
+            P[2] += (CORE.z - P[2]) * collide;
+            const spin = collide * (1.5 + clock * 2.2);   // keeps tumbling even while you pause scrolling
+            P[3] += spin * (i % 2 ? 1 : -0.7); P[4] += spin * (i % 3 ? 0.8 : -1); P[5] += spin * (i % 2 ? -0.6 : 0.9);
+            P[6] *= 1 - collide * 0.55;
+          }
+          // Page opens: the books tumble down from the sky one by one and land in a stack.
+          let kk = k;
+          if (introOn) {
+            const e = clamp01((clock - 0.25 - (n - 1 - i) * 0.14) / 0.85);
+            if (e < 1) { const d = 1 - bounce(e); P[1] += d * 8; P[3] += d * 5 * (i % 2 ? 1 : -1); P[5] += d * 3 * (i % 3 ? -1 : 1); kk = 1; }
+          }
+          const bob = reduced ? 0 : Math.sin(clock * 0.8 + i) * 0.04;
+          c.userData.hover += ((c === hovered ? 1 : 0) - c.userData.hover) * k;
+          c.position.x += (P[0] - c.position.x) * kk;
+          c.position.y += (P[1] + bob - c.position.y) * kk;
+          c.position.z += (P[2] + c.userData.hover * 0.35 - c.position.z) * kk;
+          // A hovered book swings gently, like it was just touched.
+          const swing = reduced ? 0 : Math.sin(clock * 5.5) * 0.06 * c.userData.hover;
+          c.rotation.x += (P[3] - c.rotation.x) * kk; c.rotation.y += (P[4] - c.rotation.y) * kk; c.rotation.z += (P[5] + swing - c.rotation.z) * kk;
+          const sc = P[6] * (1 + c.userData.hover * 0.05); c.scale.setScalar(c.scale.x + (sc - c.scale.x) * kk);
+        });
+        const show = reduced ? 1 : sn >= 0 ? clamp01((sn - 0.43) / 0.08) : (t >= 3 ? 1 : 0);
+        boards.forEach((bd, r) => { const p = boardPose(r); bd.position.set(p[0], p[1], p[2]); bd.scale.set(Math.max(0.001, ease(show)), 1, 1); bd.visible = show > 0.01; });
+
+        deck.rotation.y += ((reduced ? 0 : px * 0.18 + Math.sin(clock * 0.25) * 0.04) - deck.rotation.y) * k;
+        deck.rotation.x += ((reduced ? 0 : py * 0.1) - deck.rotation.x) * k;
+
+        // Impact flash and shockwaves when the books collide.
+        let flashK = 0, ringK = -1;
+        if (sn >= 0.4) { flashK = Math.exp(-Math.pow((sn - 0.43) / 0.045, 2)); ringK = clamp01((sn - 0.41) / 0.34); }
+        scene.updateMatrixWorld();
+        cards.forEach(c => { c.visible = !(sn >= 0.42 && sn < 0.5); });
+        // While books rise, each row is cut off at its shelf board, so they come up out of it.
+        graves.forEach((pl, r) => { if (sn >= 0.42) pl.set(UP, -(r ? -1.38 : 0.17)).applyMatrix4(deck.matrixWorld); else pl.set(UP, 1000); });
+        centerV.copy(CORE).applyMatrix4(deck.matrixWorld);
+        // Flash and shockwaves
+        flash.visible = flashK > 0.01; flash.position.copy(centerV); flash.scale.setScalar(0.5 + flashK * 6.5); flash.material.opacity = Math.min(1, flashK * 1.3);
+        [ring, ring2].forEach((r, j) => {
+          const g = clamp01(ringK - j * 0.12);
+          r.visible = ringK >= 0 && g > 0 && g < 1;
+          r.position.copy(centerV); r.lookAt(camera.position); r.rotateX(j ? 0.5 : -0.3);
+          r.scale.setScalar(0.2 + outCubic(g) * (j ? 4.5 : 6));
+          r.material.opacity = (1 - g) * 0.9;
+        });
+        renderer.render(scene, camera);
+        requestAnimationFrame(frame);
+      }
+      root.classList.add('scene-ready');
+      requestAnimationFrame(frame);
+    }
 
     addEventListener('scroll', () => markChapter(progress()), { passive: true });
     addEventListener('load', () => markChapter(progress()));
     markChapter(progress());
-    // ---------- The particle story: book, skill cube, supernova, shelf, driven by scroll ----------
-    import('./particles.js?v=20261112-particles').then(m => {
-      m.startParticles({ canvas: document.getElementById('stage'), getProgress: () => previewPose ?? progress(), reduced,
-        skills: D ? D.skills : [], colorOf: id => window.ShelfToys ? window.ShelfToys.color(id) : null });
-      root.classList.add('scene-ready');
-    }).catch(() => root.classList.add('no-webgl'));
+    start().catch(() => root.classList.add('no-webgl'));
     // #pop=<skill id> opens that skill's pop-up straight away (handy for sharing one skill).
     const popHash = /^#pop=([\w-]+)/.exec(location.hash);
     if (popHash && D) { const s = D.skills.find(x => x.id === popHash[1]); if (s) openPop(s); }
