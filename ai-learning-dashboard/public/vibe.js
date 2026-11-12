@@ -1,5 +1,5 @@
 // AI Skill Shelf: the funky "vibing on Claude" background shared by both pages.
-// Tilted ribbons scroll real prompts from skills.js, and a giant outlined "just ask." sits behind everything.
+// Tilted ribbons scroll real prompts from skills.js, behind everything.
 (() => {
   'use strict';
   const D = window.SKILL_DATA;
@@ -20,6 +20,6 @@
   const layer = document.createElement('div');
   layer.className = 'vibe' + (home ? ' vibe-home' : ' vibe-shelf');
   layer.setAttribute('aria-hidden', 'true');
-  layer.innerHTML = (home ? '' : '<div class="big-word">just ask.</div>') + ribbon('r1', a) + ribbon('r2', b);
+  layer.innerHTML = ribbon('r1', a) + ribbon('r2', b);
   document.body.prepend(layer);
 })();

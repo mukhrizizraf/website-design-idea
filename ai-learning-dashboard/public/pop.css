@@ -261,3 +261,32 @@ html:has(dialog[open]),body:has(dialog[open]){overflow:hidden}
 /* Keep all seven shelf destinations visible on narrow phones. */
 @media(max-width:400px){.category-dock,.tabbar{gap:0;padding:6px}.dock-item,.tabbar .tb{min-width:44px;flex-basis:44px;padding:7px 1px;font-size:10px}.dock-toy{--toy:32px}.tabbar .tb b{width:32px;height:32px}}
 .tabbar .tb .toy,.tabbar .tb .toy-spin{overflow:visible}
+
+/* ==========================================================================
+   Live wallpaper (wallpaper.js) and pointer parallax (motion.js).
+   The transparent 3D canvas floats its shapes in front of the CSS colour fields in .room.
+   The ribbons and the floating toys shift with the pointer at different depths.
+   ========================================================================== */
+.live-wall{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none;display:block}
+.vibe{translate:calc(var(--px,0)*-22px) calc(var(--py,0)*-14px);scale:1.04}
+.floaters{translate:calc(var(--px,0)*34px) calc(var(--py,0)*22px);scale:1.06}
+@media (prefers-reduced-motion:reduce){.vibe,.floaters{translate:none;scale:none}}
+
+/* ---------- App navigation (desktop and laptop): Home / Library / Saved / Guide as one segmented control ---------- */
+.appnav{display:flex;align-items:center;gap:2px;padding:4px;margin:0 auto;border-radius:14px;background:rgba(255,255,255,.6);border:1px solid #fff;box-shadow:0 1px 2px rgba(40,20,60,.06)}
+.appnav a,.appnav button{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:#4a4152;
+  font:700 .8125rem/1 'Bricolage Grotesque',system-ui,sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,scale .1s}
+.appnav svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.appnav [aria-current="page"]{background:#242127;color:#fff}
+@media(hover:hover) and (pointer:fine){.appnav a:not([aria-current]):hover,.appnav button:not([aria-current]):hover{background:rgba(255,255,255,.95)}}
+.appnav a:active,.appnav button:active{scale:.95}
+@media(max-width:1180px){.appnav span{display:none}.appnav a,.appnav button{padding:0 11px}}
+@media(max-width:760px){.appnav{display:none}}
+
+/* ---------- Skill cube: every skill card carries a turning 3D cube in that skill's own colours ---------- */
+.sk-cube{display:block;flex:none;width:72px;height:72px;margin:-6px 0 0 -8px;perspective:420px}
+.sk-cube .cube{--s:50px;--h:25px;display:block;margin:11px;animation-duration:10s;animation-delay:calc(var(--i,0) * -.7s)}
+.sk-cube .cube i{border-radius:13px;box-shadow:inset 0 0 0 2px rgba(41,35,48,.85),inset 0 2px 0 rgba(255,255,255,.5)}
+.sk-cube .cube i svg{width:24px;height:24px}
+.cube.off{animation-play-state:paused}
+@media(max-width:760px){.sk-cube{width:60px;height:60px}.sk-cube .cube{--s:42px;--h:21px;margin:9px}.sk-cube .cube i svg{width:21px;height:21px}}
