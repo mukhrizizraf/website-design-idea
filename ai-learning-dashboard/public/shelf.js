@@ -110,10 +110,10 @@
     if (!c) { let tries = 0; do { c = COVERS[coverN++ % COVERS.length]; } while (avoid.includes(c) && ++tries < 20); }
     prevC2 = prevC; prevC = c; groupC[i] = c; coverOf.set(s.id, c);
     return `<li style="--i:${i};--c:${c}"><button class="row book${DARK.has(c) ? ' dark' : ''}${c === '#1d1d1f' ? ' black' : ''}" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)} ${isNew(s) ? 'New · ' : ''}${esc(levelLabel(s))}. ${esc(s.what)}">
-      <span class="badge" aria-hidden="true">${svg(glyphFor(s), 24)}</span>
+      <span class="badge skill-badge" aria-hidden="true">${window.SkillImages?.markup(s.id) || svg(glyphFor(s), 24)}</span>
       <span class="lbl"><span class="row-name">${esc(s.title)}</span> <span class="row-meta">${isNew(s) ? '<b class="new">New</b> · ' : ''}${esc(levelLabel(s))}</span></span></button></li>`;
   }
-  const miniBook = s => `<span class="mini-book" style="--c:${coverOf.get(s.id) || COVERS[0]}" aria-hidden="true"><span>${svg(glyphFor(s), 19)}</span></span>`;
+  const miniBook = s => `<span class="mini-book" style="--c:${coverOf.get(s.id) || COVERS[0]}" aria-hidden="true"><span>${window.SkillImages?.markup(s.id, false) || svg(glyphFor(s), 19)}</span></span>`;
   function renderShelf() {
     coverN = 0; prevC = ''; prevC2 = ''; cols = gridCols();
     const found = items.filter(matches);

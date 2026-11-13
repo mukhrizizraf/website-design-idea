@@ -107,6 +107,8 @@ svg{flex:none}
 .book::after{content:"";position:absolute;left:-34%;top:-12%;width:42%;height:62%;background:rgba(255,255,255,.22);rotate:28deg;pointer-events:none;transition:translate .6s var(--out)}
 .badge{position:relative;z-index:1;display:grid;place-items:center;width:52%;aspect-ratio:1;margin:9% auto 0;border-radius:50%;background:#fff;border:2.5px solid var(--ink);box-shadow:2px 3px 0 var(--ink);color:var(--ink);transition:rotate .5s var(--spring),scale .5s var(--spring)}
 .badge svg{width:54%;height:54%;stroke-width:2.1}
+.skill-badge{width:68%;margin:3% auto 0}
+.skill-badge .skill-art{width:94%;height:94%}
 .book.dark .badge{border-color:#fff;box-shadow:2px 3px 0 rgba(0,0,0,.45)}
 .lbl{position:relative;z-index:1;display:grid;gap:4px;padding:8px 9px;border:2px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink)}
 .row-name{font-size:.875rem;font-weight:800;line-height:1.15;letter-spacing:-.015em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}

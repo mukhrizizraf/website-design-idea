@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
   <link rel="stylesheet" href="./home.css?v=20261113-looks">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
+  <link rel="stylesheet" href="./skill-images.css?v=20261113-art">
   <script type="importmap">
     { "imports": {
         "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
@@ -35,6 +36,8 @@
   </script>
   <script defer src="./skills.js?v=20261113-jury2"></script>
   <script defer src="./toys.js?v=20261113-jury"></script>
+  <script defer src="./skill-images.js?v=20261113-art"></script>
+  <script defer src="./skill-images-home.js?v=20261113-art"></script>
 </head>
 <body data-page="home">
   <a class="skip" href="#ch-share">Skip to the shelf link</a>
@@ -156,7 +159,7 @@
       popEl.style.setProperty('--fy', `${Math.round(y - innerHeight / 2)}px`);
       popEl.style.setProperty('--fr', `${x < innerWidth / 2 ? 14 : -14}deg`);
       document.getElementById('pop-body').innerHTML = `<div class="pop-in">
-        <div class="pop-top">${cube(s.cat)}<div><p class="pop-cat">${esc(label[s.cat])}</p><h2 id="pop-title">${esc(s.title)}</h2></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
+        <div class="pop-top"><span class="pop-skill-art" aria-hidden="true">${window.SkillImages?.markup(s.id, false) || cube(s.cat)}</span><div><p class="pop-cat">${esc(label[s.cat])}</p><h2 id="pop-title">${esc(s.title)}</h2></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
         <p class="pop-what">${esc(s.what)}</p>
         <div class="pop-say"><p>“${esc(s.say)}”</p><button class="copy-btn" type="button" data-copy="${esc(s.say)}">Copy</button></div>
         <div class="pop-actions"><a class="pill" href="./shelf.html#skill=${encodeURIComponent(s.id)}">How do I install it?</a></div></div>`;
@@ -214,6 +217,16 @@
       await Promise.all(['800 64px "Bricolage Grotesque"', '400 40px "Instrument Serif"', 'italic 400 40px "Instrument Serif"', '500 20px "JetBrains Mono"'].map(f => document.fonts.load(f).catch(() => {})));
       const ids = ['tiktok-reader', 'awwwards', 'canvas-design', 'motion-design', 'humanizer', 'pptx', 'gsap', 'frontend-design', 'deep-research'];
       const picks = ids.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
+      // Load only the nine visible books; artwork is painted once into each cover texture.
+      const coverArt = new Map();
+      await Promise.all(picks.map(s => new Promise(resolve => {
+        const url = window.SkillImages?.src(s.id);
+        if (!url) return resolve();
+        const image = new Image();
+        image.onload = () => { coverArt.set(s.id, image); resolve(); };
+        image.onerror = resolve;
+        image.src = window.SkillImagesHome?.[s.id] || url;
+      })));
       const hero = Math.max(0, picks.findIndex(s => s.id === 'humanizer'));
       const label = Object.fromEntries(D.categories.map(c => [c.id, c.label]));
       function wrap(ctx, text, x, y, max, lh, lines) {
@@ -285,7 +298,11 @@
         x.fillStyle = '#fff'; x.beginPath(); x.arc(bx, by, br, 0, Math.PI * 2); x.fill();
         x.lineWidth = 10; x.strokeStyle = ink; x.stroke();
         const path = COVER[s.id];
-        if (path) {
+        if (coverArt.has(s.id)) {
+          // Transparent cutouts sit inside the existing white sticker without clipping.
+          const size = br * 1.84;
+          x.drawImage(coverArt.get(s.id), bx - size / 2, by - size / 2, size, size);
+        } else if (path) {
           const scale = br * 1.25 / 24;
           x.save(); x.translate(bx - 12 * scale, by - 12 * scale); x.scale(scale, scale);
           x.lineCap = 'round'; x.lineJoin = 'round';
