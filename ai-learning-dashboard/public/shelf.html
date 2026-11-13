@@ -2,88 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f5f7">
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f5f5f7">
-  <meta name="color-scheme" content="light">
-  <meta name="description" content="The AI skills I use with Claude: what each one does, the words to use it, and how to install it.">
-  <title>Library · AI Skill Shelf</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" href="./app-icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="canonical" href="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/shelf.html">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="The shelf, AI Skill Shelf">
-  <meta property="og:description" content="The AI skills I use with Claude: what each one does, the words to use it, and how to install it.">
-  <meta property="og:url" content="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/shelf.html">
-  <meta property="og:image" content="https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/public/og.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&display=swap">
-  <link rel="stylesheet" href="./pop.css?v=20261112-cards">
-  <link rel="stylesheet" href="./shelf.css?v=20261113-art">
-  <link rel="stylesheet" href="./skill-images.css?v=20261113-art">
-  <script>
-    // The browser sometimes skips the page transition and rejects a promise this page can't reach; don't report it as an error.
-    addEventListener('unhandledrejection', e => { if (e.reason?.name === 'InvalidStateError' && /Transition was aborted/.test(e.reason.message)) e.preventDefault(); });
-  </script>
-  <script defer src="./skills.js?v=20261113-jury2"></script>
-  <script defer src="./toys.js?v=20261113-jury"></script>
-  <script defer src="./skill-images.js?v=20261113-art"></script>
-  <script defer src="./shelf.js?v=20261113-art"></script>
-  <script defer src="./app.js?v=20261112-books"></script>
-  <script defer src="./motion.js?v=20261113-jury"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Skill Shelf has moved</title>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://mukhrizizraf.github.io/ai-learning-dashboard/public/shelf.html">
+  <script>location.replace("https://mukhrizizraf.github.io/ai-learning-dashboard/public/shelf.html" + location.search + location.hash);</script>
+  <meta http-equiv="refresh" content="0;url=https://mukhrizizraf.github.io/ai-learning-dashboard/public/shelf.html">
 </head>
 <body>
-  <a class="skip" href="#shelf">Skip to the skills</a>
-  <div class="app">
-    <aside class="rail" aria-label="Shelves">
-      <a class="rail-home" href="./index.html"><img src="./favicon.svg" width="36" height="36" alt=""><span>Home</span></a>
-      <nav class="tabs" id="tabs" aria-label="Skill categories"></nav>
-      <button class="rail-guide" type="button" data-guide><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg><span>Guide</span></button>
-    </aside>
-    <header class="bar">
-      <a class="bar-home" href="./index.html" aria-label="Home"><img src="./favicon.svg" width="28" height="28" alt=""></a>
-      <div class="bar-title"><h1 id="library-title">All skills</h1><p class="result" id="result" aria-live="polite"></p></div>
-      <label class="search">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 16l5 5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"/></svg>
-        <input id="q" type="search" enterkeyhint="search" autocapitalize="none" placeholder="Search skills" aria-label="Search skills" autocomplete="off">
-        <kbd aria-hidden="true">/</kbd>
-      </label>
-      <label class="easy"><input type="checkbox" id="easy" aria-label="Easy">Easy</label>
-      <button class="icon-btn" type="button" id="surprise" aria-label="Surprise me" title="Surprise me"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h.01 M16 8h.01 M12 12h.01 M8 16h.01 M16 16h.01" stroke-width="3"/></svg></button>
-      <button class="btn install-button" id="install-app" type="button" hidden>Install app</button>
-    </header>
-    <main class="shelf" id="shelf" tabindex="-1" data-view="cards">
-      <button class="link reset-filters" id="reset-filters" type="button" hidden>Clear filters</button>
-      <div id="groups"></div>
-    </main>
-  </div>
-  <!-- Elements the library script still updates; not shown in this design. -->
-  <div hidden><p id="library-description"></p><span id="library-count"></span><span id="location-label"></span><span id="storage-note"></span><button id="share-page" type="button">Share</button></div>
-  <nav class="tabbar" id="tabbar" aria-label="App navigation">
-    <a href="./index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></svg><span>Home</span></a>
-    <button type="button" data-section="library" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z"/></svg><span>Library</span></button>
-    <button type="button" data-guide><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 5 2.2c-1.2.7-2 1.1-2 2.8 M12 17h.01 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg><span>Guide</span></button>
-  </nav>
-  <dialog id="detail" class="pop" aria-labelledby="d-title"><div id="detail-body"></div></dialog>
-  <dialog id="guide" aria-labelledby="g-title">
-    <div class="sheet">
-      <div class="sheet-top"><h2 id="g-title">So what's a skill?</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
-      <p class="lead">A skill is a small folder of instructions, usually just one file called <code>SKILL.md</code>. When you ask for something that matches, Claude reads it and follows along. Think of it as a recipe card for one job.</p>
-      <div class="how">
-        <div><h3>In Claude Code</h3><p>Skills stay in the folder <code>~/.claude/skills/</code>. Every skill here has an install sentence. Just paste it into Claude Code and it copies the folder for you.</p></div>
-        <div><h3>In the Claude app</h3><p>Word, PowerPoint, Excel and PDF skills are already in there. For the others, download the ZIP from the skill's page here, then upload the folder under Settings, Capabilities, Skills. Done.</p></div>
-      </div>
-      <p class="note">Not using Claude? No problem, the example words still work in other chatbots. The skill itself works best in Claude, though.</p>
-    </div>
-  </dialog>
-  <div id="toast" role="status" aria-live="polite"></div>
-  <noscript><p class="noscript">Turn on JavaScript to see the skills.</p></noscript>
+  <p>AI Skill Shelf has moved: <a href="https://mukhrizizraf.github.io/ai-learning-dashboard/public/shelf.html">https://mukhrizizraf.github.io/ai-learning-dashboard/public/shelf.html</a></p>
 </body>
 </html>
