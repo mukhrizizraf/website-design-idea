@@ -2,13 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Two copies of this project: edit here, publish there
+## Edit here, push from here (owner rule, 13 Nov 2026)
 
-- **Source (edit here):** `I:\My Drive\AI LEARNING\ai-learning-dashboard` (not a git repo).
-- **Published copy:** `I:\My Drive\AI LEARNING\website-design-idea\ai-learning-dashboard`, inside the git repo `mukhrizizraf/website-design-idea`. GitHub Pages serves `main` directly; live URL `https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/` (redirects to the homepage `public/index.html`; the library is `public/shelf.html`).
-- **Warning (13 Nov 2026):** the Drive working copy `I:\My Drive\AI LEARNING\website-design-idea` is broken: it is behind `origin/main` and shows many files as deleted (likely Google Drive sync). Do not commit or push from it. Publish from a fresh clone in a temp folder instead (`git clone --depth 5 https://github.com/mukhrizizraf/website-design-idea.git <temp>`), copy in only the files changed this session, run `npm test` in `<temp>/ai-learning-dashboard`, commit, push. The owner should delete and re-clone the Drive copy.
-- To publish: copy **only the files changed in this session**, run `npm test` in the repo copy, then commit and push. Never mirror the whole folder: another session (Codex or Claude) has edited both copies in parallel before, and a full copy once wiped its work. Leave out `node_modules`, `dist`, `data`, `.github` and `*.mp4`.
-- Git has no global identity on this machine: commit with `git -c user.name=mukhrizizraf -c user.email=mukhrizizraf@users.noreply.github.com commit ...`.
+- **This folder is the only source:** `I:\My Drive\AI LEARNING\ai-learning-dashboard` (not a git repo; git data in Google Drive gets corrupted by sync, so never `git init` here).
+- **Push only with `npm run push-site`** (`scripts/push-site.mjs`): it clones `mukhrizizraf/website-design-idea` fresh into a temp folder, lists every file here that is new or changed against GitHub's `ai-learning-dashboard/` (text compared without CRLF), and stops. `npm run push-site -- --yes -m "message"` copies those files, runs `npm test` in the copy, commits as mukhrizizraf and pushes. It never deletes files on GitHub and skips `node_modules`, `dist`, `data`, `.github`, `.jury`, `.claude`, `__pycache__`, `*.mp4`, `*.zip`. Read the dry-run list before `--yes`: a file listed as changed that you didn't touch may be newer on GitHub (another session) and would be overwritten.
+- GitHub Pages serves `main`; live URL `https://mukhrizizraf.github.io/website-design-idea/ai-learning-dashboard/` (redirects to `public/index.html`; the library is `public/shelf.html`).
+- Do not push from `I:\My Drive\AI LEARNING\website-design-idea` (the old Drive git copy is broken by sync and no longer used).
 - The root `index.html` and `OPEN DASHBOARD.html` are only redirects to the live homepage (with a `?v=` cache-busting tag). The repo root `index.html` makes the folder URL work, so never delete it.
 - Every changed CSS/JS file needs a new `?v=` tag in the HTML **and** the same string in `public/sw.js` `ASSETS` (bump `CACHE` too), or phones keep showing the old version. `tests/app.test.mjs` checks that every CSS/JS file `shelf.html` loads is in `ASSETS`.
 
