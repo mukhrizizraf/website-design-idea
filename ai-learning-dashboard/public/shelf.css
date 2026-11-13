@@ -309,3 +309,31 @@ html{scrollbar-gutter:stable}
   .rail{background:var(--surface);-webkit-mask-image:none;mask-image:none}
   .rail::after{content:"";position:sticky;right:0;flex:none;width:36px;margin-left:-36px;background:linear-gradient(90deg,rgba(255,255,255,0),var(--surface));pointer-events:none}
 }
+
+/* Look C (owner pick, 13 Nov 2026): every cover is a hardback with a spine, and every row of books stands on a shelf board.
+   The board is drawn per card (li::before) and joins across the gap; shelf.js marks the row ends (.edge-l / .edge-r).
+   Tilt and entrance now move the book, not the li, so the boards stay still. */
+.rows{--gx:20px;gap:30px var(--gx)}
+.rows>li{padding-bottom:13px}
+.rows>li::before{content:"";position:absolute;left:calc(var(--gx) / -2);right:calc(var(--gx) / -2);bottom:0;height:13px;background:#e4e2e9;border-block:2.5px solid var(--ink);box-shadow:0 4px 0 var(--ink);pointer-events:none}
+.rows>li.edge-l::before{left:-10px;border-left:2.5px solid var(--ink);border-radius:6px 0 0 6px}
+.rows>li.edge-r::before{right:-10px;border-right:2.5px solid var(--ink);border-radius:0 6px 6px 0}
+.rows>li.edge-l.edge-r::before{border-radius:6px}
+.book{border-radius:5px 14px 14px 5px;padding-left:23px;box-shadow:4px 0 0 var(--ink);
+  background:linear-gradient(90deg,rgba(0,0,0,.2) 0 10px,var(--ink) 10px 12.5px,rgba(255,255,255,.28) 12.5px 14.5px,transparent 14.5px),var(--c,#ff3b30)}
+.book.black{background:linear-gradient(90deg,rgba(255,255,255,.16) 0 10px,rgba(255,255,255,.55) 10px 12.5px,transparent 12.5px),var(--c)}
+.book::after{left:0;top:0;width:100%;height:100%;rotate:none;opacity:0;background:radial-gradient(circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.3),transparent 55%);transition:opacity .3s}
+.row-name{min-height:2.3em}
+.rows>li,.rows>li.lean{transform:none}
+.rows>li::after{content:none}
+.rows>li.fx-in{animation:none}
+.rows>li.fx-in>.book{animation:fx-card .55s var(--spring) backwards;animation-delay:var(--fxd,0ms)}
+.rows>li.fx-wait>.book{animation-play-state:paused}
+@media(hover:hover) and (pointer:fine){
+  .book:hover{transform:translateY(-8px) rotate(-1deg);box-shadow:6px 8px 0 var(--ink)}
+  .book:hover::after{translate:none}
+  .rows>li.lean>.book{transform:perspective(900px) translateY(-8px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));box-shadow:6px 8px 0 var(--ink);transition-duration:.14s,.3s;transition-timing-function:ease-out}
+  .rows>li.lean>.book::after{opacity:1}
+}
+@media(max-width:760px){.rows{--gx:14px;gap:26px var(--gx)}}
+@media(prefers-reduced-motion:reduce){.rows>li.fx-in>.book{animation:none}.rows>li.lean>.book{transform:none}}

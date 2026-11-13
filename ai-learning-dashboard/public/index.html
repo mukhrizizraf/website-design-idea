@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="./home.css?v=20261113-jury">
+  <link rel="stylesheet" href="./home.css?v=20261113-looks">
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
   <script type="importmap">
     { "imports": {
@@ -51,6 +51,7 @@
   </main>
   <a class="cta launch" href="./shelf.html">Browse skills</a>
   <a class="front-link" id="front-link" href="./shelf.html">Open the front book</a>
+  <div class="front-info" id="front-info" hidden><button class="front-name" id="front-name" type="button"></button><p class="front-what" id="front-what"></p></div>
 
 
   <!-- A skill card picked from the 3D deck pops up here and speaks. -->
@@ -197,22 +198,13 @@
       scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
       const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
 
-      // A bright wallpaper of soft colour fields (Apple's system colours) stands behind the glass,
-      // so the candy-coloured cards have colour to bend. Painted in code: no photo to load.
-      const wall = document.createElement('canvas'); wall.width = 1600; wall.height = 1067;
-      const g = wall.getContext('2d');
-      g.fillStyle = '#f5f5f7'; g.fillRect(0, 0, wall.width, wall.height);
-      const blob = (x, y, r, c) => { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(245,245,247,0)'); g.fillStyle = gr; g.fillRect(0, 0, wall.width, wall.height); };
-      blob(180, 160, 620, 'rgba(255,159,10,.92)'); blob(1450, 140, 660, 'rgba(94,92,230,.8)'); blob(1360, 940, 680, 'rgba(100,210,255,.92)');
-      blob(260, 960, 620, 'rgba(255,55,95,.82)'); blob(820, 520, 520, 'rgba(191,90,242,.6)'); blob(1050, 260, 380, 'rgba(255,214,10,.6)'); blob(560, 300, 300, 'rgba(255,45,85,.45)'); blob(1180, 700, 320, 'rgba(94,92,230,.45)');
-      const wallTex = new THREE.CanvasTexture(wall); wallTex.colorSpace = THREE.SRGBColorSpace;
-      const back = new THREE.Mesh(new THREE.PlaneGeometry(31.5, 21), new THREE.MeshBasicMaterial({ map: wallTex, toneMapped: false }));
-      back.position.set(0, 0.8, -9); scene.add(back);
-      // Glossy 3D candy shapes (wallpaper.js) float and tumble behind the books, so the glass books bend real moving 3D.
+      // Plain light paper behind the books (owner pick, 13 Nov 2026: no soft colour blur).
+      // Cartoon shapes (wallpaper.js, toon mode) float behind the books on laptops: flat colour, ink outline, ink shadow,
+      // drawn like the covers. The middle stays clear so nothing peeks out under the front book.
       let field = null;
       try {
-        const { createField } = await import('./wallpaper.js?v=20261112-fast');
-        field = createField({ count: innerWidth < 820 ? 0 : 7, bubbles: 2, lite: true, area: [19, 11], depth: [-7.8, -2.4], seed: 11 });
+        const { createField } = await import('./wallpaper.js?v=20261113-looks');
+        field = createField({ count: innerWidth < 820 ? 0 : 7, toon: true, clear: [3.3, 2.7], area: [19, 11], depth: [-7.8, -2.4], seed: 11 });
         scene.add(field.group);
         const keyLight = new THREE.DirectionalLight('#ffffff', 0.9); keyLight.position.set(4, 6, 6); scene.add(keyLight);
         scene.add(new THREE.HemisphereLight('#ffe6f2', '#cfe4ff', 0.45));
@@ -220,7 +212,6 @@
 
       // Card faces drawn with the page fonts.
       await Promise.all(['800 64px "Bricolage Grotesque"', '400 40px "Instrument Serif"', 'italic 400 40px "Instrument Serif"', '500 20px "JetBrains Mono"'].map(f => document.fonts.load(f).catch(() => {})));
-      wallTex.needsUpdate = true;
       const ids = ['tiktok-reader', 'awwwards', 'canvas-design', 'motion-design', 'humanizer', 'pptx', 'gsap', 'frontend-design', 'deep-research'];
       const picks = ids.map(id => D.skills.find(s => s.id === id)).filter(Boolean);
       const hero = Math.max(0, picks.findIndex(s => s.id === 'humanizer'));
@@ -265,25 +256,31 @@
       function face(s, isHero, i) {
         const c = document.createElement('canvas'); c.width = 600; c.height = 800; const x = c.getContext('2d');
         const ink = '#1d1d1f', col = CARTOON[i % CARTOON.length];
-        // Cover: flat colour inside a thick black border
-        x.fillStyle = col; x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.fill();
+        // Cover: flat colour inside a thick black border; hardback, so the spine corners (left) are squarer
+        const R = [14, 44, 44, 14];
+        x.fillStyle = col; x.beginPath(); x.roundRect(14, 14, 572, 772, R); x.fill();
         // Halftone dots, bigger towards the bottom-right corner
-        x.save(); x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.clip();
+        x.save(); x.beginPath(); x.roundRect(14, 14, 572, 772, R); x.clip();
         x.fillStyle = 'rgba(0,0,0,.13)';
         for (let yy = 30; yy < 800; yy += 26) for (let xx = 30; xx < 600; xx += 26) {
           const r = Math.max(0, ((xx + yy) / 1400) * 8 - 2.2); if (r > 0) { x.beginPath(); x.arc(xx + (yy / 26 % 2) * 13, yy, r, 0, Math.PI * 2); x.fill(); }
         }
         // Cartoon shine stripe
-        x.fillStyle = 'rgba(255,255,255,.28)'; x.beginPath(); x.moveTo(60, 14); x.lineTo(150, 14); x.lineTo(14, 260); x.lineTo(14, 120); x.fill();
+        x.fillStyle = 'rgba(255,255,255,.28)'; x.beginPath(); x.moveTo(90, 14); x.lineTo(180, 14); x.lineTo(44, 260); x.lineTo(44, 120); x.fill();
+        // Hardback spine: a darker band down the left edge, an ink hinge line and a thin highlight
+        const blackCover = col === '#1d1d1f';
+        x.fillStyle = blackCover ? 'rgba(255,255,255,.16)' : 'rgba(0,0,0,.2)'; x.fillRect(14, 14, 44, 772);
+        x.fillStyle = blackCover ? 'rgba(255,255,255,.55)' : ink; x.fillRect(56, 14, 9, 772);
+        if (!blackCover) { x.fillStyle = 'rgba(255,255,255,.3)'; x.fillRect(65, 14, 7, 772); }
         x.restore();
-        x.lineWidth = 14; x.strokeStyle = ink; x.beginPath(); x.roundRect(14, 14, 572, 772, 44); x.stroke();
+        x.lineWidth = 14; x.strokeStyle = ink; x.beginPath(); x.roundRect(14, 14, 572, 772, R); x.stroke();
         // Category tag: black pill with white text
         x.font = '700 22px "JetBrains Mono"';
         const tag = label[s.cat].toUpperCase(), tw = x.measureText(tag).width + 40;
-        x.fillStyle = ink; x.beginPath(); x.roundRect(48, 48, tw, 48, 24); x.fill();
-        x.fillStyle = '#fff'; x.fillText(tag, 68, 80);
+        x.fillStyle = ink; x.beginPath(); x.roundRect(96, 48, tw, 48, 24); x.fill();
+        x.fillStyle = '#fff'; x.fillText(tag, 116, 80);
         // Sticker badge with the skill's symbol (white circle, black outline, hard shadow)
-        const bx = isHero ? 450 : 300, by = isHero ? 200 : 300, br = isHero ? 92 : 150;
+        const bx = isHero ? 460 : 326, by = isHero ? 200 : 300, br = isHero ? 92 : 145;
         x.fillStyle = ink; x.beginPath(); x.arc(bx + 10, by + 12, br, 0, Math.PI * 2); x.fill();
         x.fillStyle = '#fff'; x.beginPath(); x.arc(bx, by, br, 0, Math.PI * 2); x.fill();
         x.lineWidth = 10; x.strokeStyle = ink; x.stroke();
@@ -298,21 +295,21 @@
         }
         // Sparkle stickers
         const spark = (cx, cy, r) => { x.beginPath(); x.moveTo(cx, cy - r); x.quadraticCurveTo(cx, cy, cx + r, cy); x.quadraticCurveTo(cx, cy, cx, cy + r); x.quadraticCurveTo(cx, cy, cx - r, cy); x.quadraticCurveTo(cx, cy, cx, cy - r); x.closePath(); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 5; x.strokeStyle = ink; x.stroke(); };
-        spark(isHero ? 320 : 500, isHero ? 120 : 150, 26); spark(isHero ? 545 : 110, isHero ? 330 : 470, 18);
+        spark(isHero ? 330 : 515, isHero ? 120 : 150, 26); spark(isHero ? 550 : 140, isHero ? 330 : 470, 18);
         if (isHero) {
           // Speech bubble with the words to say
-          x.fillStyle = ink; x.beginPath(); x.roundRect(48, 330, 512, 230, 34); x.fill();
-          x.fillStyle = "#fff"; x.beginPath(); x.roundRect(40, 320, 512, 230, 34); x.fill(); x.lineWidth = 8; x.strokeStyle = ink; x.stroke();
+          x.fillStyle = ink; x.beginPath(); x.roundRect(90, 330, 480, 230, 34); x.fill();
+          x.fillStyle = "#fff"; x.beginPath(); x.roundRect(82, 320, 480, 230, 34); x.fill(); x.lineWidth = 8; x.strokeStyle = ink; x.stroke();
           x.fillStyle = ink; x.font = 'italic 400 44px "Instrument Serif"';
-          wrap(x, '“' + s.say.replace(/\s*:\s*…$/, '…') + '”', 70, 384, 450, 50, 5);
+          wrap(x, '“' + s.say.replace(/\s*:\s*…$/, '…') + '”', 110, 384, 420, 50, 5);
           x.font = '800 54px "Bricolage Grotesque"'; x.fillStyle = '#fff'; x.lineWidth = 12; x.strokeStyle = ink;
-          x.strokeText(s.title, 48, 720); x.fillText(s.title, 48, 720);
+          x.strokeText(s.title, 92, 720); x.fillText(s.title, 92, 720);
         } else {
           // Comic title label
-          x.fillStyle = ink; x.beginPath(); x.roundRect(50, 532, 512, 210, 28); x.fill();
-          x.fillStyle = '#fff'; x.beginPath(); x.roundRect(40, 520, 512, 210, 28); x.fill(); x.lineWidth = 8; x.strokeStyle = ink; x.stroke();
-          x.fillStyle = ink; x.font = '800 58px "Bricolage Grotesque"'; wrap(x, s.title, 68, 592, 460, 60, 2);
-          x.fillStyle = 'rgba(29,29,31,.72)'; x.font = '400 28px "Instrument Serif"'; wrap(x, s.what, 68, 696, 460, 30, 1);
+          x.fillStyle = ink; x.beginPath(); x.roundRect(92, 532, 478, 210, 28); x.fill();
+          x.fillStyle = '#fff'; x.beginPath(); x.roundRect(82, 520, 478, 210, 28); x.fill(); x.lineWidth = 8; x.strokeStyle = ink; x.stroke();
+          x.fillStyle = ink; x.font = '800 56px "Bricolage Grotesque"'; wrap(x, s.title, 108, 592, 430, 60, 2);
+          x.fillStyle = 'rgba(29,29,31,.72)'; x.font = '400 28px "Instrument Serif"'; wrap(x, s.what, 108, 696, 430, 30, 1);
         }
         const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
       }
@@ -338,14 +335,35 @@
       // Speed: a plain, solid material for the book edges. The see-through physical glass was shaded several times per pixel
       // and made phones and laptops lag; the cover art carries the look.
       const glassFor = i => new THREE.MeshStandardMaterial({ color: RAINBOW[i % RAINBOW.length], roughness: 0.35, metalness: 0, envMapIntensity: 0.9 });
-      const slabGeo = new RoundedBoxGeometry(1.6, 2.12, 0.08, 3, 0.1);
-      const faceGeo = new THREE.PlaneGeometry(1.58, 2.1);
+      // Real books (owner pick, 13 Nov 2026): two ink cover boards, a cream page block with page lines, and a spine in the cover colour.
+      const BW = 1.6, BH = 2.12, BT = 0.2, BD = 0.045;   // width, height, thickness, cover board thickness
+      const boardShape = new THREE.Shape();
+      { const x0 = -BW / 2, y0 = -BH / 2, x1 = BW / 2, y1 = BH / 2, rl = 0.035, rr = 0.115;   // squarer corners on the spine side
+        boardShape.moveTo(x0 + rl, y0); boardShape.lineTo(x1 - rr, y0); boardShape.quadraticCurveTo(x1, y0, x1, y0 + rr);
+        boardShape.lineTo(x1, y1 - rr); boardShape.quadraticCurveTo(x1, y1, x1 - rr, y1); boardShape.lineTo(x0 + rl, y1);
+        boardShape.quadraticCurveTo(x0, y1, x0, y1 - rl); boardShape.lineTo(x0, y0 + rl); boardShape.quadraticCurveTo(x0, y0, x0 + rl, y0); }
+      const boardGeo = new THREE.ExtrudeGeometry(boardShape, { depth: BD, bevelEnabled: false, curveSegments: 6 }); boardGeo.translate(0, 0, -BD / 2);
+      const spineGeo = new RoundedBoxGeometry(0.1, BH, BT, 2, 0.035);
+      const pagesGeo = new THREE.BoxGeometry(BW - 0.11, BH - 0.1, BT - 2 * BD + 0.004);
+      const stripes = vertical => {
+        const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+        x.fillStyle = '#fbf6ea'; x.fillRect(0, 0, 64, 64); x.fillStyle = 'rgba(29,29,31,.22)';
+        for (let k = 4; k < 64; k += 8) { if (vertical) x.fillRect(k, 0, 2, 64); else x.fillRect(0, k, 64, 2); }
+        const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+      };
+      const pageSide = new THREE.MeshBasicMaterial({ map: stripes(true), toneMapped: false }), pageTop = new THREE.MeshBasicMaterial({ map: stripes(false), toneMapped: false });
+      const inkBoard = new THREE.MeshBasicMaterial({ color: '#1d1d1f', toneMapped: false });
+      const faceGeo = new THREE.PlaneGeometry(BW, BH);
       const deck = new THREE.Group(); scene.add(deck);
       const cards = picks.map((s, i) => {
         const card = new THREE.Group();
-        const slab = new THREE.Mesh(slabGeo, glassFor(i)); slab.userData.card = card; card.add(slab);
+        const ink = inkBoard.clone(), ps = pageSide.clone(), pt = pageTop.clone();
+        const slab = new THREE.Mesh(boardGeo, ink); slab.position.z = BT / 2 - BD / 2; slab.userData.card = card; card.add(slab);
+        const backBoard = new THREE.Mesh(boardGeo, ink); backBoard.position.z = -(BT / 2 - BD / 2); card.add(backBoard);
+        const pages = new THREE.Mesh(pagesGeo, [ps, ps, pt, pt, ps, ps]); pages.position.x = 0.04; card.add(pages);
+        const spine = new THREE.Mesh(spineGeo, glassFor(i)); spine.position.x = -BW / 2 + 0.05; card.add(spine);
         const f = new THREE.Mesh(faceGeo, new THREE.MeshBasicMaterial({ map: face(s, i === hero, i), transparent: true, toneMapped: false, depthWrite: false }));
-        f.position.z = 0.046; card.add(f);
+        f.position.z = BT / 2 + 0.002; card.add(f);
         card.userData = { s, slab, hover: 0 };
         deck.add(card); return card;
       });
@@ -374,7 +392,7 @@
       // One cutting plane per shelf row: books are hidden below their board while they rise.
       const UP = new THREE.Vector3(0, 1, 0), graves = [new THREE.Plane(UP.clone(), 1000), new THREE.Plane(UP.clone(), 1000)];
       renderer.localClippingEnabled = true;
-      cards.forEach((c, i) => c.children.forEach(m => { m.material.clippingPlanes = [graves[i < 5 ? 0 : 1]]; }));
+      cards.forEach((c, i) => c.children.forEach(m => [].concat(m.material).forEach(mt => { mt.clippingPlanes = [graves[i < 5 ? 0 : 1]]; })));
 
       // Four poses, one per chapter. Values: [x, y, z, rotX, rotY, rotZ, scale]
       const n = cards.length, mid = (n - 1) / 2;
@@ -388,17 +406,31 @@
       const boardPose = r => [2.41, r ? -1.41 : 0.14, 0];
       cards.forEach((c, i) => { const p = poses[reduced ? 3 : previewPose !== null ? Math.round(previewPose) : 0](i); c.position.set(p[0], p[1], p[2]); c.rotation.set(p[3], p[4], p[5]); c.scale.setScalar(p[6]); });
 
+      // Phones (owner pick A, 13 Nov 2026): the front book's real name (tap it to open the book) and one line
+      // saying what it does. CSS shows them only on narrow screens.
+      const nav = document.querySelector('.nav'), nameBtn = document.getElementById('front-name'), whatEl = document.getElementById('front-what');
+      nameBtn.addEventListener('click', () => { if (frontIndex >= 0) openPop(cards[frontIndex].userData.s); });
+      document.getElementById('front-info').hidden = false;
+
       // Layout for the screen size.
       let narrow = false;
+      const BOOK_H = BH * 1.4 * 0.8, TAN = Math.tan(16 * Math.PI / 180);   // front book height on phones (world units), half field of view
       function resize() {
         const w = innerWidth, h = innerHeight; narrow = w < 820;
         renderer.setSize(w, h, false); camera.aspect = w / h;
-        // Phones: pull back far enough that the whole shelf (about 4.6 units wide) fits the screen width.
-        camera.position.set(0, 0, narrow ? Math.min(19, Math.max(13, 4.6 / (2 * Math.tan(16 * Math.PI / 180) * w / h))) : 9.5); camera.updateProjectionMatrix();
-        // No text windows any more: the book stack takes centre stage on every screen.
-        deck.position.x = narrow ? -2.35 : -2.25; deck.position.y = narrow ? .55 : .1;
-        // A phone only sees a narrow strip of the wallpaper; slide it so warm orange and pink sit behind the deck.
-        back.position.x = narrow ? 4 : 0;
+        if (narrow) {
+          // Phones: one big front book between the top bar and its name. Size it in pixels, then place the camera to match.
+          const top = (nav ? nav.getBoundingClientRect().bottom : 70) + 14;
+          const bottom = (nameBtn.getClientRects().length ? nameBtn.getBoundingClientRect().top : h - 300) - 10;
+          const px = Math.max(150, Math.min((bottom - top) * 0.9, w * 0.66 * BH / BW));
+          camera.position.set(0, 0, BOOK_H * h / (2 * TAN * px) + 1.1);
+          deck.position.x = -2.35;
+          deck.position.y = (h / 2 - (top + bottom) / 2 - Math.max(0, bottom - top - px) * 0.2) * BOOK_H / px - 0.35;
+        } else {
+          camera.position.set(0, 0, 9.5);
+          deck.position.x = -2.25; deck.position.y = .1;
+        }
+        camera.updateProjectionMatrix();
       }
       addEventListener('resize', resize); resize();
 
@@ -413,7 +445,7 @@
         loopTarget += (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * (e.deltaMode ? 0.33 : 0.006);
         lastInput = lastWheel = clock;
       }, { passive: true });
-      addEventListener('pointerdown', e => { if (e.target.closest('a,button,dialog,input')) return; drag = e.clientX; dragMoved = 0; loopVel = 0; });
+      addEventListener('pointerdown', e => { if (e.target.closest('a,button,dialog,input,nav')) return; drag = e.clientX; dragMoved = 0; loopVel = 0; });
       addEventListener('pointermove', e => {
         if (drag === null) return;
         const step = (e.clientX - drag) / (narrow ? 85 : 150); drag = e.clientX;
@@ -443,11 +475,11 @@
       const scatter = cards.map(() => ({ x: (Math.random() - .5) * 2, y: (Math.random() - .5) * 2, z: Math.random() * 1.4 - 1, ry: (Math.random() - .5) * 1.2, rz: (Math.random() - .5) * 1.8, delay: Math.random() * .55, crawl: Math.random() * .7 }));
       function loopPose(i) {
         const o = wrapO(i - loopPos), a = Math.abs(o), sg = Math.sign(o);
-        const sp = narrow ? 0.62 : 1;
+        const sp = narrow ? 0.7 : 1;
         const x = -deck.position.x + sg * (Math.min(a, 1) * 1.6 + Math.max(0, a - 1) * 0.95) * sp;
         const z = Math.max(0, 1 - a) * 1.1 - a * 0.42;
         const fade = Math.min(1, Math.max(0, (4.35 - a) / 0.9));
-        const sc = (0.98 + 0.42 * Math.exp(-o * o * 1.3)) * (narrow ? 0.8 : 1) * Math.min(1, innerHeight / 780) * Math.max(0.001, fade);
+        const sc = (0.98 + 0.42 * Math.exp(-o * o * 1.3)) * (narrow ? 0.8 : Math.min(1, innerHeight / 780)) * Math.max(0.001, fade);
         return [x, (narrow ? 0.35 : 0.05) - a * 0.05, z, 0.04, Math.max(-0.42, Math.min(0.42, -o * 0.11)), o * 0.05, sc];
       }
 
@@ -463,7 +495,12 @@
         loopPos += (loopTarget - loopPos) * (1 - Math.exp(-dt * 7));
         // Keyboard and screen readers: a real link always points at the front book (arrow keys turn the loop).
         const fi = ((Math.round(loopPos) % n) + n) % n;
-        if (fi !== frontIndex) { frontIndex = fi; const fs0 = cards[fi].userData.s; frontLink.href = './shelf.html#skill=' + encodeURIComponent(fs0.id); frontLink.textContent = 'Open ' + fs0.title; }
+        if (fi !== frontIndex) {
+          if (frontIndex < 0) requestAnimationFrame(resize);   // first name shown: measure the phone layout again
+          frontIndex = fi; const fs0 = cards[fi].userData.s; frontLink.href = './shelf.html#skill=' + encodeURIComponent(fs0.id); frontLink.textContent = 'Open ' + fs0.title;
+          nameBtn.textContent = fs0.title; nameBtn.setAttribute('aria-label', fs0.title + ', open');
+          whatEl.textContent = fs0.what;
+        }
         const a = Math.floor(t), b = Math.min(3, a + 1), f = ease(t - a), k = 1 - Math.exp(-dt * 5.5);
 
         ray.setFromCamera(ptr, camera);
@@ -504,7 +541,7 @@
           // Page opens: the books tumble down from the sky one by one and land in a stack.
           let kk = reduced ? 1 : k;
           if (introOn && clock < 4.3) {
-            const sc0 = scatter[i], spanX = narrow ? 1.5 : 3.9, spanY = narrow ? 2.6 : 1.55;
+            const sc0 = scatter[i], spanX = narrow ? 0.9 : 3.9, spanY = narrow ? 1.9 : 1.55;
             const eA = clamp01((clock - 0.2 - sc0.delay) / 0.75), eB = clamp01((clock - 1.55 - sc0.crawl) / 1.9);
             const m = eB * eB * (3 - 2 * eB), env = Math.sin(Math.PI * eB), stepW = Math.sin(eB * Math.PI * 7);
             const sx = -deck.position.x + sc0.x * spanX, sy = sc0.y * spanY, sz = sc0.z;

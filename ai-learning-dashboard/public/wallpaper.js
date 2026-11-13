@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 
 // Apple system colours, no green.
 const PALETTE = ['#ff375f', '#ff9f0a', '#ffd60a', '#bf5af2', '#5e5ce6', '#0a84ff', '#64d2ff', '#ff2d55'];
@@ -43,6 +44,27 @@ function shapes() {
 }
 const ORDER = ['star', 'ring', 'cube', 'sparkle', 'pill', 'gem', 'knot', 'coin', 'star', 'ring', 'sparkle', 'cube', 'gem', 'pill', 'knot', 'sparkle'];
 
+// Cartoon shapes (homepage, owner pick 13 Nov 2026): drawn like the book covers. Flat colour, an ink outline
+// (the shape's back faces pushed out along smooth normals) and a hard ink shadow behind it.
+const INK = '#1d1d1f';
+const BOOK = ['#ff3b30', '#2f6bff', '#ffd60a', '#a259ff', '#ff8a00', '#4cc9ff', '#ff5fa2'];
+const TOON_ORDER = ['star', 'ring', 'cube', 'sparkle', 'pill', 'ball', 'coin', 'sparkle', 'star', 'ring'];
+const SHADOW_OFFSET = new THREE.Vector3(0.11, -0.14, -0.02);
+let inkHull = null, inkFlat = null;
+const hullCache = {};
+function hullGeo(kind, g) {
+  if (!hullCache[kind]) { const h = g.clone(); h.deleteAttribute('uv'); h.deleteAttribute('normal'); const m = mergeVertices(h, 1e-3); m.computeVertexNormals(); hullCache[kind] = m; }
+  return hullCache[kind];
+}
+function inkMaterials() {
+  if (!inkHull) {
+    inkHull = new THREE.MeshBasicMaterial({ color: INK, side: THREE.BackSide, toneMapped: false });
+    inkHull.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  transformed += normal * 0.075;'); };
+    inkFlat = new THREE.MeshBasicMaterial({ color: INK, toneMapped: false, depthWrite: false });
+  }
+  return [inkHull, inkFlat];
+}
+
 function candy(color, flat) {
   return new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(color), roughness: .26, metalness: 0, clearcoat: 1, clearcoatRoughness: .1,
@@ -58,28 +80,37 @@ function bubble() {
 
 // A field of floating shapes. area = [width, height] it fills; depth = [far z, near z].
 // lite: standard materials instead of physical ones (no clearcoat, sheen or iridescence): far cheaper per pixel.
-export function createField({ count = 14, bubbles = 3, area = [16, 10], depth = [-12, 1], seed = 7, wrapY = 0, lite = false } = {}) {
+// toon: flat cartoon shapes with ink outline and shadow. clear = [half width, half height] kept free in the middle (behind the front book).
+export function createField({ count = 14, bubbles = 3, area = [16, 10], depth = [-12, 1], seed = 7, wrapY = 0, lite = false, toon = false, clear = null } = {}) {
   const geo = shapes(), r = rng(seed), group = new THREE.Group(), items = [];
   for (let i = 0; i < count; i++) {
-    const isBubble = i < bubbles;
-    const kind = isBubble ? 'ball' : ORDER[i % ORDER.length];
-    const color = PALETTE[(i * 3) % PALETTE.length];
-    const material = lite
+    const isBubble = !toon && i < bubbles;
+    const kind = isBubble ? 'ball' : (toon ? TOON_ORDER : ORDER)[i % (toon ? TOON_ORDER : ORDER).length];
+    const color = toon ? BOOK[(i * 3) % BOOK.length] : PALETTE[(i * 3) % PALETTE.length];
+    const material = toon ? new THREE.MeshBasicMaterial({ color, toneMapped: false }) : lite
       ? (isBubble ? new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: .05, metalness: .1, transparent: true, opacity: .35, depthWrite: false, envMapIntensity: 1.6 })
                   : new THREE.MeshStandardMaterial({ color, roughness: .22, metalness: 0, envMapIntensity: 1.1, flatShading: kind === 'gem' }))
       : (isBubble ? bubble() : candy(color, kind === 'gem'));
-    const mesh = new THREE.Mesh(geo[kind], material);
+    const hit = new THREE.Mesh(geo[kind], material);
+    let mesh = hit, shadow = null;
+    if (toon) {
+      const [hullM, flatM] = inkMaterials();
+      mesh = new THREE.Group(); mesh.add(hit, new THREE.Mesh(hullGeo(kind, geo[kind]), hullM));
+      shadow = new THREE.Mesh(geo[kind], flatM); shadow.renderOrder = -1; group.add(shadow);
+    }
     const z = depth[0] + (depth[1] - depth[0]) * r();
+    let bx = (r() - .5) * area[0], by = (r() - .5) * area[1];
+    if (clear && Math.abs(bx) < clear[0] && Math.abs(by) < clear[1]) bx = Math.sign(bx || 1) * (clear[0] + Math.abs(bx) / clear[0] * (area[0] / 2 - clear[0]) * .6);
     const it = {
-      mesh, base: new THREE.Vector3((r() - .5) * area[0], (r() - .5) * area[1], z),
+      mesh, hit, shadow, base: new THREE.Vector3(bx, by, z),
       size: (isBubble ? .7 + r() * .5 : .5 + r() * .55), spin: new THREE.Vector3((r() - .5) * .7, (r() - .5) * .9, (r() - .5) * .5),
       ph: r() * 6.28, f: .15 + r() * .2, boost: 0, s: 1, sv: 0, push: new THREE.Vector3()
     };
     mesh.rotation.set(r() * 6, r() * 6, r() * 6);
-    mesh.userData.item = it;
+    hit.userData.item = it;
     group.add(mesh); items.push(it);
   }
-  const meshes = items.map(i => i.mesh);
+  const meshes = items.map(i => i.hit);
   const tmp = new THREE.Vector3();
   return {
     group, items,
@@ -97,6 +128,7 @@ export function createField({ count = 14, bubbles = 3, area = [16, 10], depth = 
         // A springy scale: pokes make the shape swell and wobble back.
         it.sv += ((1 - it.s) * 120 - it.sv * 9) * dt; it.s += it.sv * dt;
         it.mesh.scale.setScalar(it.size * it.s);
+        if (it.shadow) { it.shadow.position.copy(p).add(SHADOW_OFFSET); it.shadow.rotation.copy(it.mesh.rotation); it.shadow.scale.copy(it.mesh.scale); }
       }
     },
     // Pointer over a shape: it spins faster and drifts away along the ray.

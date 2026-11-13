@@ -91,20 +91,31 @@
   const COVERS = ['#ff3b30', '#2f6bff', '#ffd60a', '#a259ff', '#ff8a00', '#4cc9ff', '#ff5fa2', '#1d1d1f', '#fff1c9', '#3a2fd6'];
   const DARK = new Set(['#2f6bff', '#a259ff', '#1d1d1f', '#3a2fd6']);
   const coverOf = new Map();
-  let coverN = 0, prevC = '', prevC2 = '';
-  function row(s, i, next) {
-    // Homepage books keep their colour; every other book takes the next colour that differs from its two neighbours.
-    let c = (window.ShelfToys && ShelfToys.HOME_COVERS && ShelfToys.HOME_COVERS[s.id]) || '';
-    const nextFixed = next && window.ShelfToys && ShelfToys.HOME_COVERS ? ShelfToys.HOME_COVERS[next.id] : '';
-    if (!c) { do { c = COVERS[coverN++ % COVERS.length]; } while (c === prevC || c === prevC2 || c === nextFixed); }
-    prevC2 = prevC; prevC = c; coverOf.set(s.id, c);
-    return `<li style="--i:${i};--c:${c}"><button class="row book${DARK.has(c) ? ' dark' : ''}" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)} ${isNew(s) ? 'New · ' : ''}${esc(levelLabel(s))}. ${esc(s.what)}">
+  let coverN = 0, prevC = '', prevC2 = '', groupC = [], cols = 4;
+  const fixedC = s => (s && window.ShelfToys && ShelfToys.HOME_COVERS && ShelfToys.HOME_COVERS[s.id]) || '';
+  // Columns the grid will have (same rule as .rows in shelf.css), so colours can also differ from the books above and below.
+  function gridCols() {
+    const ul = $('#groups .rows');
+    if (ul) return getComputedStyle(ul).gridTemplateColumns.split(' ').length;
+    const w = innerWidth;
+    if (w <= 760) return w >= 520 ? 3 : 2;
+    const gw = $('#groups').clientWidth || w;
+    return Math.max(1, Math.floor((gw + 20) / (158 + 20)));
+  }
+  function row(s, i, next, list) {
+    // Homepage books keep their colour; every other book takes the next colour that differs from its neighbours
+    // left, right, above and below.
+    let c = fixedC(s);
+    const avoid = [prevC, prevC2, fixedC(next), groupC[i - cols], fixedC(list && list[i + cols])];
+    if (!c) { let tries = 0; do { c = COVERS[coverN++ % COVERS.length]; } while (avoid.includes(c) && ++tries < 20); }
+    prevC2 = prevC; prevC = c; groupC[i] = c; coverOf.set(s.id, c);
+    return `<li style="--i:${i};--c:${c}"><button class="row book${DARK.has(c) ? ' dark' : ''}${c === '#1d1d1f' ? ' black' : ''}" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)} ${isNew(s) ? 'New · ' : ''}${esc(levelLabel(s))}. ${esc(s.what)}">
       <span class="badge" aria-hidden="true">${svg(glyphFor(s), 24)}</span>
       <span class="lbl"><span class="row-name">${esc(s.title)}</span> <span class="row-meta">${isNew(s) ? '<b class="new">New</b> · ' : ''}${esc(levelLabel(s))}</span></span></button></li>`;
   }
   const miniBook = s => `<span class="mini-book" style="--c:${coverOf.get(s.id) || COVERS[0]}" aria-hidden="true"><span>${svg(glyphFor(s), 19)}</span></span>`;
   function renderShelf() {
-    coverN = 0; prevC = ''; prevC2 = '';
+    coverN = 0; prevC = ''; prevC2 = ''; cols = gridCols();
     const found = items.filter(matches);
     $('#surprise').disabled = !found.some(s => !s.lessons);
     $('#surprise').title = $('#surprise').disabled ? 'No matching skills. Change your filters to try again.' : 'Choose a skill from your current results';
@@ -118,11 +129,21 @@
     $('#groups').innerHTML = D.categories.map(c => {
       const list = found.filter(s => s.cat === c.id);
       if (!list.length) return '';
-      return `<section class="group" data-cat="${c.id}" aria-labelledby="g-${c.id}"><div class="group-head">${headCube(c.id)}<h2 id="g-${c.id}">${esc(c.label)}</h2><span>${list.length}</span></div><ul class="rows">${list.map((s, i) => row(s, i, list[i + 1])).join('')}</ul></section>`;
+      return `<section class="group" data-cat="${c.id}" aria-labelledby="g-${c.id}"><div class="group-head">${headCube(c.id)}<h2 id="g-${c.id}">${esc(c.label)}</h2><span>${list.length}</span></div><ul class="rows">${(groupC = [], list.map((s, i) => row(s, i, list[i + 1], list))).join('')}</ul></section>`;
     }).join('');
     watchRows();
   }
-  function watchRows() {}
+  // Shelf boards: mark the first and last book of every visual row so the board gets its end caps.
+  // If the column count changed (window resized), colours are dealt again so no two books above each other match.
+  function watchRows() {
+    const uls = document.querySelectorAll('#groups .rows');
+    if (!uls.length) return;
+    const n = getComputedStyle(uls[0]).gridTemplateColumns.split(' ').length;
+    if (n !== cols) { cols = n; renderShelf(); return; }
+    uls.forEach(ul => { const lis = [...ul.children]; lis.forEach((li, i) => { li.classList.toggle('edge-l', i % n === 0); li.classList.toggle('edge-r', i % n === n - 1 || i === lis.length - 1); }); });
+  }
+  let rowsTimer = 0;
+  addEventListener('resize', () => { clearTimeout(rowsTimer); rowsTimer = setTimeout(watchRows, 120); });
 
   // Arriving from a homepage category card: that card morphs into this category's heading.
   window.addEventListener('pagereveal', e => {
