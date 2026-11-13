@@ -76,3 +76,13 @@ test('every skill with a GitHub source has what the shelf needs to write install
     assert.ok(src.root || typeof src.dir === 'string', `${s.src}: dir or root`);
   }
 });
+
+test('the homepage front-book text in the HTML matches the first home book', async () => {
+  const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
+  const first = /const ids = \['([^']+)'/.exec(html)[1];
+  const s = D.skills.find(item => item.id === first);
+  assert.ok(s, first);
+  const esc = t => t.replaceAll('&', '&amp;').replaceAll('<', '&lt;');
+  assert.match(html, new RegExp(`id="front-name"[^>]*>${esc(s.title)}</button>`));
+  assert.ok(html.includes(`id="front-what">${esc(s.what)}</p>`), 'front-what equals ' + first + '.what');
+});

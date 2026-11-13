@@ -20,6 +20,8 @@
   <script>
     // Old shared links pointed at this page; send them to the shelf.
     if (/^#(skill=|guide)/.test(location.hash)) location.replace('./shelf.html' + location.hash);
+    // The browser sometimes skips the page transition and rejects a promise this page can't reach; don't report it as an error.
+    addEventListener('unhandledrejection', e => { if (e.reason?.name === 'InvalidStateError' && /Transition was aborted/.test(e.reason.message)) e.preventDefault(); });
   </script>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,7 +56,8 @@
   </main>
   <a class="cta launch" href="./shelf.html">Browse skills</a>
   <a class="front-link" id="front-link" href="./shelf.html">Open the front book</a>
-  <div class="front-info" id="front-info" hidden><button class="front-name" id="front-name" type="button"></button><p class="front-what" id="front-what"></p></div>
+  <!-- The first front book's text is in the HTML so phones paint it at once (it was the slow LCP element when JS wrote it). Keep it equal to ids[0] in skills.js; a test checks. -->
+  <div class="front-info" id="front-info"><button class="front-name" id="front-name" type="button" aria-label="TikTok Reader, open">TikTok Reader</button><p class="front-what" id="front-what">Pulls the caption, creator, hashtags and stats out of a TikTok link, so Claude can use the idea in the video. It reads the text, not the picture or sound.</p></div>
 
 
   <!-- A skill card picked from the 3D deck pops up here and speaks. -->
@@ -558,10 +561,11 @@
           // Page opens: the books tumble down from the sky one by one and land in a stack.
           let kk = reduced ? 1 : k;
           if (introOn && clock < 4.3) {
-            const sc0 = scatter[i], spanX = narrow ? 0.9 : 3.9, spanY = narrow ? 1.9 : 1.55;
+            // Phones: books land inside the front book's own area (centred on its height), so they never cover the name below it.
+            const sc0 = scatter[i], spanX = narrow ? 0.9 : 3.9, spanY = narrow ? 0.4 : 1.55;
             const eA = clamp01((clock - 0.2 - sc0.delay) / 0.75), eB = clamp01((clock - 1.55 - sc0.crawl) / 1.9);
             const m = eB * eB * (3 - 2 * eB), env = Math.sin(Math.PI * eB), stepW = Math.sin(eB * Math.PI * 7);
-            const sx = -deck.position.x + sc0.x * spanX, sy = sc0.y * spanY, sz = sc0.z;
+            const sx = -deck.position.x + sc0.x * spanX, sy = (narrow ? 0.35 : 0) + sc0.y * spanY, sz = sc0.z;
             P[0] = sx + (P[0] - sx) * m;
             P[1] = sy + (1 - bounce(eA)) * 7 + (P[1] - sy) * m + Math.abs(stepW) * 0.14 * env;
             P[2] = sz + (P[2] - sz) * m;

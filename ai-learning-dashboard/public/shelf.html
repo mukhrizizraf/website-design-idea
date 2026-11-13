@@ -28,6 +28,10 @@
   <link rel="stylesheet" href="./pop.css?v=20261112-cards">
   <link rel="stylesheet" href="./shelf.css?v=20261113-art">
   <link rel="stylesheet" href="./skill-images.css?v=20261113-art">
+  <script>
+    // The browser sometimes skips the page transition and rejects a promise this page can't reach; don't report it as an error.
+    addEventListener('unhandledrejection', e => { if (e.reason?.name === 'InvalidStateError' && /Transition was aborted/.test(e.reason.message)) e.preventDefault(); });
+  </script>
   <script defer src="./skills.js?v=20261113-jury2"></script>
   <script defer src="./toys.js?v=20261113-jury"></script>
   <script defer src="./skill-images.js?v=20261113-art"></script>
