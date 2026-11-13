@@ -13,7 +13,7 @@ window.SKILL_DATA = {
     { id: 'workflow', label: 'AI tools', short: 'AI tools', icon: '🧠' }
   ],
   levels: {
-    easy: { label: 'Easy', hint: 'Anyone can use it. Just ask like you normally would.' },
+    easy: { label: 'Easy', hint: 'Anyone can use it. Ask in your own words.' },
     medium: { label: 'Medium', hint: 'Easy to ask for, but best with a real project.' },
     technical: { label: 'Technical', hint: 'For people who build websites or write code.' }
   },

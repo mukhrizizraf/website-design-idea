@@ -8,7 +8,7 @@
   --surface:#ffffff;
   --ink:#1d1d1f;
   --ink-2:#5b5862;
-  --ink-3:#8a8692;
+  --ink-3:#6e6a76;
   --line:#e4e2e9;
   --chip:#efeef3;
   --rail:96px;
@@ -278,4 +278,34 @@ html{scrollbar-gutter:stable}
  .search input,.easy{height:42px}
  .rail{top:calc(114px + env(safe-area-inset-top,0px));-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent)}
  .tab{min-height:64px}
+}
+
+/* Jury fixes, round 2 (13 Nov 2026) */
+/* The bar row sizes to its content. Before, the grid split the screen between the bar and the empty
+   shelf, so the bar started 200 px down and jumped up when the books arrived (desktop CLS 0.229). */
+.app{grid-template-rows:auto 1fr}
+@media(max-width:760px){.app{grid-template-rows:auto auto 1fr}}
+/* Easy toggle: the invisible checkbox covers the whole chip, so it carries the focus ring itself. */
+.easy input{opacity:1;-webkit-appearance:none;appearance:none;border:0;border-radius:inherit;background:transparent}
+.easy:has(input:focus-visible){box-shadow:none;outline:none}
+.easy input:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+/* Buttons lift with an ink shadow under the pointer, like the covers. */
+.btn{transition:background .2s,scale .12s,translate .25s var(--spring),box-shadow .25s var(--out)}
+.way{transition:background .2s,color .2s,translate .25s var(--spring)}
+@media(hover:hover) and (pointer:fine){
+  .btn:hover{translate:0 -2px;box-shadow:3px 4px 0 var(--ink)}
+  .btn.primary:hover{box-shadow:3px 4px 0 #8a8692}
+  .way:hover{translate:0 -1px}
+  .way:not([aria-selected="true"]):hover{background:var(--surface);color:var(--ink)}
+}
+/* Skill sheet: the title row and close button stay in view while the sheet scrolls. */
+.sheet-top{position:sticky;top:0;z-index:3;margin:-28px -30px 0;padding:28px 30px 14px;background:var(--surface);box-shadow:0 1px 0 var(--line)}
+@media(max-width:760px){
+  .sheet-top{margin:-12px calc(-1 * max(18px,env(safe-area-inset-right,0px))) 0;padding:12px max(18px,env(safe-area-inset-right,0px))}
+  /* Install choices as an even grid instead of a wrapping row. */
+  .ways{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  /* Solid phone chrome: covers never show through. */
+  .tabbar{background:var(--surface)}
+  .rail{background:var(--surface);-webkit-mask-image:none;mask-image:none}
+  .rail::after{content:"";position:sticky;right:0;flex:none;width:36px;margin-left:-36px;background:linear-gradient(90deg,rgba(255,255,255,0),var(--surface));pointer-events:none}
 }

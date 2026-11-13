@@ -100,7 +100,7 @@
     prevC2 = prevC; prevC = c; coverOf.set(s.id, c);
     return `<li style="--i:${i};--c:${c}"><button class="row book${DARK.has(c) ? ' dark' : ''}" type="button" data-skill="${esc(s.id)}" aria-label="${esc(s.title)} ${isNew(s) ? 'New · ' : ''}${esc(levelLabel(s))}. ${esc(s.what)}">
       <span class="badge" aria-hidden="true">${svg(glyphFor(s), 24)}</span>
-      <span class="lbl"><span class="row-name">${esc(s.title)}</span><span class="row-meta">${isNew(s) ? '<b class="new">New</b> · ' : ''}${esc(levelLabel(s))}</span></span></button></li>`;
+      <span class="lbl"><span class="row-name">${esc(s.title)}</span> <span class="row-meta">${isNew(s) ? '<b class="new">New</b> · ' : ''}${esc(levelLabel(s))}</span></span></button></li>`;
   }
   const miniBook = s => `<span class="mini-book" style="--c:${coverOf.get(s.id) || COVERS[0]}" aria-hidden="true"><span>${svg(glyphFor(s), 19)}</span></span>`;
   function renderShelf() {
@@ -174,7 +174,7 @@
   function installHtml(s) {
     const i = install(s);
     if (i.none) {
-      const text = i.none === 'claudeapp' ? 'This one already comes with the Claude app. Nothing to install, just ask.'
+      const text = i.none === 'claudeapp' ? 'This one already comes with the Claude app. Nothing to install.'
         : i.none === 'plugin' ? 'This one comes in a Claude Code plugin. In Claude Code, type <code>/plugin</code>, find it in the list, install from there.'
         : "No public download link for this one yet. Just message me and I'll send you the folder.";
       return `<h3>How to install</h3><p class="note" style="margin-top:0">${text}</p>`;
@@ -184,7 +184,7 @@
       ? [['ask', 'In Claude Code', `<p>Type these two lines into Claude Code, one at a time.</p>${block(i.plugin.join('\n'), 'Copied! Now paste it into Claude Code.')}`],
          ['term', 'Terminal', `<p>Or run this in a terminal. It'll ask you a few questions.</p>${block('npx claude-mem install', 'Copied! Now paste it into a terminal.')}`]]
       : [['ask', 'Ask Claude Code', `<p>The easiest way. Paste it into Claude Code and it copies the files for you. Done.</p>${block(i.ask, 'Copied! Now paste it into Claude Code.')}`],
-         ['win', 'Windows', `<p>Paste into PowerShell. You'll need Git. No Git? Just use Ask Claude Code instead.</p>${block(i.win, 'Copied! Now paste it into PowerShell.')}`],
+         ['win', 'Windows', `<p>Paste into PowerShell. You'll need Git. No Git? Use Ask Claude Code instead.</p>${block(i.win, 'Copied! Now paste it into PowerShell.')}`],
          ['mac', 'Mac or Linux', `<p>Paste into Terminal. You'll need Git.</p>${block(i.mac, 'Copied! Now paste it into Terminal.')}`],
          ['app', 'Claude app', s.builtIn ? '<p>Already in the Claude app. Nothing to install.</p>'
            : `<p>Download the ZIP, unzip it, and open <code>${esc(i.unzipped)}</code>. Zip ${s.members ? 'each skill folder you want' : 'that one folder'}, then upload it in the Claude app under Settings, Capabilities, Skills.</p><a class="btn" href="${esc(i.zip)}" download>Download the ZIP</a>`]];
@@ -207,6 +207,8 @@
       d.style.setProperty('--fr', `${r.left + r.width / 2 < innerWidth / 2 ? 14 : -14}deg`);
     }
     d.classList.remove('closing');
+    const item = items.find(x => x.id === id);
+    if (item) document.title = item.title + ' · AI Skill Shelf';
     if (!d.open) d.showModal();
     d.scrollTop = 0;
     if (push && location.hash !== '#skill=' + id) history.pushState({ skillShelfSheet: true }, '', '#skill=' + id);
@@ -265,7 +267,7 @@
       <div class="sheet-top">${miniBook(s)}<div><h2 id="d-title">${esc(s.title)}</h2><p class="sheet-sub">${esc(cats[s.cat].label)}, ${esc(D.levels[s.level].label.toLowerCase())}, from ${esc(src.name)}${isNew(s) ? ', new this month' : ''}</p></div><button class="close" type="button" data-close aria-label="Close">×</button></div>
       <p class="lead">${esc(s.what)}</p>
       <h3>Best for</h3><ul class="uses">${s.useFor.map(u => `<li>${esc(u)}</li>`).join('')}</ul>
-      <h3>Just say this to Claude</h3><div class="say"><p>“${esc(s.say)}”</p><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy</button></div>
+      <h3>What to type</h3><div class="say"><p>“${esc(s.say)}”</p><button class="btn primary" type="button" data-copy="${esc(s.say)}">Copy</button></div>
       <p class="note">${esc(D.levels[s.level].hint)} In Claude Code you can also type <code>/${esc(s.members ? s.members[0][0] : s.id)}</code> to start it right away.</p>
       ${installHtml(s)}
       ${s.members ? `<h3>What's inside this pack</h3><ul class="members">${s.members.map(([n, t]) => `<li><code>/${esc(n)}</code><br>${esc(t)}</li>`).join('')}</ul>` : ''}
@@ -274,6 +276,7 @@
   }
   $('#detail').addEventListener('close', () => {
     $('#detail').querySelectorAll('video').forEach(v => v.pause());
+    document.title = $('#library-title').textContent + ' · AI Skill Shelf';
     const opener = [...document.querySelectorAll('.row')].find(b => b.dataset.skill === $('#detail').dataset.skill);
     (opener || $('#shelf')).focus({ preventScroll: true });
     if (location.hash.startsWith('#skill=')) {
